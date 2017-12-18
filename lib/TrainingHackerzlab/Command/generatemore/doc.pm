@@ -13,10 +13,11 @@ sub run {
     # app 自身のクラス名取得
     die 'Can not get class name!' if $home->path('lib')->list->size ne 1;
     my $appclass = $home->path('lib')->list->first->basename('.pm');
+    my $appname  = class_to_file $appclass;
 
     # doc/deploy.md
     my $deploy_file = 'deploy.md';
-    $self->render_to_rel_file( 'deploy', "doc/$deploy_file", $appclass );
+    $self->render_to_rel_file( 'deploy', "doc/$deploy_file", $appname );
     return;
 }
 
@@ -80,7 +81,7 @@ id: example
 1. step
 
 ```
-$ carton exec -- hypnotoad script/<%= lc $app %>
+$ carton exec -- hypnotoad script/<%= $app %>
 ```
 
 ## START
@@ -88,7 +89,7 @@ $ carton exec -- hypnotoad script/<%= lc $app %>
 ### APP SERVER
 
 ```
-$ carton exec -- hypnotoad script/<%= lc $app %>
+$ carton exec -- hypnotoad script/<%= $app %>
 ```
 
 ### WEB SERVER

@@ -1,6 +1,6 @@
 # NAME
 
-deploy - TrainingHackerzlab
+deploy - training_hackerzlab
 
 # SYNOPSIS
 
@@ -33,7 +33,7 @@ id: example
 1. step
 
 ```
-$ carton exec -- hypnotoad script/traininghackerzlab
+$ carton exec -- hypnotoad script/training_hackerzlab
 ```
 
 ## START
@@ -41,7 +41,7 @@ $ carton exec -- hypnotoad script/traininghackerzlab
 ### APP SERVER
 
 ```
-$ carton exec -- hypnotoad script/traininghackerzlab
+$ carton exec -- hypnotoad script/training_hackerzlab
 ```
 
 ### WEB SERVER
