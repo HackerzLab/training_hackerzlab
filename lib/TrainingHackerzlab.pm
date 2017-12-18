@@ -3,19 +3,30 @@ use Mojo::Base 'Mojolicious';
 
 # This method will run once at server start
 sub startup {
-  my $self = shift;
+    my $self = shift;
 
-  # Load configuration from hash returned by "my_app.conf"
-  my $config = $self->plugin('Config');
+    my $mode    = $self->mode;
+    my $moniker = $self->moniker;
+    my $home    = $self->home;
+    my $common  = $home->child( 'etc', "$moniker.common.conf" )->to_string;
+    my $conf    = $home->child( 'etc', "$moniker.$mode.conf" )->to_string;
 
-  # Documentation browser under "/perldoc"
-  $self->plugin('PODRenderer') if $config->{perldoc};
+    # 設定ファイル (読み込む順番に注意)
+    $self->plugin( Config => +{ file => $common } );
+    $self->plugin( Config => +{ file => $conf } );
+    my $config = $self->config;
 
-  # Router
-  my $r = $self->routes;
+    # Documentation browser under "/perldoc"
+    $self->plugin('PODRenderer') if $config->{perldoc};
 
-  # Normal route to controller
-  $r->get('/')->to('example#welcome');
+    # コマンドをロードするための他の名前空間
+    push @{ $self->commands->namespaces }, 'TrainingHackerzlab::Command';
+
+    # Router
+    my $r = $self->routes;
+
+    # Normal route to controller
+    $r->get('/')->to('example#welcome');
 }
 
 1;
