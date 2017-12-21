@@ -111,11 +111,13 @@ sub run {
         $t_util_pm_args );
 
     # t::app.t
-    my $t_app_t_file = lc $appclass . '.t';
+    my $t_app_t_name = class_to_file $appclass;
+    my $t_app_t_file = $t_app_t_name . '.t';
     $self->render_to_rel_file( 'test', "t/$t_app_t_file" );
 
     # db/app_schema.sql
-    my $sql_file = lc $appclass . '_schema.sql';
+    my $sql_name = class_to_file $appclass;
+    my $sql_file = $sql_name . '_schema.sql';
     $self->render_to_rel_file( 'sql', "db/$sql_file" );
 
     # Controller
@@ -130,12 +132,21 @@ sub run {
         $controller_args );
 
     # Test
-    my $test_name = lc join '/', split '::', $controller;
+    my @test_names = split '::', $controller;
+    for my $name (@test_names) {
+        $name = class_to_file $name;
+    }
+    my $test_name = join '/', @test_names;
     my $test_file = $test_name . '.t';
     $self->render_to_rel_file( 'test', "t/$test_file" );
 
     # Templates
-    my $templates_name = lc join '/', @class_names, 'index';
+    my @templates_names;
+    for my $name (@class_names) {
+        push @templates_names, class_to_file $name;
+    }
+    push @templates_names, 'index';
+    my $templates_name = join '/', @templates_names;
     my $templates_file = $templates_name . '.html.ep';
     $self->render_to_rel_file( 'index', "templates/$templates_file" );
 
@@ -149,7 +160,11 @@ sub run {
     $self->render_to_rel_file( 'model', "lib/$model_file", $model_args );
 
     # Doc
-    my $doc_name = lc join '/', split '::', $controller;
+    my @doc_names = split '::', $controller;
+    for my $name (@doc_names) {
+        $name = class_to_file $name;
+    }
+    my $doc_name = join '/', @doc_names;
     my $doc_file = $doc_name . '.md';
     my $doc_args = +{
         name       => $doc_name,
