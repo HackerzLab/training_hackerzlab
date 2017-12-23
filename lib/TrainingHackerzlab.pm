@@ -27,6 +27,17 @@ sub startup {
 
     # Normal route to controller
     $r->get('/')->to('example#welcome');
+
+    # 認証関連
+    $r->get('/auth/create')->to('Auth#create');
+    $r->get('/auth/:id/edit')->to('Auth#edit');
+    $r->get('/auth/:id')->to('Auth#show');
+    $r->get('/auth')->to('Auth#index');
+    $r->post('/auth/login')->to('Auth#login');
+    $r->post('/auth/logout')->to('Auth#logout');
+    $r->post('/auth/:id/update')->to('Auth#update');
+    $r->post('/auth/:id/remove')->to('Auth#remove');
+    $r->post('/auth')->to('Auth#store');
 }
 
 1;
