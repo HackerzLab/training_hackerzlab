@@ -10,6 +10,7 @@ my $t         = $test_util->init;
 sub _url_list {
     my $id = shift || '';
     return +{
+        top    => "/",
         create => "/auth/create",
         edit   => "/auth/$id/edit",
         show   => "/auth/$id",
@@ -40,7 +41,25 @@ subtest 'router' => sub {
 # ユーザー登録画面
 subtest 'get /auth/create create' => sub {
     subtest 'template' => sub {
-        ok(1);
+        my $url = _url_list();
+        $t->get_ok( $url->{create} )->status_is(200);
+
+        # form
+        my $form = "form[name=form_store][method=post][action=$url->{store}]";
+        $t->element_exists($form);
+
+        # input text
+        my $text_names = [qw{user_id username}];
+        for my $name ( @{$text_names} ) {
+            $t->element_exists("$form input[name=$name][type=text]");
+        }
+
+        # input password
+        $t->element_exists("$form input[name=password][type=password]");
+
+        # 他 button, link
+        $t->element_exists("$form button[type=submit]");
+        $t->element_exists("a[href=$url->{top}]");
     };
     subtest 'fail' => sub {
         ok(1);
