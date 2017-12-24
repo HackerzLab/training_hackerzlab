@@ -25,8 +25,9 @@ sub startup {
     # Router
     my $r = $self->routes;
 
-    # Normal route to controller
-    $r->get('/')->to('example#welcome');
+    # トップページ
+    $r->get('/')->to('Hackerz#index');
+    $r->get('/hackerz')->to('Hackerz#index');
 
     # 認証関連
     $r->get('/auth/create')->to('Auth#create');

@@ -1,0 +1,31 @@
+% layout 'base';
+% title 'HackerzLab.博多';
+  <div class="container">
+    <h2 class="page-header">ハカー？？</h2>
+    <p class="well">
+    ホワイトハカーというのを知ってるかい？<br>
+    ホワイトハカーというのは悪いことをするハッカーの攻撃から身を守るためのハカー、つまり正義のハッカーの事なんだ<br>
+    今の日本ではホワイトハカーが不足しているんだ<br>
+    このイベントではホワイトハカーになるためのセンスを磨くために必要な技術を解説しようと思う<br>
+    まずはセキュリティに関する問題を解いてもらう<br>
+    おっと、学校の試験のような堅苦しい問題はないから安心して<br>
+    <br>
+    </p>
+  </div>
+
+  <!-- 会員登録入力 -->
+  <div class="container">
+    <h2 class="page-header">まずは会員登録をしよう</h2>
+    <p class="well">
+      この会員は今回だけのもので、終わったらデータはすべて破棄するから安心して！
+    </p>
+    <a href="/auth/create" class="btn btn-default btn-lg btn-block">登録する</a>
+  </div>
+
+  <div class="container">
+    <h2 class="page-header">ログイン</h2>
+    <p class="well">
+      会員登録が終わった人はログインしよう！
+    </p>
+    <a href="/auth" class="btn btn-default btn-lg btn-block">ログインする</a>
+  </div>
