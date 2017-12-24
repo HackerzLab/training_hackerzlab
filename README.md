@@ -294,3 +294,7 @@ __リファクタリングを常に意識して実装__
 # EXAMPLES
 
 # SEE ALSO
+
+- <https://github.com/cferdinandi/smooth-scroll> - smooth-scroll
+- <https://getbootstrap.com/docs/3.3/> - bootstrap
+- <https://bootswatch.com/3/> - bootswatch

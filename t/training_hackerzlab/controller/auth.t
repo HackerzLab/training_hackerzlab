@@ -98,7 +98,25 @@ subtest 'get /auth/:id show' => sub {
 # ログイン入力画面
 subtest 'get /auth index' => sub {
     subtest 'template' => sub {
-        ok(1);
+        my $url = _url_list();
+        $t->get_ok( $url->{index} )->status_is(200);
+
+        # form
+        my $form = "form[name=form_login][method=post][action=$url->{login}]";
+        $t->element_exists($form);
+
+        # input text
+        my $text_names = [qw{user_id}];
+        for my $name ( @{$text_names} ) {
+            $t->element_exists("$form input[name=$name][type=text]");
+        }
+
+        # input password
+        $t->element_exists("$form input[name=password][type=password]");
+
+        # 他 button, link
+        $t->element_exists("$form button[type=submit]");
+        $t->element_exists("a[href=$url->{top}]");
     };
     subtest 'fail' => sub {
         ok(1);

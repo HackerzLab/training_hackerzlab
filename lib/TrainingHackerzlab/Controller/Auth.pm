@@ -29,7 +29,11 @@ sub show {
 # ログイン入力画面
 sub index {
     my $self = shift;
-    $self->render( text => 'index' );
+    $self->render(
+        template => 'auth/index',
+        format   => 'html',
+        handler  => 'ep',
+    );
     return;
 }
 
