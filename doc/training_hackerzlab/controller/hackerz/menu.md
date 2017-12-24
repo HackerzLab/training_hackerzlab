@@ -1,6 +1,6 @@
 # NAME
 
-training_hackerzlab/controller/hackerz/menu - TrainingHackerzlab
+training_hackerzlab/controller/hackerz/menu - TrainingHackerzlab アプリメニュー
 
 # SYNOPSIS
 

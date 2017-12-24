@@ -44,6 +44,7 @@ sub startup {
     # 認証保護されたページ
     # アプリメニュー
     $r->get('/hackerz/menu')->to('Hackerz::Menu#index');
+    $r->get('/hackerz/ranking')->to('Hackerz::Ranking#index');
 }
 
 1;

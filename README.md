@@ -166,12 +166,6 @@ $ carton exec -- hypnotoad script/training_hackerzlab
     回答結果、ユーザーID表示
     現在の得点表示
 
-/hackerz/ranking
-総合ランキング画面
-    ランキング順位、ログインID
-    現在の得点
-    トップページボタン -> トップページ
-
 /hackerz/answer
 
 解答一覧画面

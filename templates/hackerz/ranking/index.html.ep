@@ -1,0 +1,31 @@
+% layout 'base';
+% title 'HackerzLab.博多';
+  <div class="container">
+    <div class="jumbotron">
+    <h2>[&nbsp;総合ランキング&nbsp;]</h2>
+
+    % for my $ranking (@{$rankings}) {
+    <h2>第&nbsp;<%= $ranking->{rank} %>&nbsp;位 [ <%= $ranking->{name} %> さん ]</h2>
+      <div class="panel panel-danger">
+        <div class="panel-heading">
+          <h3 class="panel-title">現在の得点</h3>
+        </div>
+        <div class="panel-body">
+          <div class="progress progress-striped active">
+            <div class="progress-bar" style="width: <%= $ranking->{score} %>%"></div>
+          </div>
+          <%= $ranking->{score} %>点
+        </div>
+      </div>
+    % }
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <h2 class="page-header">トップページ</h2>
+        <a href="/" class="btn btn-default btn-lg btn-block">トップページ</a>
+      </div>
+    </div>
+  </div>

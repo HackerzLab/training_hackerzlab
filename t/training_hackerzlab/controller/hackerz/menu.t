@@ -10,9 +10,10 @@ my $t         = $test_util->init;
 sub _url_list {
     my $id = shift || '';
     return +{
-        top    => "/",
-        index  => "/hackerz/menu",
-        logout => "/auth/logout",
+        top           => "/",
+        index         => "/hackerz/menu",
+        logout        => "/auth/logout",
+        ranking_index => "/hackerz/ranking",
     };
 }
 
@@ -36,9 +37,9 @@ subtest 'get /hackerz/menu index' => sub {
 
         # 他 button, link
         $t->element_exists("$form button[type=submit]");
-        # $t->element_exists("a[href=$url->{auth_index}]");
+        $t->element_exists("a[href=$url->{ranking_index}]");
+
         # $t->element_exists("a[href=$url->{top}]");
-        ok(1);
     };
     subtest 'fail' => sub {
         ok(1);
