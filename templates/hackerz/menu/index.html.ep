@@ -1,0 +1,49 @@
+% layout 'base';
+% title 'HackerzLab.博多';
+  <!-- ホワイトハッカーとは? -->
+  <%= include('inc/hacker', format => 'html') =%>
+
+  <!-- ログイン後の画面選択 -->
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <h2 class="page-header">問題はこっちだ</h2>
+        <a href="/questions" class="btn btn-default btn-lg btn-block">問題をとく</a>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <h2 class="page-header">ログアウトはこっちだ</h2>
+        <form  name="form_logout" method="post" action="/auth/logout">
+          <button type="submit" class="btn btn-default btn-lg btn-block" style="">ログアウトする</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2 class="page-header">問題一覧 Question Season6 - Kii</h2>
+    <div class="row">
+      % for my $int (1..60) {
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <a href="/questions/<%= $int %>" class="btn btn-default btn-lg btn-block">第 <%= $int %> 問</a>
+      </div>
+      % }
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <h2 class="page-header">自分の解答一覧はこっちだ</h2>
+        <a href="/user_answers" class="btn btn-default btn-lg btn-block">自分の解答一覧</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <h2 class="page-header">ランキングはこっちだ</h2>
+        <a href="/rankings" class="btn btn-default btn-lg btn-block">総合ランキング</a>
+      </div>
+    </div>
+  </div>

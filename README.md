@@ -152,15 +152,9 @@ $ carton exec -- hypnotoad script/training_hackerzlab
 
 ```
 旧システムのメモ
-トップページ (ログイン中)
-    サイトタイトル
-    サイト説明文
-    問題をとくボタン -> 問題を解く画面
-    ログアウトボタン -> ログアウトしてトップページ
-    問題一覧
-    自分の回答一覧ボタン -> 解答一覧画面
-    総合ランキングボタン -> 総合ランキング画面
 
+
+/hackerz/question
 問題を解く画面
     ユーザーID表示
     名前表示
@@ -172,14 +166,19 @@ $ carton exec -- hypnotoad script/training_hackerzlab
     回答結果、ユーザーID表示
     現在の得点表示
 
+/hackerz/ranking
 総合ランキング画面
     ランキング順位、ログインID
     現在の得点
     トップページボタン -> トップページ
 
+/hackerz/answer
+
 解答一覧画面
     解答した問題の答えのリスト
 
+
+/hackerz/question/:code
 各問題画面
     問題番号
     問題文

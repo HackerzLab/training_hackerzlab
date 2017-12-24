@@ -30,15 +30,20 @@ sub startup {
     $r->get('/hackerz')->to('Hackerz#index');
 
     # 認証関連
+    my $id = [ id => qr/[0-9]+/ ];
     $r->get('/auth/create')->to('Auth#create');
-    $r->get('/auth/:id/edit')->to('Auth#edit');
-    $r->get('/auth/:id')->to('Auth#show');
+    $r->get( '/auth/:id/edit' => $id )->to('Auth#edit');
+    $r->get( '/auth/:id'      => $id )->to('Auth#show');
     $r->get('/auth')->to('Auth#index');
     $r->post('/auth/login')->to('Auth#login');
     $r->post('/auth/logout')->to('Auth#logout');
-    $r->post('/auth/:id/update')->to('Auth#update');
-    $r->post('/auth/:id/remove')->to('Auth#remove');
+    $r->post( '/auth/:id/update' => $id )->to('Auth#update');
+    $r->post( '/auth/:id/remove' => $id )->to('Auth#remove');
     $r->post('/auth')->to('Auth#store');
+
+    # 認証保護されたページ
+    # アプリメニュー
+    $r->get('/hackerz/menu')->to('Hackerz::Menu#index');
 }
 
 1;
