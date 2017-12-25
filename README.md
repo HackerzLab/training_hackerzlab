@@ -152,8 +152,6 @@ $ carton exec -- hypnotoad script/training_hackerzlab
 
 ```
 旧システムのメモ
-
-
 /hackerz/question
 問題を解く画面
     ユーザーID表示
@@ -161,16 +159,6 @@ $ carton exec -- hypnotoad script/training_hackerzlab
     問題を始めるボタン -> 第1問へ
     ログアウトボタン -> ログアウトしてトップページ
     得点確認ボタン -> 回答結果画面
-
-回答結果画面
-    回答結果、ユーザーID表示
-    現在の得点表示
-
-/hackerz/answer
-
-解答一覧画面
-    解答した問題の答えのリスト
-
 
 /hackerz/question/:code
 各問題画面
@@ -187,7 +175,7 @@ $ carton exec -- hypnotoad script/training_hackerzlab
     解答を入力 (問題により変更)
         入力フォーム (テキスト)
         ラジオボタン
-    送信ボタン
+    送信ボタン -> 回答を送信したぞ画面(入力値を送信する)
     (問題により)
     ファイルをダウンロードボタン -> ファイルがダウンロードされる
 
@@ -214,6 +202,120 @@ wab api
     ユーザーを全て削除ボタン
     各問題の項目一覧
         編集ボタン
+```
+
+```sql
+-- 新しくテーブル構造みなおし
+-- ユーザー
+DROP TABLE IF EXISTS user;
+CREATE TABLE user (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
+    login_id        TEXT,                               -- ログインID名 (例: 'hackerz@gmail.com')
+    password        TEXT,                               -- ログインパスワード (例: 'hackerz')
+    approved        INTEGER,                            -- 承認フラグ (例: 0: 承認していない, 1: 承認済み)
+    deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
+    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
+    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
+);
+
+-- 問題
+DROP TABLE IF EXISTS QUESTION;
+CREATE TABLE question (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `question` TEXT BINARY NOT NULL,
+    `answer` TEXT BINARY NOT NULL,
+    `score` INT UNSIGNED NOT NULL,
+    `level` INT UNSIGNED NOT NULL,
+    `type` VARCHAR(30) BINARY NOT NULL,
+    `addfile` VARCHAR(255) BINARY NOT NULL DEFAULT '',
+    `option1` VARCHAR(128) BINARY NOT NULL DEFAULT '',
+    `option2` VARCHAR(128) BINARY NOT NULL DEFAULT '',
+    `option3` VARCHAR(128) BINARY NOT NULL DEFAULT '',
+    `option4` VARCHAR(128) BINARY NOT NULL DEFAULT '',
+    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
+    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
+);
+
+-- 問題のヒント (5段階ヒントだったが、10段階にしたい場合もありそう)
+DROP TABLE IF EXISTS hint;
+CREATE TABLE hint (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
+    question_id     INTEGER,                            -- 問題ID (例: 5)
+    level           INTEGER,                               -- ヒントレベル (例: 3 )
+    hint            TEXT,                            -- ヒント文面 (例: '問題をよく読んでみよう')
+    deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
+    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
+    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
+);
+
+-- 入力された回答
+
+-- 得点
+
+drop table if exists users;
+create table users (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `user_id` VARCHAR(50) BINARY NOT NULL,
+    `username` VARCHAR(50) BINARY NOT NULL,
+    `password` VARCHAR(128) BINARY NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX `user_id_and_passwrd` (user_id, password)
+);
+
+drop table if exists questions;
+create table questions (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `question` TEXT BINARY NOT NULL,
+    `answer` TEXT BINARY NOT NULL,
+    `score` INT UNSIGNED NOT NULL,
+    `level` INT UNSIGNED NOT NULL,
+    `hint1` TEXT BINARY,
+    `hint2` TEXT BINARY,
+    `hint3` TEXT BINARY,
+    `hint4` TEXT BINARY,
+    `hint5` TEXT BINARY,
+    `type` VARCHAR(30) BINARY NOT NULL,
+    `addfile` VARCHAR(255) BINARY NOT NULL DEFAULT '',
+    `option1` VARCHAR(128) BINARY NOT NULL DEFAULT '',
+    `option2` VARCHAR(128) BINARY NOT NULL DEFAULT '',
+    `option3` VARCHAR(128) BINARY NOT NULL DEFAULT '',
+    `option4` VARCHAR(128) BINARY NOT NULL DEFAULT '',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+drop table if exists answers;
+create table answers (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `question_id` INT UNSIGNED NOT NULL,
+    `user_id` INT UNSIGNED NOT NULL,
+    `user_answer` TEXT BINARY NOT NULL,
+    `score` INT UNSIGNED NOT NULL,
+    `hint1` INT UNSIGNED,
+    `hint2` INT UNSIGNED,
+    `hint3` INT UNSIGNED,
+    `hint4` INT UNSIGNED,
+    `hint5` INT UNSIGNED,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX `question_id_and_user_id` (question_id, user_id)
+);
+
+drop table if exists scores;
+create table scores (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT UNSIGNED NOT NULL,
+    `score` INT UNSIGNED NOT NULL,
+    `updated_at` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX `user_id` (user_id)
+);
+
+drop table if exists sessions;
+create table sessions (
+    `session_id` VARCHAR(128) BINARY NOT NULL,
+    `session_data` TEXT BINARY NOT NULL,
+    `session_expires` DATETIME NOT NULL,
+    `created_at` DATETIME NOT NULL,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 ```
 
 
