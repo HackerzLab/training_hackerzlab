@@ -205,53 +205,7 @@ wab api
 ```
 
 ```sql
--- 新しくテーブル構造みなおし
--- ユーザー
-DROP TABLE IF EXISTS user;
-CREATE TABLE user (
-    id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
-    login_id        TEXT,                               -- ログインID名 (例: 'hackerz@gmail.com')
-    password        TEXT,                               -- ログインパスワード (例: 'hackerz')
-    approved        INTEGER,                            -- 承認フラグ (例: 0: 承認していない, 1: 承認済み)
-    deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
-    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
-    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
-);
-
--- 問題
-DROP TABLE IF EXISTS QUESTION;
-CREATE TABLE question (
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `question` TEXT BINARY NOT NULL,
-    `answer` TEXT BINARY NOT NULL,
-    `score` INT UNSIGNED NOT NULL,
-    `level` INT UNSIGNED NOT NULL,
-    `type` VARCHAR(30) BINARY NOT NULL,
-    `addfile` VARCHAR(255) BINARY NOT NULL DEFAULT '',
-    `option1` VARCHAR(128) BINARY NOT NULL DEFAULT '',
-    `option2` VARCHAR(128) BINARY NOT NULL DEFAULT '',
-    `option3` VARCHAR(128) BINARY NOT NULL DEFAULT '',
-    `option4` VARCHAR(128) BINARY NOT NULL DEFAULT '',
-    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
-    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
-);
-
--- 問題のヒント (5段階ヒントだったが、10段階にしたい場合もありそう)
-DROP TABLE IF EXISTS hint;
-CREATE TABLE hint (
-    id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
-    question_id     INTEGER,                            -- 問題ID (例: 5)
-    level           INTEGER,                               -- ヒントレベル (例: 3 )
-    hint            TEXT,                            -- ヒント文面 (例: '問題をよく読んでみよう')
-    deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
-    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
-    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
-);
-
--- 入力された回答
-
--- 得点
-
+-- 当初のスキーマー
 drop table if exists users;
 create table users (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -317,7 +271,6 @@ create table sessions (
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 ```
-
 
 ## 開発の進め方基本ルール
 
