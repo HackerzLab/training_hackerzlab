@@ -1,5 +1,6 @@
 package TrainingHackerzlab;
 use Mojo::Base 'Mojolicious';
+use TrainingHackerzlab::Model;
 
 # This method will run once at server start
 sub startup {
@@ -21,6 +22,8 @@ sub startup {
 
     # コマンドをロードするための他の名前空間
     push @{ $self->commands->namespaces }, 'TrainingHackerzlab::Command';
+
+    $self->helper( model => sub { TrainingHackerzlab::Model->new( +{ conf => $config } ); } );
 
     # Router
     my $r = $self->routes;
