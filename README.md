@@ -136,7 +136,7 @@ $ ssh kusakabe@training.hackerzlab.com
 $ ssh kusakabe@160.16.231.20
 
 (アプリケーションユーザーに)
-$ sudo su - training_hackerzlab
+$ sudo su - training
 
 (移動後、git 更新)
 $ cd ~/training_hackerzlab/
