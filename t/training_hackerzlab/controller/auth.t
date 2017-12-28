@@ -209,7 +209,6 @@ subtest 'post /auth/login login' => sub {
             is( $session_id, undef, 'session_id' );
         };
     };
-
     subtest 'success' => sub {
         my $user     = $t->app->test_db->teng->single( 'user', +{ id => 1 } );
         my $login_id = $user->login_id;

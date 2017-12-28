@@ -43,7 +43,6 @@ sub login {
     my $params = $self->req->params->to_hash;
     my $model  = $self->model->auth->req_params($params);
     my $master = $model->db->master;
-    my $msg    = $master->auth->word( $master->auth->constant('IS_LOGIN') );
 
     $self->stash(
         template => 'auth/index',
@@ -56,23 +55,19 @@ sub login {
 
     # ログインIDがない
     if ( $check->{constant} eq $master->auth->constant('NOT_LOGIN_ID') ) {
-        my $msg
-            = $master->auth->word( $master->auth->constant('NOT_LOGIN_ID') );
-        $self->render( msg => $msg );
+        $self->render( msg => $check->{msg} );
         return;
     }
 
     # パスワード違い
     if ( $check->{constant} eq $master->auth->constant('NOT_PASSWORD') ) {
-        my $msg
-            = $master->auth->word( $master->auth->constant('NOT_PASSWORD') );
-        $self->render( msg => $msg );
+        $self->render( msg => $check->{msg} );
         return;
     }
 
     # 認証
     $self->session( user => $params->{login_id} );
-    $self->flash( msg => $msg );
+    $self->flash( msg => $check->{msg} );
     $self->redirect_to('/hackerz/menu');
     return;
 }
