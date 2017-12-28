@@ -21,6 +21,78 @@ sub init {
     return $t;
 }
 
+# ログインする
+sub login {
+    my $self    = shift;
+    my $t       = shift;
+    my $user_id = shift || 1;
+
+    my $user = $t->app->test_db->teng->single( 'user', +{ id => $user_id } );
+    my $login_id = $user->login_id;
+    my $password = $user->password;
+    my $master   = $t->app->test_db->master;
+    my $msg      = $master->auth->word( $master->auth->constant('IS_LOGIN') );
+
+    # セッション確認
+    my $session_id = $t->app->build_controller( $t->tx )->session('user');
+    is( $session_id, undef, 'session_id' );
+
+    # ログイン画面
+    $t->get_ok('/auth')->status_is(200);
+    my $dom        = $t->tx->res->dom;
+    my $form       = 'form[name=form_login]';
+    my $action_url = $dom->at($form)->attr('action');
+
+    # 値を入力
+    $dom->at('input[name=login_id]')->attr( +{ value => $login_id } );
+    $dom->at('input[name=password]')->attr( +{ value => $password } );
+
+    # input val 取得
+    my $params = $self->get_input_val( $dom, $form );
+
+    # ログイン実行
+    $t->post_ok( $action_url => form => $params )->status_is(302);
+    my $location_url = $t->tx->res->headers->location;
+    $t->get_ok($location_url)->status_is(200);
+
+    # 成功画面
+    $t->content_like(qr{\Q<b>$msg</b>\E});
+
+    # セッション確認
+    $session_id = $t->app->build_controller( $t->tx )->session('user');
+    ok( $session_id, 'session_id' );
+    return;
+}
+
+# ログアウトする
+sub logout {
+    my $self = shift;
+    my $t    = shift;
+
+    my $dom        = $t->tx->res->dom;
+    my $form       = 'form[name=form_logout]';
+    my $action_url = $dom->at($form)->attr('action');
+    my $master     = $t->app->test_db->master;
+
+    # ログアウト実行
+    $t->post_ok($action_url)->status_is(302);
+    my $location_url = $t->tx->res->headers->location;
+    $t->get_ok($location_url)->status_is(200);
+
+    # 成功画面
+    my $msg = $master->auth->word( $master->auth->constant('IS_LOGOUT') );
+    $t->content_like(qr{\Q<b>$msg</b>\E});
+
+    # 他 button, link
+    $t->element_exists("a[href=/]");
+    $t->element_exists("a[href=/auth]");
+
+    # セッション確認
+    my $session_id = $t->app->build_controller( $t->tx )->session('user');
+    is( $session_id, undef, 'session_id' );
+    return;
+}
+
 # input 入力フォームの値を取得
 sub get_input_val {
     my $self = shift;
