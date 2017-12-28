@@ -39,15 +39,49 @@ sub index {
 
 # ユーザーログイン実行
 sub login {
-    my $self = shift;
-    $self->render( text => 'login' );
+    my $self   = shift;
+    my $params = $self->req->params->to_hash;
+    my $model  = $self->model->auth->req_params($params);
+    my $master = $model->db->master;
+    my $msg    = $master->auth->word( $master->auth->constant('IS_LOGIN') );
+
+    $self->stash(
+        template => 'auth/index',
+        format   => 'html',
+        handler  => 'ep',
+    );
+
+    # DB 存在確認
+    my $check = $model->check;
+
+    # ログインIDがない
+    if ( $check->{constant} eq $master->auth->constant('NOT_LOGIN_ID') ) {
+        my $msg
+            = $master->auth->word( $master->auth->constant('NOT_LOGIN_ID') );
+        $self->render( msg => $msg );
+        return;
+    }
+
+    # パスワード違い
+    if ( $check->{constant} eq $master->auth->constant('NOT_PASSWORD') ) {
+        my $msg
+            = $master->auth->word( $master->auth->constant('NOT_PASSWORD') );
+        $self->render( msg => $msg );
+        return;
+    }
+
+    # 認証
+    $self->session( user => $params->{login_id} );
+    $self->flash( msg => $msg );
+    $self->redirect_to('/hackerz/menu');
     return;
 }
 
 # ユーザーログアウト実行
 sub logout {
     my $self = shift;
-    $self->render( text => 'logout' );
+    $self->session( expires => 1 );
+    $self->redirect_to('/hackerz');
     return;
 }
 

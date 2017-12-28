@@ -106,7 +106,7 @@ subtest 'get /auth index' => sub {
         $t->element_exists($form);
 
         # input text
-        my $text_names = [qw{user_id}];
+        my $text_names = [qw{login_id}];
         for my $name ( @{$text_names} ) {
             $t->element_exists("$form input[name=$name][type=text]");
         }
@@ -132,10 +132,120 @@ subtest 'post /auth/login login' => sub {
         ok(1);
     };
     subtest 'fail' => sub {
-        ok(1);
+        subtest 'not login id' => sub {
+            my $login_id = 9999;
+            my $password = 'dummy';
+            my $master   = $t->app->test_db->master;
+            my $msg      = $master->auth->word(
+                $master->auth->constant('NOT_LOGIN_ID') );
+
+            # セッション確認
+            my $session_id
+                = $t->app->build_controller( $t->tx )->session('user');
+            is( $session_id, undef, 'session_id' );
+
+            # ログイン画面
+            my $url = _url_list();
+            $t->get_ok( $url->{index} )->status_is(200);
+            my $dom        = $t->tx->res->dom;
+            my $form       = 'form[name=form_login]';
+            my $action_url = $dom->at($form)->attr('action');
+
+            # 値を入力
+            $dom->at('input[name=login_id]')->attr( +{ value => $login_id } );
+            $dom->at('input[name=password]')->attr( +{ value => $password } );
+
+            # input val 取得
+            my $params = $test_util->get_input_val( $dom, $form );
+
+            # ログイン実行
+            $t->post_ok( $action_url => form => $params )->status_is(200);
+
+            # 失敗時の画面
+            $t->content_like(qr{\Q<b>$msg</b>\E});
+
+            # セッション確認
+            $session_id
+                = $t->app->build_controller( $t->tx )->session('user');
+            is( $session_id, undef, 'session_id' );
+        };
+
+        subtest 'not password' => sub {
+            my $user = $t->app->test_db->teng->single( 'user', +{ id => 1 } );
+            my $login_id = $user->login_id;
+            my $password = 'dummy';
+            my $master   = $t->app->test_db->master;
+            my $msg      = $master->auth->word(
+                $master->auth->constant('NOT_PASSWORD') );
+
+            # セッション確認
+            my $session_id
+                = $t->app->build_controller( $t->tx )->session('user');
+            is( $session_id, undef, 'session_id' );
+
+            # ログイン画面
+            my $url = _url_list();
+            $t->get_ok( $url->{index} )->status_is(200);
+            my $dom        = $t->tx->res->dom;
+            my $form       = 'form[name=form_login]';
+            my $action_url = $dom->at($form)->attr('action');
+
+            # 値を入力
+            $dom->at('input[name=login_id]')->attr( +{ value => $login_id } );
+            $dom->at('input[name=password]')->attr( +{ value => $password } );
+
+            # input val 取得
+            my $params = $test_util->get_input_val( $dom, $form );
+
+            # ログイン実行
+            $t->post_ok( $action_url => form => $params )->status_is(200);
+
+            # 失敗時の画面
+            $t->content_like(qr{\Q<b>$msg</b>\E});
+
+            # セッション確認
+            $session_id
+                = $t->app->build_controller( $t->tx )->session('user');
+            is( $session_id, undef, 'session_id' );
+        };
     };
+
     subtest 'success' => sub {
-        ok(1);
+        my $user     = $t->app->test_db->teng->single( 'user', +{ id => 1 } );
+        my $login_id = $user->login_id;
+        my $password = $user->password;
+        my $master   = $t->app->test_db->master;
+        my $msg = $master->auth->word( $master->auth->constant('IS_LOGIN') );
+
+        # セッション確認
+        my $session_id = $t->app->build_controller( $t->tx )->session('user');
+        is( $session_id, undef, 'session_id' );
+
+        # ログイン画面
+        my $url = _url_list();
+        $t->get_ok( $url->{index} )->status_is(200);
+        my $dom        = $t->tx->res->dom;
+        my $form       = 'form[name=form_login]';
+        my $action_url = $dom->at($form)->attr('action');
+
+        # 値を入力
+        $dom->at('input[name=login_id]')->attr( +{ value => $login_id } );
+        $dom->at('input[name=password]')->attr( +{ value => $password } );
+
+        # input val 取得
+        my $params = $test_util->get_input_val( $dom, $form );
+
+        # ログイン実行
+        $t->post_ok( $action_url => form => $params )->status_is(302);
+        my $location_url = $t->tx->res->headers->location;
+        $t->get_ok($location_url)->status_is(200);
+
+        # 成功画面
+        $t->content_like(qr{\Q<b>$msg</b>\E});
+
+        # セッション確認
+        $session_id = $t->app->build_controller( $t->tx )->session('user');
+        ok( $session_id, 'session_id' );
     };
 };
 

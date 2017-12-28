@@ -25,6 +25,14 @@
       <p>ホワイトハカーというのを知ってるかい？...</p>
     </div>
   </div>
+  <div class="container">
+  % if ( my $msg = flash('msg') ) {
+    <div class="alert alert-success"><b><%== $msg =%></b></div>
+  % }
+  % if ( my $msg = stash('msg') ) {
+    <div class="alert alert-success"><b><%== $msg =%></b></div>
+  % }
+  </div>
   <%= content =%>
   <div class="container">
     <nav class="navbar navbar-default navbar-fixed-bottom">

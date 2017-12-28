@@ -3,6 +3,29 @@ use Mojo::Base -base;
 
 has [qw{master_hash master_constant_hash}];
 
+sub auth {
+    my $self = shift;
+    my $hash = +{
+        0 => 'ユーザーが存在しません',
+        1 => 'パスワードが違います',
+        2 => 'ログインしました',
+        3 => 'プロフィールを登録してください',
+        4 => 'ログアウトしました',
+    };
+
+    my $constant = +{
+        NOT_LOGIN_ID   => 0,
+        NOT_PASSWORD   => 1,
+        IS_LOGIN       => 2,
+        IS_FIRST_LOGIN => 3,
+        IS_LOGOUT      => 4,
+    };
+
+    $self->master_hash($hash);
+    $self->master_constant_hash($constant);
+    return $self;
+}
+
 sub deleted {
     my $self = shift;
     my $hash = +{
