@@ -13,4 +13,12 @@ sub render_fillin {
     return;
 }
 
+# ログイン中はアクセスできない
+sub not_access {
+    my $self = shift;
+    return if !$self->session('user');
+    $self->redirect_to('/hackerz/menu');
+    return 1;
+}
+
 1;

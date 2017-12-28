@@ -11,6 +11,7 @@ sub auth {
         2 => 'ログインしました',
         3 => 'プロフィールを登録してください',
         4 => 'ログアウトしました',
+        5 => 'ログインが必要です',
     };
 
     my $constant = +{
@@ -19,6 +20,7 @@ sub auth {
         IS_LOGIN       => 2,
         IS_FIRST_LOGIN => 3,
         IS_LOGOUT      => 4,
+        NEED_LOGIN     => 5,
     };
 
     $self->master_hash($hash);

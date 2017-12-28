@@ -34,4 +34,17 @@ sub check {
     return $check;
 }
 
+# セッション用確認
+sub session_check {
+    my $self   = shift;
+    my $params = $self->req_params;
+    my $cond   = +{
+        login_id => $params->{login_id},
+        deleted  => $self->db->master->deleted->constant('NOT_DELETED'),
+    };
+    my $user = $self->db->teng->single( 'user', $cond );
+    return $user if $user;
+    return;
+}
+
 1;

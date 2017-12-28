@@ -23,7 +23,33 @@ sub startup {
     # コマンドをロードするための他の名前空間
     push @{ $self->commands->namespaces }, 'TrainingHackerzlab::Command';
 
-    $self->helper( model => sub { TrainingHackerzlab::Model->new( +{ conf => $config } ); } );
+    $self->helper( model =>
+            sub { TrainingHackerzlab::Model->new( +{ conf => $config } ); } );
+
+    # ルーティング前に共通して実行
+    $self->hook(
+        before_dispatch => sub {
+            my $c   = shift;
+            my $url = $c->req->url;
+
+            # 認証保護されたページ
+            if ( $url =~ m{^/hackerz/.+} ) {
+
+                # セッション情報からログイン者の情報を取得
+                my $params = +{ login_id => $c->session('user') };
+                my $model = $self->model->auth->req_params($params);
+                return if $model->session_check;
+
+                # セッション無き場合ログインページへ
+                my $master   = $model->db->master;
+                my $constant = $master->auth->constant('NEED_LOGIN');
+                my $msg      = $master->auth->word($constant);
+                $c->flash( msg => $msg );
+                $c->redirect_to('/auth');
+                return;
+            }
+        }
+    );
 
     # Router
     my $r = $self->routes;
