@@ -10,6 +10,7 @@ training_hackerzlab/controller/auth - TrainingHackerzlab 認証
 - GET - `/auth/:id/edit` - edit ユーザーパスワード変更画面 (未実装)
 - GET - `/auth/:id` - show ユーザー情報詳細 (未実装)
 - GET - `/auth` - index - ログイン入力画面
+- GET - `/auth/logout` - logout - ユーザーログアウト画面
 - POST - `/auth/login` - login - ユーザーログイン実行
 - POST - `/auth/logout` - logout - ユーザーログアウト実行
 - POST - `/auth/:id/update` - update ユーザーパスワード変更実行 (未実装)
@@ -51,6 +52,12 @@ training_hackerzlab/controller/auth - TrainingHackerzlab 認証
     ログインボタン -> ログインしてアプリメニューページ
 ```
 
+## - GET - `/auth/logout` - logout - ユーザーログアウト画面
+
+```
+ログアウトボタン -> ログアウト実行からのリダイレクト
+```
+
 ## - POST - `/auth/login` - login - ユーザーログイン実行
 
 ```
@@ -61,7 +68,7 @@ training_hackerzlab/controller/auth - TrainingHackerzlab 認証
 ## - POST - `/auth/logout` - logout - ユーザーログアウト実行
 
 ```
-ログアウトボタン -> ログアウト実行 -> 成功(ログアウトしてトップページ)
+ログアウトボタン -> ログアウト実行 -> 成功(ログアウトしてログアウト画面)
 ログアウトボタン -> ログアウト実行 -> 失敗(例外処理)
 ```
 
