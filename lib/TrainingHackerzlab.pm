@@ -38,6 +38,7 @@ sub startup {
     $r->get( '/auth/:id/edit', $id )->to('Auth#edit');
     $r->get( '/auth/:id',      $id )->to('Auth#show');
     $r->get('/auth')->to('Auth#index');
+    $r->get('/auth/logout')->to('Auth#logout');
     $r->post('/auth/login')->to('Auth#login');
     $r->post('/auth/logout')->to('Auth#logout');
     $r->post( '/auth/:id/update', $id )->to('Auth#update');

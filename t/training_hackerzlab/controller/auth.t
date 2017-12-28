@@ -245,6 +245,9 @@ subtest 'post /auth/login login' => sub {
         # セッション確認
         $session_id = $t->app->build_controller( $t->tx )->session('user');
         ok( $session_id, 'session_id' );
+        $t->reset_session;
+        $session_id = $t->app->build_controller( $t->tx )->session('user');
+        is( $session_id, undef, 'session_id' );
     };
 };
 
@@ -257,7 +260,63 @@ subtest 'post /auth/logout logout' => sub {
         ok(1);
     };
     subtest 'success' => sub {
-        ok(1);
+        my $user     = $t->app->test_db->teng->single( 'user', +{ id => 1 } );
+        my $login_id = $user->login_id;
+        my $password = $user->password;
+        my $master   = $t->app->test_db->master;
+        my $msg = $master->auth->word( $master->auth->constant('IS_LOGIN') );
+
+        # セッション確認
+        my $session_id = $t->app->build_controller( $t->tx )->session('user');
+        is( $session_id, undef, 'session_id' );
+
+        # ログイン画面
+        my $url = _url_list();
+        $t->get_ok( $url->{index} )->status_is(200);
+        my $dom        = $t->tx->res->dom;
+        my $form       = 'form[name=form_login]';
+        my $action_url = $dom->at($form)->attr('action');
+
+        # 値を入力
+        $dom->at('input[name=login_id]')->attr( +{ value => $login_id } );
+        $dom->at('input[name=password]')->attr( +{ value => $password } );
+
+        # input val 取得
+        my $params = $test_util->get_input_val( $dom, $form );
+
+        # ログイン実行
+        $t->post_ok( $action_url => form => $params )->status_is(302);
+        my $location_url = $t->tx->res->headers->location;
+        $t->get_ok($location_url)->status_is(200);
+
+        # 成功画面
+        $t->content_like(qr{\Q<b>$msg</b>\E});
+
+        # セッション確認
+        $session_id = $t->app->build_controller( $t->tx )->session('user');
+        ok( $session_id, 'session_id' );
+
+        # ログアウト実行
+        my $dom_logout        = $t->tx->res->dom;
+        my $form_logout       = 'form[name=form_logout]';
+        my $action_url_logout = $dom_logout->at($form_logout)->attr('action');
+
+        $t->post_ok($action_url_logout)->status_is(302);
+        my $location_url_logout = $t->tx->res->headers->location;
+        $t->get_ok($location_url_logout)->status_is(200);
+
+        # 成功画面
+        my $msg_logout
+            = $master->auth->word( $master->auth->constant('IS_LOGOUT') );
+        $t->content_like(qr{\Q<b>$msg_logout</b>\E});
+
+        # 他 button, link
+        $t->element_exists("a[href=$url->{top}]");
+        $t->element_exists("a[href=$url->{index}]");
+
+        # セッション確認
+        $session_id = $t->app->build_controller( $t->tx )->session('user');
+        is( $session_id, undef, 'session_id' );
     };
 };
 

@@ -72,11 +72,23 @@ sub login {
     return;
 }
 
-# ユーザーログアウト実行
+# ユーザーログアウト画面
 sub logout {
     my $self = shift;
-    $self->session( expires => 1 );
-    $self->redirect_to('/hackerz');
+
+    # ユーザーログアウト実行
+    if ( $self->req->method eq 'POST' ) {
+        $self->session( expires => 1 );
+        $self->redirect_to('/auth/logout');
+        return;
+    }
+    my $master = $self->model->auth->db->master;
+    $self->render(
+        msg => $master->auth->word( $master->auth->constant('IS_LOGOUT') ),
+        template => 'auth/logout',
+        format   => 'html',
+        handler  => 'ep',
+    );
     return;
 }
 
