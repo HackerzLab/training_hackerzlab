@@ -39,15 +39,15 @@ sub index {
 
 # ユーザーログイン実行
 sub login {
-    my $self   = shift;
-    my $params = $self->req->params->to_hash;
-    my $model  = $self->model->auth->req_params($params);
-    my $master = $model->db->master;
+    my $self     = shift;
+    my $params   = $self->req->params->to_hash;
+    my $model    = $self->model->auth->req_params($params);
+    my $master   = $model->db->master;
+    my $template = 'auth/index';
 
     $self->stash(
-        template => 'auth/index',
-        format   => 'html',
-        handler  => 'ep',
+        format  => 'html',
+        handler => 'ep',
     );
 
     # DB 存在確認
@@ -55,13 +55,15 @@ sub login {
 
     # ログインIDがない
     if ( $check->{constant} eq $master->auth->constant('NOT_LOGIN_ID') ) {
-        $self->render( msg => $check->{msg} );
+        $self->stash( msg => $check->{msg} );
+        $self->render_fillin( $template, $params );
         return;
     }
 
     # パスワード違い
     if ( $check->{constant} eq $master->auth->constant('NOT_PASSWORD') ) {
-        $self->render( msg => $check->{msg} );
+        $self->stash( msg => $check->{msg} );
+        $self->render_fillin( $template, $params );
         return;
     }
 

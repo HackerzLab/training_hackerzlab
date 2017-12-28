@@ -164,6 +164,9 @@ subtest 'post /auth/login login' => sub {
             # 失敗時の画面
             $t->content_like(qr{\Q<b>$msg</b>\E});
 
+            # フィルイン
+            $t->element_exists("input[name=login_id][type=text][value=$login_id]");
+
             # セッション確認
             $session_id
                 = $t->app->build_controller( $t->tx )->session('user');
@@ -202,6 +205,9 @@ subtest 'post /auth/login login' => sub {
 
             # 失敗時の画面
             $t->content_like(qr{\Q<b>$msg</b>\E});
+
+            # フィルイン
+            $t->element_exists("input[name=login_id][type=text][value=$login_id]");
 
             # セッション確認
             $session_id
