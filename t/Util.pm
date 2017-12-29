@@ -31,7 +31,7 @@ sub login {
     my $login_id = $user->login_id;
     my $password = $user->password;
     my $master   = $t->app->test_db->master;
-    my $msg      = $master->auth->word( $master->auth->constant('IS_LOGIN') );
+    my $msg      = $master->auth->to_word('IS_LOGIN');
 
     # セッション確認
     my $session_id = $t->app->build_controller( $t->tx )->session('user');
@@ -82,7 +82,7 @@ sub logout {
     $t->get_ok($location_url)->status_is(200);
 
     # 成功画面
-    my $msg = $master->auth->word( $master->auth->constant('IS_LOGOUT') );
+    my $msg = $master->auth->to_word('IS_LOGOUT');
     $t->content_like(qr{\Q<b>$msg</b>\E});
 
     # 他 button, link

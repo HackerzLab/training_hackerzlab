@@ -54,20 +54,18 @@ sub check {
     my $check = +{
         user     => $user,
         constant => $master->auth->constant('IS_LOGIN'),
-        msg => $master->auth->word( $master->auth->constant('IS_LOGIN') ),
+        msg      => $master->auth->to_word('IS_LOGIN'),
     };
 
     if ( !$user ) {
-        my $constant = $master->auth->constant('NOT_LOGIN_ID');
-        $check->{constant} = $constant;
-        $check->{msg}      = $master->auth->word($constant);
+        $check->{constant} = $master->auth->constant('NOT_LOGIN_ID');
+        $check->{msg}      = $master->auth->to_word('NOT_LOGIN_ID');
         return $check;
     }
 
     if ( $user->password ne $params->{password} ) {
-        my $constant = $master->auth->constant('NOT_PASSWORD');
-        $check->{constant} = $constant;
-        $check->{msg}      = $master->auth->word($constant);
+        $check->{constant} = $master->auth->constant('NOT_PASSWORD');
+        $check->{msg}      = $master->auth->to_word('NOT_PASSWORD');
         return $check;
     }
     return $check;

@@ -89,7 +89,7 @@ sub logout {
     }
     my $master = $self->model->auth->db->master;
     $self->render(
-        msg => $master->auth->word( $master->auth->constant('IS_LOGOUT') ),
+        msg      => $master->auth->to_word('IS_LOGOUT'),
         template => 'auth/logout',
         format   => 'html',
         handler  => 'ep',
@@ -134,7 +134,7 @@ sub store {
     # DB 登録実行
     my $store = $model->store;
 
-     # ログイン処理
+    # ログイン処理
     $self->session( user => $params->{login_id} );
 
     # 書き込み保存終了、リダイレクトアプリメニューへ

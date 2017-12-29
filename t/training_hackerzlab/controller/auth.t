@@ -195,8 +195,7 @@ subtest 'post /auth/login login' => sub {
             my $login_id = 9999;
             my $password = 'dummy';
             my $master   = $t->app->test_db->master;
-            my $msg      = $master->auth->word(
-                $master->auth->constant('NOT_LOGIN_ID') );
+            my $msg      = $master->auth->to_word('NOT_LOGIN_ID');
 
             # セッション確認
             my $session_id
@@ -237,8 +236,7 @@ subtest 'post /auth/login login' => sub {
             my $login_id = $user->login_id;
             my $password = 'dummy';
             my $master   = $t->app->test_db->master;
-            my $msg      = $master->auth->word(
-                $master->auth->constant('NOT_PASSWORD') );
+            my $msg      = $master->auth->to_word('NOT_PASSWORD');
 
             # セッション確認
             my $session_id
@@ -470,7 +468,8 @@ subtest 'post /auth store' => sub {
             # フィルインしていない
             $t->element_exists_not(
                 "input[name=login_id][type=text][value=$login_id]");
-            $t->element_exists_not("input[name=name][type=text][value=$name]");
+            $t->element_exists_not(
+                "input[name=name][type=text][value=$name]");
 
             # DB確認
             my $user = $t->app->test_db->teng->single(
@@ -480,7 +479,7 @@ subtest 'post /auth store' => sub {
                     name     => 'dummy_name',
                 }
             );
-            ok($user, 'db');
+            ok( $user, 'db' );
         };
     };
 };

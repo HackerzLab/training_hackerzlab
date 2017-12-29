@@ -41,9 +41,8 @@ sub startup {
                 return if $model->session_check;
 
                 # セッション無き場合ログインページへ
-                my $master   = $model->db->master;
-                my $constant = $master->auth->constant('NEED_LOGIN');
-                my $msg      = $master->auth->word($constant);
+                my $master = $model->db->master;
+                my $msg    = $master->auth->to_word('NEED_LOGIN');
                 $c->flash( msg => $msg );
                 $c->redirect_to('/auth');
                 return;

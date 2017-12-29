@@ -318,6 +318,18 @@ sub word {
 }
 
 # my $label = 'DELETED';
+# my $deleted_word = $master->deleted->to_word($label);
+sub to_word {
+    my $self     = shift;
+    my $label    = shift;
+    my $constant = $self->master_constant_hash->{$label};
+    die 'error master methode constant: ' if !defined $constant;
+    my $word = $self->master_hash->{$constant};
+    die 'error master methode word: ' if !defined $word;
+    return $word;
+}
+
+# my $label = 'DELETED';
 # my $deleted_constant = $master->deleted->constant($label);
 sub constant {
     my $self     = shift;

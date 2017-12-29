@@ -47,9 +47,8 @@ subtest 'get /hackerz/menu index' => sub {
     };
     subtest 'fail' => sub {
         my $master = $t->app->test_db->master;
-        my $msg
-            = $master->auth->word( $master->auth->constant('NEED_LOGIN') );
-        my $url = _url_list();
+        my $msg    = $master->auth->to_word('NEED_LOGIN');
+        my $url    = _url_list();
         $t->get_ok( $url->{index} )->status_is(302);
         my $location_url = $t->tx->res->headers->location;
         $t->get_ok($location_url)->status_is(200);
