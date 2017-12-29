@@ -4,7 +4,7 @@ use Mojo::Base 'TrainingHackerzlab::Controller::Base';
 # ユーザー登録画面
 sub create {
     my $self = shift;
-    return if $self->not_access;
+    return if $self->transition_logged_in;
     $self->render(
         template => 'auth/create',
         format   => 'html',
@@ -30,7 +30,7 @@ sub show {
 # ログイン入力画面
 sub index {
     my $self = shift;
-    return if $self->not_access;
+    return if $self->transition_logged_in;
     $self->render(
         template => 'auth/index',
         format   => 'html',
@@ -42,7 +42,7 @@ sub index {
 # ユーザーログイン実行
 sub login {
     my $self = shift;
-    return if $self->not_access;
+    return if $self->transition_logged_in;
     my $params   = $self->req->params->to_hash;
     my $model    = $self->model->auth->req_params($params);
     my $master   = $model->db->master;

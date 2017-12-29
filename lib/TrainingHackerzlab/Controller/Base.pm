@@ -14,7 +14,7 @@ sub render_fillin {
 }
 
 # ログイン中はアクセスできない
-sub not_access {
+sub transition_logged_in {
     my $self = shift;
     return if !$self->session('user');
     $self->redirect_to('/hackerz/menu');
