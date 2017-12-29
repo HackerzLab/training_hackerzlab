@@ -45,8 +45,8 @@ subtest 'get /hackerz index' => sub {
             # ログイン中はアプリメニューへ強制遷移
             is( $location_url, '/hackerz/menu', 'logged in' );
             $t->get_ok($location_url)->status_is(200);
-            $t->element_exists_not("a[href=$url->{auth_create}]");
-            $t->element_exists_not("a[href=$url->{auth_index}]");
+            $t->element_exists_not("a[href=/auth/create]");
+            $t->element_exists_not("a[href=/auth]");
             $test_util->logout($t);
         };
     };

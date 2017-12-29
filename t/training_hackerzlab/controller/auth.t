@@ -60,6 +60,21 @@ subtest 'get /auth/create create' => sub {
         # 他 button, link
         $t->element_exists("$form button[type=submit]");
         $t->element_exists("a[href=$url->{top}]");
+
+        subtest 'not show logget in' => sub {
+            my $user_id = 1;
+            $test_util->login( $t, $user_id );
+            my $url = _url_list();
+            $t->get_ok( $url->{create} )->status_is(302);
+            my $location_url = $t->tx->res->headers->location;
+
+            # ログイン中はアプリメニューへ強制遷移
+            is( $location_url, '/hackerz/menu', 'logged in' );
+            $t->get_ok($location_url)->status_is(200);
+            $t->element_exists_not("a[href=/auth/create]");
+            $t->element_exists_not("a[href=/auth]");
+            $test_util->logout($t);
+        };
     };
     subtest 'fail' => sub {
         ok(1);
@@ -117,6 +132,21 @@ subtest 'get /auth index' => sub {
         # 他 button, link
         $t->element_exists("$form button[type=submit]");
         $t->element_exists("a[href=$url->{top}]");
+
+        subtest 'not show logget in' => sub {
+            my $user_id = 1;
+            $test_util->login( $t, $user_id );
+            my $url = _url_list();
+            $t->get_ok( $url->{index} )->status_is(302);
+            my $location_url = $t->tx->res->headers->location;
+
+            # ログイン中はアプリメニューへ強制遷移
+            is( $location_url, '/hackerz/menu', 'logged in' );
+            $t->get_ok($location_url)->status_is(200);
+            $t->element_exists_not("a[href=/auth/create]");
+            $t->element_exists_not("a[href=/auth]");
+            $test_util->logout($t);
+        };
     };
     subtest 'fail' => sub {
         ok(1);
@@ -132,6 +162,35 @@ subtest 'post /auth/login login' => sub {
         ok(1);
     };
     subtest 'fail' => sub {
+
+        # ログイン中はログイン実行できない
+        subtest 'not login logget in' => sub {
+            my $user_id = 1;
+            $test_util->login( $t, $user_id );
+
+            # 直接ログイン実行された場合
+            my $user = $t->app->test_db->teng->single( 'user',
+                +{ id => $user_id } );
+            my $login_id = $user->login_id;
+            my $password = $user->password;
+            my $params   = +{
+                login_id => $login_id,
+                password => $password,
+            };
+
+            # ログイン実行
+            $t->post_ok( '/auth/login' => form => $params )->status_is(302);
+            my $location_url = $t->tx->res->headers->location;
+
+            # ログイン中はアプリメニューへ強制遷移
+            is( $location_url, '/hackerz/menu', 'logged in' );
+            $t->get_ok($location_url)->status_is(200);
+            $t->element_exists_not("a[href=/auth/create]");
+            $t->element_exists_not("a[href=/auth]");
+            $test_util->logout($t);
+        };
+    };
+    subtest 'success' => sub {
         subtest 'not login id' => sub {
             my $login_id = 9999;
             my $password = 'dummy';
@@ -165,14 +224,14 @@ subtest 'post /auth/login login' => sub {
             $t->content_like(qr{\Q<b>$msg</b>\E});
 
             # フィルイン
-            $t->element_exists("input[name=login_id][type=text][value=$login_id]");
+            $t->element_exists(
+                "input[name=login_id][type=text][value=$login_id]");
 
             # セッション確認
             $session_id
                 = $t->app->build_controller( $t->tx )->session('user');
             is( $session_id, undef, 'session_id' );
         };
-
         subtest 'not password' => sub {
             my $user = $t->app->test_db->teng->single( 'user', +{ id => 1 } );
             my $login_id = $user->login_id;
@@ -207,15 +266,14 @@ subtest 'post /auth/login login' => sub {
             $t->content_like(qr{\Q<b>$msg</b>\E});
 
             # フィルイン
-            $t->element_exists("input[name=login_id][type=text][value=$login_id]");
+            $t->element_exists(
+                "input[name=login_id][type=text][value=$login_id]");
 
             # セッション確認
             $session_id
                 = $t->app->build_controller( $t->tx )->session('user');
             is( $session_id, undef, 'session_id' );
         };
-    };
-    subtest 'success' => sub {
         my $user_id = 1;
         $test_util->login( $t, $user_id );
 
