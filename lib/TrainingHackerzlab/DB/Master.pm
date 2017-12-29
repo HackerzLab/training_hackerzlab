@@ -12,15 +12,37 @@ sub auth {
         3 => 'プロフィールを登録してください',
         4 => 'ログアウトしました',
         5 => 'ログインが必要です',
+        6 => '有効な値を入力してください',
+        7 => 'ユーザー登録完了',
     };
 
     my $constant = +{
-        NOT_LOGIN_ID   => 0,
-        NOT_PASSWORD   => 1,
-        IS_LOGIN       => 2,
-        IS_FIRST_LOGIN => 3,
-        IS_LOGOUT      => 4,
-        NEED_LOGIN     => 5,
+        NOT_LOGIN_ID    => 0,
+        NOT_PASSWORD    => 1,
+        IS_LOGIN        => 2,
+        IS_FIRST_LOGIN  => 3,
+        IS_LOGOUT       => 4,
+        NEED_LOGIN      => 5,
+        HAS_ERROR_INPUT => 6,
+        DONE_ENTRY      => 7,
+    };
+
+    $self->master_hash($hash);
+    $self->master_constant_hash($constant);
+    return $self;
+}
+
+# approved 承認
+sub approved {
+    my $self = shift;
+    my $hash = +{
+        0 => '承認していない',
+        1 => '承認済み',
+    };
+
+    my $constant = +{
+        NOT_APPROVED => 0,
+        APPROVED     => 1,
     };
 
     $self->master_hash($hash);
@@ -64,6 +86,18 @@ sub word {
     my $self    = shift;
     my $word_id = shift;
     my $word    = $self->master_hash->{$word_id};
+    die 'error master methode word: ' if !defined $word;
+    return $word;
+}
+
+# my $label = 'DELETED';
+# my $deleted_word = $master->deleted->to_word($label);
+sub to_word {
+    my $self     = shift;
+    my $label    = shift;
+    my $constant = $self->master_constant_hash->{$label};
+    die 'error master methode constant: ' if !defined $constant;
+    my $word = $self->master_hash->{$constant};
     die 'error master methode word: ' if !defined $word;
     return $word;
 }

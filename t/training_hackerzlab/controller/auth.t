@@ -49,7 +49,7 @@ subtest 'get /auth/create create' => sub {
         $t->element_exists($form);
 
         # input text
-        my $text_names = [qw{user_id username}];
+        my $text_names = [qw{login_id name}];
         for my $name ( @{$text_names} ) {
             $t->element_exists("$form input[name=$name][type=text]");
         }
@@ -338,7 +338,150 @@ subtest 'post /auth store' => sub {
         ok(1);
     };
     subtest 'success' => sub {
-        ok(1);
+        subtest 'not entry login_id' => sub {
+            my $login_id = '';
+            my $password = 'dummy_pass';
+            my $name     = 'dummy_name';
+            my $master   = $t->app->test_db->master;
+            my $msg      = $master->auth->to_word('HAS_ERROR_INPUT');
+
+            # ユーザー登録画面
+            my $url = _url_list();
+            $t->get_ok( $url->{create} )->status_is(200);
+            my $dom        = $t->tx->res->dom;
+            my $form       = 'form[name=form_store]';
+            my $action_url = $dom->at($form)->attr('action');
+
+            # 値を入力
+            $dom->at('input[name=login_id]')->attr( +{ value => $login_id } );
+            $dom->at('input[name=password]')->attr( +{ value => $password } );
+            $dom->at('input[name=name]')->attr( +{ value => $name } );
+
+            # input val 取得
+            my $params = $test_util->get_input_val( $dom, $form );
+
+            # ユーザー登録実行
+            $t->post_ok( $action_url => form => $params )->status_is(200);
+
+            # 失敗時の画面
+            $t->content_like(qr{\Q<b>$msg</b>\E});
+
+            # フィルイン
+            $t->element_exists(
+                "input[name=login_id][type=text][value=$login_id]");
+            $t->element_exists("input[name=name][type=text][value=$name]");
+        };
+        subtest 'not entry login_id' => sub {
+            my $login_id = 'dummy@gmail.com';
+            my $password = '';
+            my $name     = 'dummy_name';
+            my $master   = $t->app->test_db->master;
+            my $msg      = $master->auth->to_word('HAS_ERROR_INPUT');
+
+            # ユーザー登録画面
+            my $url = _url_list();
+            $t->get_ok( $url->{create} )->status_is(200);
+            my $dom        = $t->tx->res->dom;
+            my $form       = 'form[name=form_store]';
+            my $action_url = $dom->at($form)->attr('action');
+
+            # 値を入力
+            $dom->at('input[name=login_id]')->attr( +{ value => $login_id } );
+            $dom->at('input[name=password]')->attr( +{ value => $password } );
+            $dom->at('input[name=name]')->attr( +{ value => $name } );
+
+            # input val 取得
+            my $params = $test_util->get_input_val( $dom, $form );
+
+            # ユーザー登録実行
+            $t->post_ok( $action_url => form => $params )->status_is(200);
+
+            # 失敗時の画面
+            $t->content_like(qr{\Q<b>$msg</b>\E});
+
+            # フィルイン
+            $t->element_exists(
+                "input[name=login_id][type=text][value=$login_id]");
+            $t->element_exists("input[name=name][type=text][value=$name]");
+        };
+        subtest 'not entry login_id' => sub {
+            my $login_id = 'dummy@gmail.com';
+            my $password = 'dummy_pass';
+            my $name     = '';
+            my $master   = $t->app->test_db->master;
+            my $msg      = $master->auth->to_word('HAS_ERROR_INPUT');
+
+            # ユーザー登録画面
+            my $url = _url_list();
+            $t->get_ok( $url->{create} )->status_is(200);
+            my $dom        = $t->tx->res->dom;
+            my $form       = 'form[name=form_store]';
+            my $action_url = $dom->at($form)->attr('action');
+
+            # 値を入力
+            $dom->at('input[name=login_id]')->attr( +{ value => $login_id } );
+            $dom->at('input[name=password]')->attr( +{ value => $password } );
+            $dom->at('input[name=name]')->attr( +{ value => $name } );
+
+            # input val 取得
+            my $params = $test_util->get_input_val( $dom, $form );
+
+            # ユーザー登録実行
+            $t->post_ok( $action_url => form => $params )->status_is(200);
+
+            # 失敗時の画面
+            $t->content_like(qr{\Q<b>$msg</b>\E});
+
+            # フィルイン
+            $t->element_exists(
+                "input[name=login_id][type=text][value=$login_id]");
+            $t->element_exists("input[name=name][type=text][value=$name]");
+        };
+        subtest 'entry' => sub {
+            my $login_id = 'dummy@gmail.com';
+            my $password = 'dummy_pass';
+            my $name     = 'dummy_name';
+            my $master   = $t->app->test_db->master;
+            my $msg      = $master->auth->to_word('DONE_ENTRY');
+
+            # ユーザー登録画面
+            my $url = _url_list();
+            $t->get_ok( $url->{create} )->status_is(200);
+            my $dom        = $t->tx->res->dom;
+            my $form       = 'form[name=form_store]';
+            my $action_url = $dom->at($form)->attr('action');
+
+            # 値を入力
+            $dom->at('input[name=login_id]')->attr( +{ value => $login_id } );
+            $dom->at('input[name=password]')->attr( +{ value => $password } );
+            $dom->at('input[name=name]')->attr( +{ value => $name } );
+
+            # input val 取得
+            my $params = $test_util->get_input_val( $dom, $form );
+
+            # ユーザー登録実行
+            $t->post_ok( $action_url => form => $params )->status_is(302);
+            my $location_url = $t->tx->res->headers->location;
+            $t->get_ok($location_url)->status_is(200);
+
+            # 成功時の画面
+            $t->content_like(qr{\Q<b>$msg</b>\E});
+
+            # フィルインしていない
+            $t->element_exists_not(
+                "input[name=login_id][type=text][value=$login_id]");
+            $t->element_exists_not("input[name=name][type=text][value=$name]");
+
+            # DB確認
+            my $user = $t->app->test_db->teng->single(
+                'user',
+                +{  login_id => 'dummy@gmail.com',
+                    password => 'dummy_pass',
+                    name     => 'dummy_name',
+                }
+            );
+            ok($user, 'db');
+        };
     };
 };
 

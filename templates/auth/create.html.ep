@@ -7,14 +7,14 @@
         <div class="form-group has-feedback">
           <label for="user_id" class="col-lg-2 control-label">ユーザーID</label>
           <div class="col-lg-10">
-            <input type="text" class="form-control" id="user_id" placeholder="ユーザーID" name="user_id" value="">
+            <input type="text" class="form-control" id="user_id" placeholder="ユーザーID" name="login_id" value="">
             <span class="glyphicon glyphicon-check form-control-feedback"></span>
           </div>
         </div>
         <div class="form-group has-feedback">
           <label for="username" class="col-lg-2 control-label">名前</label>
           <div class="col-lg-10">
-            <input type="text" class="form-control" id="username" placeholder="名前" name="username" value="">
+            <input type="text" class="form-control" id="username" placeholder="名前" name="name" value="">
             <span class="glyphicon glyphicon-check form-control-feedback"></span>
           </div>
         </div>

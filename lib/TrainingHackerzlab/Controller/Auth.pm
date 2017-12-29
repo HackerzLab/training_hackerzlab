@@ -114,7 +114,32 @@ sub remove {
 # ユーザー新規登録実行
 sub store {
     my $self = shift;
-    $self->render( text => 'store' );
+    return if $self->transition_logged_in;
+
+    my $params   = $self->req->params->to_hash;
+    my $model    = $self->model->auth->req_params($params);
+    my $master   = $model->db->master;
+    my $template = 'auth/create';
+
+    $self->stash(
+        msg     => $master->auth->to_word('HAS_ERROR_INPUT'),
+        format  => 'html',
+        handler => 'ep',
+    );
+
+    # 簡易的なバリデート
+    return $self->render_fillin( $template, $params )
+        if $model->has_error_easy;
+
+    # DB 登録実行
+    my $store = $model->store;
+
+     # ログイン処理
+    $self->session( user => $params->{login_id} );
+
+    # 書き込み保存終了、リダイレクトアプリメニューへ
+    $self->flash( msg => $store->{msg} );
+    $self->redirect_to('/hackerz/menu');
     return;
 }
 
