@@ -69,6 +69,8 @@ sub logout {
     my $self = shift;
     my $t    = shift;
 
+    # ログアウトボタンの存在する画面
+    $t->get_ok('/hackerz/menu')->status_is(200);
     my $dom        = $t->tx->res->dom;
     my $form       = 'form[name=form_logout]';
     my $action_url = $dom->at($form)->attr('action');

@@ -34,6 +34,21 @@ subtest 'get /hackerz index' => sub {
         $t->element_exists("a[href=$url->{auth_create}]");
         $t->element_exists("a[href=$url->{auth_index}]");
         $t->element_exists("a[href=$url->{top}]");
+
+        subtest 'not show logget in' => sub {
+            my $user_id = 1;
+            $test_util->login( $t, $user_id );
+            my $url = _url_list();
+            $t->get_ok( $url->{index} )->status_is(302);
+            my $location_url = $t->tx->res->headers->location;
+
+            # ログイン中はアプリメニューへ強制遷移
+            is( $location_url, '/hackerz/menu', 'logged in' );
+            $t->get_ok($location_url)->status_is(200);
+            $t->element_exists_not("a[href=$url->{auth_create}]");
+            $t->element_exists_not("a[href=$url->{auth_index}]");
+            $test_util->logout($t);
+        };
     };
     subtest 'fail' => sub {
         ok(1);
