@@ -21,6 +21,16 @@ CREATE TABLE question (                                 -- 問題
     created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
     modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
 );
+DROP TABLE IF EXISTS choice;
+CREATE TABLE choice (                                 -- 問題の答えの選択
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
+    question_id     INTEGER,                            -- 問題ID (例: 5)
+    answer_text     TEXT,                               -- 答えの文 (例: '孫 正義')
+    answer_val      INTEGER,                            -- 答えの値 (例: 1)
+    deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
+    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
+    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
+);
 DROP TABLE IF EXISTS hint;
 CREATE TABLE hint (                                     -- 問題のヒント
     id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)

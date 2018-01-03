@@ -1,0 +1,38 @@
+% layout 'base';
+% title 'HackerzLab.博多';
+
+  <!-- 問題 -->
+  <%= include('inc/question', format => 'html') =%>
+
+  <div class="container">
+    <form action="/answers/4" method="POST" class="form-horizontal well">
+      <fieldset>
+        <legend><span class="glyphicon glyphicon-pencil"></span>&emsp;解答を入力</legend>
+        <div class="form-group">
+          <label class="col-lg-2 control-label">選択しよう！</label>
+          <div class="col-lg-10">
+            <div class="row">
+            % for my $val (1..4) {
+              <div class="radio col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                <label>
+                  <input type="radio" name="user_answer" id="optionsRadios1" value="<%= $val %>" > <%= $val %>: <%= $choice->{$val} %>
+                </label>
+              </div>
+            % }
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-10 col-lg-offset-2">
+            <button type="submit" class="btn btn-primary" name="send" value="ボタン">送信</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+
+  <!-- 得点と難易度 -->
+  <%= include('inc/question_level', format => 'html') =%>
+
+  <!-- ヒント機能 -->
+  <%= include('inc/hint', format => 'html') =%>
