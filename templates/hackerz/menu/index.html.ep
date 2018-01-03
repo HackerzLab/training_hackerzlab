@@ -24,7 +24,7 @@
     <div class="row">
       % for my $int (1..60) {
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-        <a href="/questions/<%= $int %>" class="btn btn-default btn-lg btn-block">第 <%= $int %> 問</a>
+        <a href="/hackerz/question/<%= $int %>/think" class="btn btn-default btn-lg btn-block">第 <%= $int %> 問</a>
       </div>
       % }
     </div>

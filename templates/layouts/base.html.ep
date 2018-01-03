@@ -63,6 +63,51 @@
   // スムーススクロールを起動する
   var scroll = new SmoothScroll('a[href*="#"]');
   </script>
+
+  <!-- ヒント機能 -->
+  <script>
+  // ヒントを隠しておく
+  $('#hintbox-2').hide();
+  $('#hintbox-3').hide();
+  $('#hintbox-4').hide();
+  $('#hintbox-5').hide();
+  // クリック毎に表示
+  $('#hintbox-1').click(function(){
+      $('#hintbox-2').show();
+      $.post("/answers/hint", {
+        value: 'hint1',
+        question_id:
+2      });
+  });
+  $('#hintbox-2').click(function(){
+      $('#hintbox-3').show();
+      $.post("/answers/hint", {
+        value: 'hint2',
+        question_id:
+2      });
+  });
+  $('#hintbox-3').click(function(){
+      $('#hintbox-4').show();
+      $.post("/answers/hint", {
+        value: 'hint3',
+        question_id:
+2      });
+  });
+  $('#hintbox-4').click(function(){
+      $('#hintbox-5').show();
+      $.post("/answers/hint", {
+        value: 'hint4',
+        question_id:
+2      });
+  });
+  $('#hintbox-5').click(function(){
+      $.post("/answers/hint", {
+        value: 'hint5',
+        question_id:
+2      });
+  });
+  </script>
+
 </body>
 
 </html>

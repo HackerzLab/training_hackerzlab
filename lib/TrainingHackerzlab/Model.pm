@@ -1,9 +1,14 @@
 package TrainingHackerzlab::Model;
 use Mojo::Base 'TrainingHackerzlab::Model::Base';
 use TrainingHackerzlab::Model::Auth;
+use TrainingHackerzlab::Model::Hackerz;
 
 has auth => sub {
     TrainingHackerzlab::Model::Auth->new( +{ conf => shift->conf } );
+};
+
+has hackerz => sub {
+    TrainingHackerzlab::Model::Hackerz->new( +{ conf => shift->conf } );
 };
 
 # add method

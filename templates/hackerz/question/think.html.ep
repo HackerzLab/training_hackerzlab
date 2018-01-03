@@ -1,0 +1,85 @@
+% layout 'base';
+% title 'HackerzLab.博多';
+  <div class="container">
+   <div class="panel panel-primary">
+     <div class="panel-heading">
+       <h3 class="panel-title"><span class="glyphicon glyphicon-question-sign"></span>&emsp;第&ensp;<%= $question->{id} %>&ensp;問</h3>
+     </div>
+     <div class="panel-body">
+     <%= $question->{question} %>
+     </div>
+   </div>
+  </div>
+
+  <div class="container">
+    <form action="/answers/2"  method="POST" class="form-horizontal well">
+      <fieldset>
+        <legend><span class="glyphicon glyphicon-pencil"></span>&emsp;解答を入力</legend>
+        <div class="form-group has-feedback">
+          <label for="user_answer" class="col-lg-2 control-label"><span class="glyphicon glyphicon-pencil"></span></label>
+          <div class="col-lg-10">
+            <input type="text" class="form-control" id="user_answer" placeholder="解答" name="user_answer" value="">
+            <span class="glyphicon glyphicon-check form-control-feedback"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-10 col-lg-offset-2">
+            <button type="submit" class="btn btn-primary" name="send" value="ボタン">送信</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <div class="bs-component">
+          <div class="panel panel-success">
+            <div class="panel-heading">
+              <h3 class="panel-title">得点:</h3>
+            </div>
+            <div class="panel-body"><%= $question->{score} %></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <div class="bs-component">
+          <div class="panel panel-warning">
+            <div class="panel-heading">
+              <h3 class="panel-title">難易度:</h3>
+            </div>
+            <div class="panel-body"> <%= $question->{level} %> </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#whathint" data-toggle="tab">ヒント機能とは？</a></li>
+      <li id="hintbox-1"><a href="#hint-1" data-toggle="tab" aria-expanded="false">ヒント１</a></li>
+      <li id="hintbox-2"><a href="#hint-2" data-toggle="tab" aria-expanded="false">ヒント２</a></li>
+      <li id="hintbox-3"><a href="#hint-3" data-toggle="tab" aria-expanded="false">ヒント３</a></li>
+      <li id="hintbox-4"><a href="#hint-4" data-toggle="tab" aria-expanded="false">ヒント４</a></li>
+      <li id="hintbox-5"><a href="#hint-5" data-toggle="tab" aria-expanded="false">ヒント５</a></li>
+    </ul>
+
+    <div id="myTabContent" class="tab-content">
+      <div class="tab-pane fade active in" id="whathint">
+        <p><br>ヒントを一つ開くたびに２点づつ減点になるぞ！ヒントは全部で５つまでだ！</p>
+      </div>
+
+      % for my $id (1..5) {
+      <div class="tab-pane fade" id="hint-<%= $id %>">
+        <p><br><%= $hint->{$id} %></p>
+      </div>
+      % }
+
+      <!-- 見つかっちゃったみたいだね！ソースコードを直接みれば、減点されなくてもヒントがみれるんだよ！ -->
+      <!-- みんなには内緒にしておいてね！ -->
+    </div>
+
+  </div>

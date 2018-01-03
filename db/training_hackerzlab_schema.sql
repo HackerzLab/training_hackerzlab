@@ -16,6 +16,7 @@ CREATE TABLE question (                                 -- 問題
     answer          TEXT,                               -- 問題の答え (例: 'Stay Hungry')
     score           INTEGER,                            -- 得点 (例 10)
     level           INTEGER,                            -- 難易度 (例: 1)
+    pattern         INTEGER,                            -- 問題パターン (例: 10: form, 20: choice, ...)
     deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
     created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
     modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')

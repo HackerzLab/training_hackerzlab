@@ -74,11 +74,16 @@ sub startup {
     # アプリメニュー
     $r->get('/hackerz/menu')->to('Hackerz::Menu#index');
     $r->get('/hackerz/ranking')->to('Hackerz::Ranking#index');
-    $r->get( '/hackerz/answer/:id/list',   $id )->to('Hackerz::Answer#list');
-    $r->get( '/hackerz/answer/:id/score',  $id )->to('Hackerz::Answer#score');
-    $r->get( '/hackerz/answer/:id/result', $id )
-        ->to('Hackerz::Answer#result');
-    $r->post('/hackerz/answer')->to('Hackerz::Answer#store');
+
+    my $answer = $r->under('/hackerz/answer');
+    $answer->get( '/:id/list',   $id )->to('Hackerz::Answer#list');
+    $answer->get( '/:id/score',  $id )->to('Hackerz::Answer#score');
+    $answer->get( '/:id/result', $id )->to('Hackerz::Answer#result');
+    $answer->post('')->to('Hackerz::Answer#store');
+
+    # 各問題画面
+    my $question = $r->under('/hackerz/question');
+    $question->get( '/:id/think', $id )->to('Hackerz::Question#think');
 }
 
 1;
