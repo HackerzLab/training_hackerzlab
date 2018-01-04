@@ -22,11 +22,23 @@ CREATE TABLE question (                                 -- 問題
     modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
 );
 DROP TABLE IF EXISTS choice;
-CREATE TABLE choice (                                 -- 問題の答えの選択
+CREATE TABLE choice (                                   -- 問題の答え選択
     id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
     question_id     INTEGER,                            -- 問題ID (例: 5)
     answer_text     TEXT,                               -- 答えの文 (例: '孫 正義')
     answer_val      INTEGER,                            -- 答えの値 (例: 1)
+    deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
+    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
+    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
+);
+DROP TABLE IF EXISTS survey;
+CREATE TABLE survey (                                   -- 調査するページ
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
+    question_id     INTEGER,                            -- 問題ID (例: 5)
+    secret_id       TEXT,                               -- 隠されているID (例: 'Daniel')
+    secret_password TEXT,                               -- 隠されているパスワード (例: 'SsrpCujI')
+    page_url        TEXT,                               -- 調査用ページへのURL (例: '/cracking_from_list')
+    page_title      TEXT,                               -- 調査用ページのタイトル (例: 'クラッキング用ページ')
     deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
     created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
     modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')

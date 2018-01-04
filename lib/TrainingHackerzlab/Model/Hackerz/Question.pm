@@ -1,7 +1,7 @@
 package TrainingHackerzlab::Model::Hackerz::Question;
 use Mojo::Base 'TrainingHackerzlab::Model::Base';
 
-has [qw{is_question_choice is_question_form}] => undef;
+has [qw{is_question_choice is_question_form is_question_survey}] => undef;
 
 # 問題画面パラメーター
 sub to_template_think {
@@ -11,6 +11,7 @@ sub to_template_think {
         question => undef,
         hint     => undef,
         choice   => undef,
+        survey   => undef,
     };
 
     my $cond = +{
@@ -50,6 +51,10 @@ sub to_template_think {
     }
     $think->{choice} = $choice;
 
+    my $survey_row = $self->db->teng->single( 'survey', $cond );
+    return $think if !$survey_row;
+    $think->{survey} = $survey_row->get_columns;
+
     return $think;
 }
 
@@ -58,6 +63,7 @@ sub _analysis_pattern {
     my $row  = shift;
     return $self->is_question_form(1)   if $row->pattern eq 10;
     return $self->is_question_choice(1) if $row->pattern eq 20;
+    return $self->is_question_survey(1) if $row->pattern eq 30;
     return;
 }
 
