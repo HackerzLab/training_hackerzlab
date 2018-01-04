@@ -19,42 +19,54 @@ sub to_template_think {
         deleted => 0,
     };
 
-    my $row = $self->db->teng->single( 'question', $cond );
-    return $think if !$row;
-    $think->{question} = $row->get_columns;
+    my $question_row = $self->db->teng->single( 'question', $cond );
+    return $think if !$question_row;
+    $think->{question} = $question_row->get_columns;
 
-    $self->_analysis_pattern($row);
-
-    $cond = +{
-        question_id => $self->req_params->{question_id},
-        deleted     => 0,
-    };
-
-    my @hint_rows = $self->db->teng->search( 'hint', $cond );
-
-    my $hint = +{};
-    for my $hint_row (@hint_rows) {
+    $self->_analysis_pattern($question_row);
+    my $hint_rows = $question_row->search_hint;
+    my $hint      = +{};
+    for my $hint_row ( @{$hint_rows} ) {
         $hint->{ $hint_row->level } = $hint_row->hint;
     }
     $think->{hint} = $hint;
 
-    $cond = +{
-        question_id => $self->req_params->{question_id},
-        deleted     => 0,
-    };
+    # 問題文に対して入力フォームにテキスト入力で解答
+    return $think if $self->is_question_form;
 
-    my @choice_rows = $self->db->teng->search( 'choice', $cond );
+    # 問題文に対して答えを4択から選択して解答
+    return $self->_create_choice_params( $question_row, $think )
+        if $self->is_question_choice;
 
-    my $choice = +{};
-    for my $choice_row (@choice_rows) {
+    # 調査するページから解答を導き出して解答
+    return $self->_create_survey_params( $question_row, $think )
+        if $self->is_question_survey;
+
+    return $think;
+}
+
+# 選択する答えのリスト
+sub _create_choice_params {
+    my $self        = shift;
+    my $row         = shift;
+    my $think       = shift;
+    my $choice_rows = $row->search_choice;
+    my $choice      = +{};
+    for my $choice_row ( @{$choice_rows} ) {
         $choice->{ $choice_row->answer_val } = $choice_row->answer_text;
     }
     $think->{choice} = $choice;
+    return $think;
+}
 
-    my $survey_row = $self->db->teng->single( 'survey', $cond );
+# 調査するページの情報
+sub _create_survey_params {
+    my $self       = shift;
+    my $row        = shift;
+    my $think      = shift;
+    my $survey_row = $row->fetch_survey;
     return $think if !$survey_row;
     $think->{survey} = $survey_row->get_columns;
-
     return $think;
 }
 

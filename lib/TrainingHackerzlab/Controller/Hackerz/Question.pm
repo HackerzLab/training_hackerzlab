@@ -7,7 +7,11 @@ sub think {
     my $params = +{ question_id => $self->stash->{id}, };
     my $model  = $self->model->hackerz->question->req_params($params);
     my $to_template_think = $model->to_template_think;
-    $self->stash($to_template_think);
+    $self->stash(
+        %{$to_template_think},
+        format  => 'html',
+        handler => 'ep',
+    );
     return $self->_choice if $model->is_question_choice;
     return $self->_form   if $model->is_question_form;
     return $self->_survey if $model->is_question_survey;
@@ -20,45 +24,34 @@ sub cracking {
     my $params = +{ question_id => $self->stash->{id}, };
     my $model  = $self->model->hackerz->question->req_params($params);
     my $to_template_think = $model->to_template_think;
-    $self->stash($to_template_think);
-    $self->render(
+    $self->stash(
+        %{$to_template_think},
         template => 'hackerz/question/survey/cracking',
         format   => 'html',
         handler  => 'ep',
     );
+    $self->render();
     return;
 }
 
 # pattern form -> 問題文に対して入力フォームにテキスト入力で解答
 sub _form {
     my $self = shift;
-    $self->render(
-        template => 'hackerz/question/form',
-        format   => 'html',
-        handler  => 'ep',
-    );
+    $self->render( template => 'hackerz/question/form', );
     return;
 }
 
 # pattern choice -> 問題文に対して答えを4択から選択して解答
 sub _choice {
     my $self = shift;
-    $self->render(
-        template => 'hackerz/question/choice',
-        format   => 'html',
-        handler  => 'ep',
-    );
+    $self->render( template => 'hackerz/question/choice', );
     return;
 }
 
 # survey -> 調査するページから解答を導き出してテキスト入力で解答
 sub _survey {
     my $self = shift;
-    $self->render(
-        template => 'hackerz/question/survey',
-        format   => 'html',
-        handler  => 'ep',
-    );
+    $self->render( template => 'hackerz/question/survey', );
     return;
 }
 
