@@ -15,6 +15,9 @@ sub think {
     return $self->_choice if $model->is_question_choice;
     return $self->_form   if $model->is_question_form;
     return $self->_survey if $model->is_question_survey;
+
+    # 存在しない問題の場合
+    $self->render( template => 'hackerz/question/index', );
     return;
 }
 
