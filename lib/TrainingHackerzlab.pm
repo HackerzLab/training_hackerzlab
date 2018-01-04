@@ -83,7 +83,8 @@ sub startup {
 
     # 各問題画面
     my $question = $r->under('/hackerz/question');
-    $question->get( '/:id/:action', $id )->to('Hackerz::Question#');
+    $question->get( '/:id/think', $id )->to('Hackerz::Question#think');
+    $question->get( '/:id/survey/:action', $id )->to('Hackerz::Question::Survey#');
 }
 
 1;

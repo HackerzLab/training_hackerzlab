@@ -18,22 +18,6 @@ sub think {
     return;
 }
 
-# クラッキング用特別画面
-sub cracking {
-    my $self   = shift;
-    my $params = +{ question_id => $self->stash->{id}, };
-    my $model  = $self->model->hackerz->question->req_params($params);
-    my $to_template_think = $model->to_template_think;
-    $self->stash(
-        %{$to_template_think},
-        template => 'hackerz/question/survey/cracking',
-        format   => 'html',
-        handler  => 'ep',
-    );
-    $self->render();
-    return;
-}
-
 # pattern form -> 問題文に対して入力フォームにテキスト入力で解答
 sub _form {
     my $self = shift;
