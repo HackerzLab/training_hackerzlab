@@ -3,7 +3,7 @@ use Mojo::Base 'TrainingHackerzlab::Model::Base';
 
 has [
     qw{is_question_choice is_question_form is_question_survey
-        is_question_survey_and_file}
+        is_question_survey_and_file is_question_explain}
 ] => undef;
 
 # 問題画面パラメーター
@@ -49,6 +49,9 @@ sub to_template_think {
     return $self->_create_survey_params( $question_row, $think )
         if $self->is_question_survey_and_file;
 
+    # 問題とその詳細から解答を導き出してテキスト入力で解答
+    return $think if $self->is_question_explain;
+
     return $think;
 }
 
@@ -84,6 +87,7 @@ sub _analysis_pattern {
     return $self->is_question_choice(1)          if $row->pattern eq 20;
     return $self->is_question_survey(1)          if $row->pattern eq 30;
     return $self->is_question_survey_and_file(1) if $row->pattern eq 31;
+    return $self->is_question_explain(1)         if $row->pattern eq 40;
     return;
 }
 

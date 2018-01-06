@@ -16,20 +16,21 @@ sub think {
     return $self->_form            if $model->is_question_form;
     return $self->_survey          if $model->is_question_survey;
     return $self->_survey_and_file if $model->is_question_survey_and_file;
+    return $self->_explain if $model->is_question_explain;
 
     # 存在しない問題の場合
     $self->render( template => 'hackerz/question/index', );
     return;
 }
 
-# pattern form -> 問題文に対して入力フォームにテキスト入力で解答
+# form -> 問題文に対して入力フォームにテキスト入力で解答
 sub _form {
     my $self = shift;
     $self->render( template => 'hackerz/question/form', );
     return;
 }
 
-# pattern choice -> 問題文に対して答えを4択から選択して解答
+# choice -> 問題文に対して答えを4択から選択して解答
 sub _choice {
     my $self = shift;
     $self->render( template => 'hackerz/question/choice', );
@@ -47,6 +48,13 @@ sub _survey {
 sub _survey_and_file {
     my $self = shift;
     $self->render( template => 'hackerz/question/survey_and_file', );
+    return;
+}
+
+# explain -> 問題とその詳細から解答を導き出してテキスト入力で解答
+sub _explain {
+    my $self = shift;
+    $self->render( template => 'hackerz/question/explain', );
     return;
 }
 
