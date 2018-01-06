@@ -1,0 +1,3 @@
+  <div class="container">
+    <a href="/hackerz/question/<%= $survey->{question_id} %>/think" class="btn btn-default btn-lg btn-block">第&nbsp;<%= $survey->{question_id} %>&nbsp;問へ戻る</a>
+  </div>

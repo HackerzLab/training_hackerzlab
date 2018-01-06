@@ -12,9 +12,10 @@ sub think {
         format  => 'html',
         handler => 'ep',
     );
-    return $self->_choice if $model->is_question_choice;
-    return $self->_form   if $model->is_question_form;
-    return $self->_survey if $model->is_question_survey;
+    return $self->_choice          if $model->is_question_choice;
+    return $self->_form            if $model->is_question_form;
+    return $self->_survey          if $model->is_question_survey;
+    return $self->_survey_and_file if $model->is_question_survey_and_file;
 
     # 存在しない問題の場合
     $self->render( template => 'hackerz/question/index', );
@@ -39,6 +40,13 @@ sub _choice {
 sub _survey {
     my $self = shift;
     $self->render( template => 'hackerz/question/survey', );
+    return;
+}
+
+# survey_and_file -> 調査するページとファイルダウンロード
+sub _survey_and_file {
+    my $self = shift;
+    $self->render( template => 'hackerz/question/survey_and_file', );
     return;
 }
 

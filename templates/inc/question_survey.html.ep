@@ -1,0 +1,7 @@
+  <div class="container">
+    <div class="form-horizontal well">
+      <fieldset>
+        <a href="/hackerz/question/<%= $survey->{question_id} %>/survey<%= $survey->{page_url} %>" class="btn btn-primary btn-lg btn-block"><%= $survey->{page_title} %>へ</a>
+      </fieldset>
+    </div>
+  </div>

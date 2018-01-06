@@ -1,7 +1,10 @@
 package TrainingHackerzlab::Model::Hackerz::Question;
 use Mojo::Base 'TrainingHackerzlab::Model::Base';
 
-has [qw{is_question_choice is_question_form is_question_survey}] => undef;
+has [
+    qw{is_question_choice is_question_form is_question_survey
+        is_question_survey_and_file}
+] => undef;
 
 # 問題画面パラメーター
 sub to_template_think {
@@ -42,6 +45,10 @@ sub to_template_think {
     return $self->_create_survey_params( $question_row, $think )
         if $self->is_question_survey;
 
+    # 調査するページとファイルダウンロード
+    return $self->_create_survey_params( $question_row, $think )
+        if $self->is_question_survey_and_file;
+
     return $think;
 }
 
@@ -73,9 +80,10 @@ sub _create_survey_params {
 sub _analysis_pattern {
     my $self = shift;
     my $row  = shift;
-    return $self->is_question_form(1)   if $row->pattern eq 10;
-    return $self->is_question_choice(1) if $row->pattern eq 20;
-    return $self->is_question_survey(1) if $row->pattern eq 30;
+    return $self->is_question_form(1)            if $row->pattern eq 10;
+    return $self->is_question_choice(1)          if $row->pattern eq 20;
+    return $self->is_question_survey(1)          if $row->pattern eq 30;
+    return $self->is_question_survey_and_file(1) if $row->pattern eq 31;
     return;
 }
 

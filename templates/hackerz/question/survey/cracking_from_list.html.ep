@@ -3,14 +3,6 @@
 
   <!-- クラッキングページ入力フォーム -->
   <%= include('inc/question_survey_form', format => 'html') =%>
-
-<!--
-これがIDだ
-hacker
-
-これがパスワードだ
-wATFyXV66LYHsCsoMDCeQLMfmGzU3A4C
--->
-
+  <script src="/static/js/q3/id.js"></script>
   <!-- 問題ページへもどる -->
   <%= include('inc/question_survey_link', format => 'html') =%>

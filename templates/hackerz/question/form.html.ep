@@ -4,25 +4,8 @@
   <!-- 問題 -->
   <%= include('inc/question', format => 'html') =%>
 
-  <div class="container">
-    <form action="/answers/2"  method="POST" class="form-horizontal well">
-      <fieldset>
-        <legend><span class="glyphicon glyphicon-pencil"></span>&emsp;解答を入力</legend>
-        <div class="form-group has-feedback">
-          <label for="user_answer" class="col-lg-2 control-label"><span class="glyphicon glyphicon-pencil"></span></label>
-          <div class="col-lg-10">
-            <input type="text" class="form-control" id="user_answer" placeholder="解答" name="user_answer" value="">
-            <span class="glyphicon glyphicon-check form-control-feedback"></span>
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="col-lg-10 col-lg-offset-2">
-            <button type="submit" class="btn btn-primary" name="send" value="ボタン">送信</button>
-          </div>
-        </div>
-      </fieldset>
-    </form>
-  </div>
+  <!-- 解答入力フォーム -->
+  <%= include('inc/question_form', format => 'html') =%>
 
   <!-- 得点と難易度 -->
   <%= include('inc/question_level', format => 'html') =%>
