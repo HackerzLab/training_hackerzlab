@@ -53,8 +53,18 @@ CREATE TABLE hint (                                     -- 問題のヒント
     created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
     modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
 );
-DROP TABLE IF EXISTS answers;
-CREATE TABLE answers (                                  -- 入力された解答
+DROP TABLE IF EXISTS hint_opened;
+CREATE TABLE hint_opened (                              -- 問題のヒント開封履歴
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
+    user_id         INTEGER,                            -- ユーザーID (例: 5)
+    hint_id         INTEGER,                            -- 問題のヒントID (例: 5)
+    opened          INTEGER,                            -- 開封記録 (例: 0: 開封していない, 1: 開封済み )
+    deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
+    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
+    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
+);
+DROP TABLE IF EXISTS answer;
+CREATE TABLE answer (                                   -- 入力された解答
     id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
     question_id     INTEGER,                            -- 問題ID (例: 5)
     user_id         INTEGER,                            -- ユーザーID (例: 5)
