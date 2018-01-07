@@ -7,7 +7,9 @@ sub think {
     my $params = +{ question_id => $self->stash->{id}, };
     my $model  = $self->model->hackerz->question->req_params($params);
     my $to_template_think = $model->to_template_think;
+    my $user = $self->login_user->get_columns;
     $self->stash(
+        user => $user,
         %{$to_template_think},
         format  => 'html',
         handler => 'ep',

@@ -53,8 +53,8 @@ GET - `/hackerz/menu`
 
 - params:
     - user_id
-    - answer
-    - question_code
+    - user_answer
+    - question_id
 
 ```
 各問題画面
