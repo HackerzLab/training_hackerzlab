@@ -13,7 +13,7 @@ training_hackerzlab/controller/hackerz/answer - TrainingHackerzlab 解答
 
 # DESCRIPTION
 
-## - GET - `/hackerz/answer/:id/list` - list - 解答一覧画面
+## - GET - `/hackerz/answer/list` - list - 解答一覧画面
 
 ```
 GET - `/hackerz/menu`

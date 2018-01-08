@@ -3,17 +3,15 @@
   <div class="container">
     <div class="jumbotron">
     <h2>解答一覧</h2>
-      % for my $row (@{$rows}) {
+      % for my $answer (@{$answers}) {
       <div class="panel panel-danger">
         <div class="panel-heading">
           <h3 class="panel-title">
-            <a href="/questions/<%= $row->{question} %>">問&nbsp;<%= $row->{question} %>&nbsp;問</a>
+            <a href="/hackerz/question/<%= $answer->{question_id} %>/think">問&nbsp;<%= $answer->{question_id} %>&nbsp;問</a>
           </h3>
         </div>
         <div class="panel-body">
-          <a href="/questions/<%= $row->{question} %>">
-            <%= $row->{answer} %>
-          </a>
+            <%= $answer->{user_answer} %>
         </div>
       </div>
       % }

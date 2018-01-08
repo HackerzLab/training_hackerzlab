@@ -3,27 +3,33 @@ use Mojo::Base 'TrainingHackerzlab::Controller::Base';
 
 # 解答一覧画面
 sub list {
-    my $self = shift;
-    $self->render(
+    my $self    = shift;
+    my $params  = +{user_id => $self->login_user->id,};
+    my $hackerz = $self->model->hackerz;
+    my $answer  = $hackerz->answer->req_params($params);
+
+    my $to_template_list = $answer->to_template_list;
+    $self->stash(
+        %{$to_template_list},
         template => 'hackerz/answer/list',
         format   => 'html',
         handler  => 'ep',
-        rows     => $self->_dummy_list_data(),
     );
+    $self->render();
     return;
 }
 
 # 解答結果画面
 sub score {
     my $self = shift;
-    $self->render( text => 'score' );
+    $self->render(text => 'score');
     return;
 }
 
 # 回答を送信したぞ画面
 sub result {
     my $self    = shift;
-    my $params  = +{ answer_id => $self->stash->{id}, };
+    my $params  = +{answer_id => $self->stash->{id},};
     my $hackerz = $self->model->hackerz;
     my $answer  = $hackerz->answer->req_params($params);
 
@@ -43,7 +49,7 @@ sub store {
     my $self = shift;
 
     my $params          = $self->req->params->to_hash;
-    my $question_params = +{ question_id => $params->{question_id}, };
+    my $question_params = +{question_id => $params->{question_id},};
     my $hackerz         = $self->model->hackerz;
 
     my $answer            = $hackerz->answer->req_params($params);
@@ -59,9 +65,9 @@ sub store {
     );
 
     # 簡易的なバリデート
-    if ( $answer->has_error_easy ) {
-        $self->stash( msg => $answer->error_msg );
-        $self->render_fillin( $template, $params );
+    if ($answer->has_error_easy) {
+        $self->stash(msg => $answer->error_msg);
+        $self->render_fillin($template, $params);
         return;
     }
 
@@ -69,25 +75,9 @@ sub store {
     my $answer_id = $answer->store;
 
     # 書き込み保存終了、リダイレクト終了
-    $self->flash( msg => '解答を送信しました' );
+    $self->flash(msg => '解答を送信しました');
     $self->redirect_to("/hackerz/answer/$answer_id/result");
     return;
-}
-
-sub _dummy_list_data {
-    my $self = shift;
-    my $hash = [
-        +{  question => 1,
-            answer   => 'dddd',
-        },
-        +{  question => 2,
-            answer   => 'sdffff',
-        },
-        +{  question => 3,
-            answer   => 'tcp',
-        },
-    ];
-    return $hash;
 }
 
 1;

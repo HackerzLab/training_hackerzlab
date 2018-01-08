@@ -81,7 +81,7 @@ sub startup {
     $r->get('/hackerz/ranking')->to('Hackerz::Ranking#index');
 
     my $answer = $r->under('/hackerz/answer');
-    $answer->get( '/:id/list',   $id )->to('Hackerz::Answer#list');
+    $answer->get( '/list')->to('Hackerz::Answer#list');
     $answer->get( '/:id/score',  $id )->to('Hackerz::Answer#score');
     $answer->get( '/:id/result', $id )->to('Hackerz::Answer#result');
     $answer->post('')->to('Hackerz::Answer#store');
