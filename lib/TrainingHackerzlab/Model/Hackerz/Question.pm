@@ -11,10 +11,11 @@ sub to_template_think {
     my $self = shift;
 
     my $think = +{
-        question => undef,
-        hint     => undef,
-        choice   => undef,
-        survey   => undef,
+        question  => undef,
+        hint_word => undef,
+        hint_id   => undef,
+        choice    => undef,
+        survey    => undef,
     };
 
     my $cond = +{
@@ -30,12 +31,11 @@ sub to_template_think {
     $think->{question} = $question_row->get_columns;
 
     $self->_analysis_pattern($question_row);
+
+    # ヒント機能
     my $hint_rows = $question_row->search_hint;
-    my $hint      = +{};
-    for my $hint_row ( @{$hint_rows} ) {
-        $hint->{ $hint_row->level } = $hint_row->hint;
-    }
-    $think->{hint} = $hint;
+    $think->{hint_word} = +{ map { $_->level => $_->hint } @{$hint_rows} };
+    $think->{hint_id}   = +{ map { $_->level => $_->id } @{$hint_rows} };
 
     # 問題文に対して入力フォームにテキスト入力で解答
     return $think if $self->is_question_form;

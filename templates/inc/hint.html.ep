@@ -14,9 +14,9 @@
         <p><br>ヒントを一つ開くたびに２点づつ減点になるぞ！ヒントは全部で５つまでだ！</p>
       </div>
 
-      % for my $id (1..5) {
-      <div class="tab-pane fade" id="hint-<%= $id %>">
-        <p><br><%= $hint->{$id} %></p>
+      % for my $level (1..5) {
+      <div class="tab-pane fade" id="hint-<%= $level %>">
+        <p><br><%= $hint_word->{$level} %></p>
       </div>
       % }
 

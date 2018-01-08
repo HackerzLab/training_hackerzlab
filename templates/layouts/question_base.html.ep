@@ -17,6 +17,9 @@
 
   <!-- body js -->
   <%= include('inc/body_js', format => 'html') =%>
+
+  <!-- body hint js -->
+  <%= include('inc/body_hint_js', format => 'html') =%>
 </body>
 
 </html>
