@@ -20,8 +20,9 @@ sub think {
 
 # 問題をとくんだな画面
 sub index {
-    my $self   = shift;
+    my $self = shift;
     $self->stash(
+        user     => $self->login_user->get_columns,
         template => 'hackerz/question/index',
         format   => 'html',
         handler  => 'ep',

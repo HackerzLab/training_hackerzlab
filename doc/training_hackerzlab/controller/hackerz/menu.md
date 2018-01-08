@@ -19,7 +19,7 @@ training_hackerzlab/controller/hackerz/menu - TrainingHackerzlab アプリメニ
     問題をとくボタン -> 問題を解く画面
     ログアウトボタン -> ログアウトしてトップページ
     問題一覧
-    自分の回答一覧ボタン -> 解答一覧画面
+    自分の解答一覧ボタン -> 解答一覧画面
     総合ランキングボタン -> 総合ランキング画面
 ```
 

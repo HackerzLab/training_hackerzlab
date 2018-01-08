@@ -4,7 +4,7 @@ use Mojo::Base 'TrainingHackerzlab::Controller::Base';
 # 解答一覧画面
 sub list {
     my $self    = shift;
-    my $params  = +{user_id => $self->login_user->id,};
+    my $params  = +{ user_id => $self->login_user->id, };
     my $hackerz = $self->model->hackerz;
     my $answer  = $hackerz->answer->req_params($params);
 
@@ -21,15 +21,27 @@ sub list {
 
 # 解答結果画面
 sub score {
-    my $self = shift;
-    $self->render(text => 'score');
+    my $self    = shift;
+    my $params  = +{ user_id => $self->login_user->id, };
+    my $hackerz = $self->model->hackerz;
+    my $answer  = $hackerz->answer->req_params($params);
+
+    my $to_template_score = $answer->to_template_score;
+    $self->stash(
+        %{$to_template_score},
+        user     => $self->login_user->get_columns,
+        template => 'hackerz/answer/score',
+        format   => 'html',
+        handler  => 'ep',
+    );
+    $self->render();
     return;
 }
 
-# 回答を送信したぞ画面
+# 解答を送信したぞ画面
 sub result {
     my $self    = shift;
-    my $params  = +{answer_id => $self->stash->{id},};
+    my $params  = +{ answer_id => $self->stash->{id}, };
     my $hackerz = $self->model->hackerz;
     my $answer  = $hackerz->answer->req_params($params);
 
@@ -49,7 +61,7 @@ sub store {
     my $self = shift;
 
     my $params          = $self->req->params->to_hash;
-    my $question_params = +{question_id => $params->{question_id},};
+    my $question_params = +{ question_id => $params->{question_id}, };
     my $hackerz         = $self->model->hackerz;
 
     my $answer            = $hackerz->answer->req_params($params);
@@ -65,9 +77,9 @@ sub store {
     );
 
     # 簡易的なバリデート
-    if ($answer->has_error_easy) {
-        $self->stash(msg => $answer->error_msg);
-        $self->render_fillin($template, $params);
+    if ( $answer->has_error_easy ) {
+        $self->stash( msg => $answer->error_msg );
+        $self->render_fillin( $template, $params );
         return;
     }
 
@@ -75,7 +87,7 @@ sub store {
     my $answer_id = $answer->store;
 
     # 書き込み保存終了、リダイレクト終了
-    $self->flash(msg => '解答を送信しました');
+    $self->flash( msg => '解答を送信しました' );
     $self->redirect_to("/hackerz/answer/$answer_id/result");
     return;
 }

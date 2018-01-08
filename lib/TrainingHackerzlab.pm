@@ -81,14 +81,14 @@ sub startup {
     $r->get('/hackerz/ranking')->to('Hackerz::Ranking#index');
 
     my $answer = $r->under('/hackerz/answer');
-    $answer->get( '/list')->to('Hackerz::Answer#list');
-    $answer->get( '/:id/score',  $id )->to('Hackerz::Answer#score');
+    $answer->get('/list')->to('Hackerz::Answer#list');
+    $answer->get('/score')->to('Hackerz::Answer#score');
     $answer->get( '/:id/result', $id )->to('Hackerz::Answer#result');
     $answer->post('')->to('Hackerz::Answer#store');
 
     # 各問題画面
     my $question = $r->under('/hackerz/question');
-    $question->get( '' )->to('Hackerz::Question#index');
+    $question->get('')->to('Hackerz::Question#index');
     $question->get( '/:id/think', $id )->to('Hackerz::Question#think');
     $question->get( '/:id/survey/:action', $id )
         ->to('Hackerz::Question::Survey#');

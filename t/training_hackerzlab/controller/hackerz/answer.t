@@ -54,7 +54,7 @@ subtest 'get /hackerz/answer/:id/score score' => sub {
     };
 };
 
-# 回答を送信したぞ画面
+# 解答を送信したぞ画面
 subtest 'get /hackerz/answer/:id/result result' => sub {
     subtest 'template' => sub {
         ok(1);
