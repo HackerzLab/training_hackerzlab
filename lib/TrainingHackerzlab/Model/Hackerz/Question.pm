@@ -3,7 +3,7 @@ use Mojo::Base 'TrainingHackerzlab::Model::Base';
 
 has [
     qw{is_question_choice is_question_form is_question_survey
-        is_question_survey_and_file is_question_explain}
+        is_question_survey_and_file is_question_explain select_template}
 ] => undef;
 
 # 問題画面パラメーター
@@ -21,6 +21,9 @@ sub to_template_think {
         id      => $self->req_params->{question_id},
         deleted => 0,
     };
+
+    # 存在しない問題の場合
+    $self->select_template('hackerz/question/index');
 
     my $question_row = $self->db->teng->single( 'question', $cond );
     return $think if !$question_row;
@@ -49,7 +52,7 @@ sub to_template_think {
     return $self->_create_survey_params( $question_row, $think )
         if $self->is_question_survey_and_file;
 
-    # 問題とその詳細から解答を導き出してテキスト入力で解答
+    # 問題と詳細から解答を導き出してテキスト入力で解答
     return $think if $self->is_question_explain;
 
     return $think;
@@ -83,11 +86,42 @@ sub _create_survey_params {
 sub _analysis_pattern {
     my $self = shift;
     my $row  = shift;
-    return $self->is_question_form(1)            if $row->pattern eq 10;
-    return $self->is_question_choice(1)          if $row->pattern eq 20;
-    return $self->is_question_survey(1)          if $row->pattern eq 30;
-    return $self->is_question_survey_and_file(1) if $row->pattern eq 31;
-    return $self->is_question_explain(1)         if $row->pattern eq 40;
+    $self->select_template(undef);
+
+    # form -> 問題文に対して入力フォームにテキスト入力
+    if ( $row->pattern eq 10 ) {
+        $self->is_question_form(1);
+        $self->select_template('/hackerz/question/form');
+        return;
+    }
+
+    # choice -> 問題文に対して答えを4択から選択して解答
+    if ( $row->pattern eq 20 ) {
+        $self->is_question_choice(1);
+        $self->select_template('/hackerz/question/choice');
+        return;
+    }
+
+    # survey -> 調査するページから解答を導き出して入力
+    if ( $row->pattern eq 30 ) {
+        $self->is_question_survey(1);
+        $self->select_template('/hackerz/question/survey');
+        return;
+    }
+
+    # survey_and_file -> 調査するページとファイル
+    if ( $row->pattern eq 31 ) {
+        $self->is_question_survey_and_file(1);
+        $self->select_template('/hackerz/question/survey_and_file');
+        return;
+    }
+
+    # explain -> 問題とその詳細から解答を導き出して入力
+    if ( $row->pattern eq 40 ) {
+        $self->is_question_explain(1);
+        $self->select_template('/hackerz/question/explain');
+        return;
+    }
     return;
 }
 

@@ -3,6 +3,23 @@ use Mojo::Base -base;
 
 has [qw{master_hash master_constant_hash}];
 
+sub answer {
+    my $self = shift;
+    my $hash = +{
+        0 => '解答が入力されていません',
+        1 => '解答入力済みです',
+    };
+
+    my $constant = +{
+        NOT_INPUT     => 0,
+        EXISTS_ANSWER => 1,
+    };
+
+    $self->master_hash($hash);
+    $self->master_constant_hash($constant);
+    return $self;
+}
+
 sub auth {
     my $self = shift;
     my $hash = +{
