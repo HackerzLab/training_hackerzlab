@@ -6,9 +6,21 @@ training_hackerzlab/controller/hackerz/question - TrainingHackerzlab
 
 ## URL
 
+- GET - `/hackerz/question` - index - 問題をとく画面
 - GET - `/hackerz/question/:id/think` - think - 各問題画面
 
 # DESCRIPTION
+
+## - GET - `/hackerz/question` - index - 問題をとく画面
+
+```
+ログイン後のメニュー画面 (/hackerz/menu)
+問題をとく -> クリック
+    ユーザーID, 名前
+    問題はこっちだ (ボタン) -> 各問題画面
+    ログアウト (ボタン) -> ログアウト
+    得点確認 (ボタン) -> 解答結果画面
+```
 
 ## - GET - `/hackerz/question/:id/think` - think - 各問題画面
 

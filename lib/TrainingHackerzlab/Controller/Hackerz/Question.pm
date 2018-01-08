@@ -18,4 +18,16 @@ sub think {
     return;
 }
 
+# 問題をとくんだな画面
+sub index {
+    my $self   = shift;
+    $self->stash(
+        template => 'hackerz/question/index',
+        format   => 'html',
+        handler  => 'ep',
+    );
+    $self->render();
+    return;
+}
+
 1;

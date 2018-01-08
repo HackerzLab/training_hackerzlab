@@ -23,7 +23,7 @@ sub to_template_think {
     };
 
     # 存在しない問題の場合
-    $self->select_template('hackerz/question/index');
+    $self->select_template('hackerz/question/not_found');
 
     my $question_row = $self->db->teng->single( 'question', $cond );
     return $think if !$question_row;
