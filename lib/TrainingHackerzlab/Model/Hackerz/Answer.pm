@@ -30,9 +30,7 @@ sub has_error_easy {
 sub to_template_score {
     my $self   = shift;
     my $master = $self->db->master;
-    my $score  = +{
-        result => 0,
-    };
+    my $score  = +{ result => 0, };
 
     my $cond = +{
         user_id => $self->req_params->{user_id},
@@ -43,12 +41,61 @@ sub to_template_score {
     my @answer_rows = $self->db->teng->search( 'answer', $cond );
     return $score if scalar @answer_rows eq 0;
 
-    # 正解加算する
+    # ヒントの開封履歴 (下書き)
+    my $list = [];
     for my $answer_row (@answer_rows) {
         my $question_row = $answer_row->fetch_question;
-        next if $answer_row->user_answer ne $question_row->answer;
-        $score->{result} += $question_row->score;
+        my $data         = +{
+            question_id       => $question_row->id,
+            question_score    => $question_row->score,
+            answer_result     => '',
+            hint_opened_level => [],
+            get_score         => 0,
+        };
+
+        my $cond = +{
+            question_id => $question_row->id,
+            deleted     => 0,
+        };
+
+        my @hint_rows = $self->db->teng->search( 'hint', $cond );
+
+        for my $hint_row (@hint_rows) {
+
+            # ヒントの開封が存在するか
+            my $cond = +{
+                user_id => $self->req_params->{user_id},
+                hint_id => $hint_row->id,
+                opened  => 1,
+                deleted => 0,
+            };
+
+            my $hint_opened_row
+                = $self->db->teng->single( 'hint_opened', $cond );
+
+            if ($hint_opened_row) {
+                push @{ $data->{hint_opened_level} }, $hint_row->level;
+            }
+        }
+
+        # 不正解の場合は 0 点
+        if ( $answer_row->user_answer eq $question_row->answer ) {
+            my $count = scalar @{ $data->{hint_opened_level} };
+            $data->{get_score} = $data->{question_score} - ( $count * 2 );
+        }
+        else {
+            $data->{get_score} = 0;
+        }
+        push @{$list}, $data;
     }
+    $score->{list} = $list;
+
+    # 獲得点数の計算
+    my $total_score = 0;
+    for my $row ( @{$list} ) {
+        $total_score += $row->{get_score};
+    }
+    $score->{result} = $total_score;
     return $score;
 }
 

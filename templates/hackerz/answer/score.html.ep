@@ -3,6 +3,19 @@
   <div class="container">
     <div class="jumbotron">
     <h2>解答結果 [ <%= $user->{login_id} %> さん ]</h2>
+
+      <ul class="list-group">
+        % for my $row (@{$list}) {
+        <li class="list-group-item"> 第<%= $row->{question_id} %>問 <%= $row->{answer_result} %>
+          <span class="badge">get <%= $row->{get_score} %></span>
+          % for my $level (@{$row->{hint_opened_level}}) {
+          <span class="badge"><%= $level %></span>
+          % }
+          <span class="badge">hint</span>
+        </li>
+        % }
+      </ul>
+
       <div class="panel panel-danger">
         <div class="panel-heading">
           <h3 class="panel-title">現在の得点</h3>
