@@ -92,6 +92,10 @@ sub startup {
     $question->get( '/:id/think', $id )->to('Hackerz::Question#think');
     $question->get( '/:id/survey/:action', $id )
         ->to('Hackerz::Question::Survey#');
+
+    # ヒント開封履歴
+    my $hint = $r->under('/hackerz/hint');
+    $hint->post('/opened')->to('Hackerz::Hint#opened');
 }
 
 1;
