@@ -30,7 +30,10 @@ sub has_error_easy {
 sub to_template_score {
     my $self   = shift;
     my $master = $self->db->master;
-    my $score  = +{ result => 0, };
+    my $score  = +{
+        result => 0,
+        list   => [],
+    };
 
     my $cond = +{
         user_id => $self->req_params->{user_id},
@@ -82,9 +85,11 @@ sub to_template_score {
         if ( $answer_row->user_answer eq $question_row->answer ) {
             my $count = scalar @{ $data->{hint_opened_level} };
             $data->{get_score} = $data->{question_score} - ( $count * 2 );
+            $data->{answer_result} = '正解';
         }
         else {
-            $data->{get_score} = 0;
+            $data->{get_score}     = 0;
+            $data->{answer_result} = '不正解';
         }
         push @{$list}, $data;
     }
