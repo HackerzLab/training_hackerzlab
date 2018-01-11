@@ -28,15 +28,16 @@ sub has_error_easy {
 
 # 解答結果点数
 sub to_template_score {
-    my $self   = shift;
-    my $master = $self->db->master;
-    my $score  = +{
+    my $self    = shift;
+    my $master  = $self->db->master;
+    my $user_id = $self->req_params->{user_id};
+    my $score   = +{
         result => 0,
         list   => [],
     };
 
     my $cond = +{
-        user_id => $self->req_params->{user_id},
+        user_id => $user_id,
         deleted => 0,
     };
 
@@ -47,49 +48,26 @@ sub to_template_score {
     # ヒントの開封履歴 (下書き)
     my $list = [];
     for my $answer_row (@answer_rows) {
+
         my $question_row = $answer_row->fetch_question;
         my $data         = +{
             question_id       => $question_row->id,
             question_score    => $question_row->score,
-            answer_result     => '',
+            answer_result     => '不正解',
             hint_opened_level => [],
             get_score         => 0,
         };
 
-        my $cond = +{
-            question_id => $question_row->id,
-            deleted     => 0,
-        };
-
-        my @hint_rows = $self->db->teng->search( 'hint', $cond );
-
-        for my $hint_row (@hint_rows) {
-
-            # ヒントの開封が存在するか
-            my $cond = +{
-                user_id => $self->req_params->{user_id},
-                hint_id => $hint_row->id,
-                opened  => 1,
-                deleted => 0,
-            };
-
-            my $hint_opened_row
-                = $self->db->teng->single( 'hint_opened', $cond );
-
-            if ($hint_opened_row) {
-                push @{ $data->{hint_opened_level} }, $hint_row->level;
-            }
-        }
+        # 問題のヒントが開封ずみのヒントを取得
+        my $hint_rows = $question_row->search_opened_hint($user_id);
+        $data->{hint_opened_level} = [ map { $_->level } @{$hint_rows} ];
 
         # 不正解の場合は 0 点
-        if ( $answer_row->user_answer eq $question_row->answer ) {
-            my $count = scalar @{ $data->{hint_opened_level} };
-            $data->{get_score} = $data->{question_score} - ( $count * 2 );
+        if ( $answer_row->is_correct ) {
+
+            # ヒントの開封を考慮した獲得点数
+            $data->{get_score} = $answer_row->get_score_opened_hint($user_id);
             $data->{answer_result} = '正解';
-        }
-        else {
-            $data->{get_score}     = 0;
-            $data->{answer_result} = '不正解';
         }
         push @{$list}, $data;
     }
