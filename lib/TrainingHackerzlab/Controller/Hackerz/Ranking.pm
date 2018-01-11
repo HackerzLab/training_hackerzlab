@@ -4,12 +4,20 @@ use Mojo::Base 'TrainingHackerzlab::Controller::Base';
 # 総合ランキング (ログイン中)
 sub index {
     my $self = shift;
-    $self->render(
-        template => 'hackerz/ranking/index',
+    # $self->render(
+    #     template => 'hackerz/ranking/index',
+    #     format   => 'html',
+    #     handler  => 'ep',
+    #     rankings => $self->_dummy_ranking_data(),
+    # );
+    my $model  = $self->model->hackerz->ranking;
+    my $to_template_index = $model->to_template_index;
+    $self->stash(
+        rankings => $to_template_index,
         format   => 'html',
         handler  => 'ep',
-        rankings => $self->_dummy_ranking_data(),
     );
+    $self->render();
     return;
 }
 
