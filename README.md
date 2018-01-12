@@ -207,6 +207,32 @@ wab api
         survey_and_file(31) -> survey, file, 組み合わせ
         explain(40) -> 問題とその詳細から解答と導き出してテキスト入力で解答
         file(50) -> 問題文とダウンロードファイルから解答を導き出してテキスト入力で解答
+
+過去問題のための「問題集」
+CREATE TABLE question_collected (                       -- 問題集
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
+    title           TEXT,                               -- タイトル (例: '第１回 2016-01-31')
+    description     TEXT,                               -- 問題集の説明 (例: '簡単なものから難しいものまで')
+    deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
+    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
+    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
+);
+
+CREATE TABLE question_collect_ids (                             -- 問題集と問題の順番
+    id                      INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
+    question_collected_id   INTEGER,                            -- 問題集ID (例 1)
+    question_id             INTEGER,                            -- 問題ID (例: 1)
+    collected_id            INTEGER,                            -- 問題集の中での問題の順番 (例: 1)
+    deleted                 INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
+    created_ts              TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
+    modified_ts             TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
+);
+sqlite バージョン
+yk-MacBookAir-2015:training_hackerzlab yk$ sqlite3 -version
+3.19.3 2017-06-27 16:48:08 2b0954060fe10d6de6d479287dd88890f1bef6cc1beca11bc6cdb79f72e2377b
+[training@tk2-257-38266 ~]$ sqlite3 -version
+3.6.20
+[training@tk2-257-38266 ~]$ 
 ```
 
 ```sql
