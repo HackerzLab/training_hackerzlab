@@ -67,7 +67,7 @@ sub _import_file_csv {
     my $ft_dir    = $ft->dirname;
 
     # sqlite コマンド用ファイルデータ
-    my $sqlite_cmd_txt = ".separator ,\n";
+    my $sqlite_cmd_txt = ".mode csv\n";
 
     # オリジナルサンプルをコピー
     for my $file_org ( $home->path('db')->list->each ) {
