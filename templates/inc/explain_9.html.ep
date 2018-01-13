@@ -1,8 +1,0 @@
-  <div class="container">
-    <div class="form-horizontal well">
-      <fieldset>
-        <a href="/static/bin/WindowsFormsApplication.zip" class="btn btn-primary btn-lg btn-block">実行ファイル(Windows用)をダウンロード<br>(右クリックで保存)</a>
-        <a href="/static/bin/Training.zip" class="btn btn-primary btn-lg btn-block">実行ファイルをダウンロード(Mac用)<br>(右クリックで保存)</a>
-      </fieldset>
-    </div>
-  </div>

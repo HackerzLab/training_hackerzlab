@@ -1,0 +1,13 @@
+  <div class="container">
+    <div class="form-horizontal well">
+      <fieldset>
+        <div>
+<pre>
+# $req->param()はユーザーからの入力値を取得するものとする
+my $cmd = $req->param('cmd');
+print system($cmd);
+</pre>
+        </div>
+      </fieldset>
+    </div>
+  </div>

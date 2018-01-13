@@ -1,0 +1,8 @@
+  <div class="container">
+    <div class="form-horizontal well">
+      <fieldset>
+        <img src="/static/images/HackersLab1.jpeg" width=400 height=300>
+        <img src="/static/images/HackersLab2.jpeg" width=400 height=300>
+      </fieldset>
+    </div>
+  </div>

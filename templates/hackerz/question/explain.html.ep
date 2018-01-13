@@ -5,7 +5,7 @@
   <%= include('inc/question', format => 'html') =%>
 
   <!-- 問題詳細 -->
-  <%= include('inc/explain_' . $question->{id} , format => 'html') =%>
+  <%= include('inc/explain/' . $question->{id} , format => 'html') =%>
 
   <!-- 解答入力フォーム -->
   <%= include('inc/question_form', format => 'html') =%>

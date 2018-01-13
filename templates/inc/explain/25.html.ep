@@ -1,0 +1,7 @@
+  <div class="container">
+    <div class="form-horizontal well">
+      <fieldset>
+        <a href="/static/bin/a.out" class="btn btn-primary btn-lg btn-block">実行ファイルをダウンロード<br>(右クリックで保存)</a>
+      </fieldset>
+    </div>
+  </div>

@@ -1,0 +1,31 @@
+  <div class="container">
+    <div class="form-horizontal well">
+      <fieldset>
+        <div>
+<pre>
+use strict;
+use warnings;
+
+# データ構造を定義
+my $questions = [
+    +{  id   => 1,
+        name => 'black',
+    },
+    +{  id   => 2,
+        name => 'white',
+    },
+    +{  id   => 3,
+        name => 'hacker',
+    },
+];
+
+# id が 3 のデータのみを抽出
+my $answers = [ **** { $_->{id} eq 3 } @{$questions} ];
+
+# 抽出したデータを画面に出力
+print $answers->[0]->{name}, "\n";
+</pre>
+        </div>
+      </fieldset>
+    </div>
+  </div>

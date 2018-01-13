@@ -1,0 +1,17 @@
+  <div class="container">
+    <div class="form-horizontal well">
+      <fieldset>
+        <div>
+<pre>
+# $req->param()はユーザーからの入力値を取得するものとする
+my $uid = $req->param('uid');
+my $password = $req->param('password');
+my $dbh = DBI->connect(...);
+my $query = "SELECT * FROM user WHERE uid = '$uid' AND password = '$password'";
+my $sth = $dbh->prepare($query);
+$sth->execute();
+</pre>
+        </div>
+      </fieldset>
+    </div>
+  </div>

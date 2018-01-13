@@ -1,0 +1,14 @@
+  <div class="container">
+    <div class="form-horizontal well">
+      <fieldset>
+        <div>
+<pre>
+&lt;script type="text/javascript"&gt;
+var ip = '&lt;?php echo $_SERVER['***********']; ?&gt;';
+$('body').html(ip);
+&lt;/script&gt;
+</pre>
+        </div>
+      </fieldset>
+    </div>
+  </div>

@@ -1,7 +1,0 @@
-  <div class="container">
-    <div class="form-horizontal well">
-      <fieldset>
-        <img src="/static/images/picture.jpeg" class="btn btn-primary btn-lg btn-block" style="transform: scale(0.7, 0.7) rotate(90deg);">
-      </fieldset>
-    </div>
-  </div>
