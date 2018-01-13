@@ -20,11 +20,11 @@
   </div>
 
   <div class="container">
-    <h2 class="page-header">問題一覧 Question Season6 - Kii</h2>
+    <h2 class="page-header">問題一覧 Questions</h2>
     <div class="row">
-      % for my $int (1..60) {
+      % for my $question (@{$questions}) {
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-        <a href="/hackerz/question/<%= $int %>/think" class="btn btn-default btn-lg btn-block">第 <%= $int %> 問</a>
+        <a href="/hackerz/question/<%= $question->{id} %>/think" class="btn btn-default btn-lg btn-block">第 <%= $question->{id} %> 問</a>
       </div>
       % }
     </div>

@@ -54,7 +54,6 @@ sub to_template_think {
 
     # 問題と詳細から解答を導き出してテキスト入力で解答
     return $think if $self->is_question_explain;
-
     return $think;
 }
 
@@ -122,6 +121,9 @@ sub _analysis_pattern {
         $self->select_template('/hackerz/question/explain');
         return;
     }
+
+    # どれにも当てはまらない場合
+    $self->select_template('hackerz/question/not_found');
     return;
 }
 

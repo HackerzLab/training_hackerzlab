@@ -4,6 +4,7 @@ use TrainingHackerzlab::Model::Hackerz::Question;
 use TrainingHackerzlab::Model::Hackerz::Answer;
 use TrainingHackerzlab::Model::Hackerz::Hint;
 use TrainingHackerzlab::Model::Hackerz::Ranking;
+use TrainingHackerzlab::Model::Hackerz::Menu;
 
 has question => sub {
     TrainingHackerzlab::Model::Hackerz::Question->new(
@@ -16,13 +17,16 @@ has answer => sub {
 };
 
 has hint => sub {
-    TrainingHackerzlab::Model::Hackerz::Hint->new(
-        +{ conf => shift->conf } );
+    TrainingHackerzlab::Model::Hackerz::Hint->new( +{ conf => shift->conf } );
 };
 
 has ranking => sub {
     TrainingHackerzlab::Model::Hackerz::Ranking->new(
         +{ conf => shift->conf } );
+};
+
+has menu => sub {
+    TrainingHackerzlab::Model::Hackerz::Menu->new( +{ conf => shift->conf } );
 };
 
 1;
