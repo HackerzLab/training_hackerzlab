@@ -235,6 +235,26 @@ yk-MacBookAir-2015:training_hackerzlab yk$ sqlite3 -version
 [training@tk2-257-38266 ~]$
 開発サーバー(CentOS6 の sqlite3 のバージョンが古いせいか csv インポートが一部失敗)
 q 14, 20, 43 を一部修正
+
+Hackerz Lab.博多 Vol.1: 2016-01-31 (日) 14:00〜: q1-q10
+Hackerz Lab.博多 Vol.2: 2016-03-27 (日) 14:00〜:
+Hackerz Lab.博多 Vol.3: 2016-05-08 (日) 14:00〜: q11-q15
+Hackerz Lab.博多 Vol.4: 2016-06-26 (日) 16:00〜: q16-q25
+Hackerz Lab.博多 Vol.5: 2016-08-08 (月) 19:00〜:
+Hackerz Lab.博多 Vol.6: 2016-09-18 (日) 14:00〜:
+Hackerz Lab.博多 Vol.7: 2016-11-20 (日) 14:00〜: q26-35
+Hackerz Lab.博多 Vol.8: 2017-01-22 (日) 14:00〜: q36-45
+Hackerz Lab.博多 Vol.9: 2017-02-26 (日) 14:00〜:
+Hackerz Lab.博多 Vol.9: 2017-04-16 (日) 10:00〜:【Revival】
+Hackerz Lab.博多 Vol.10: 2017-04-16 (日) 15:00〜:
+Hackerz Lab.博多 Vol.10: 2017-05-28 (日) 10:00〜:【Revival】
+Hackerz Lab.博多 Vol.11: 2017-05-28 (日) 15:00〜:
+Hackerz Lab.博多 Vol.11: 2017-07-02 (日) 10:00〜:【Revival】
+Hackerz Lab.博多 Vol.12: 2017-07-02 (日) 15:00〜:
+Hackerz Lab.博多 Vol.12: 2017-09-03 (日) 10:00〜:【Revival】
+Hackerz Lab.博多 Vol.13: 2017-09-03 (日) 15:00〜:
+Hackerz Lab.博多 Vol.14: 2017-11-12 (日) 15:00〜:
+Hackerz Lab.博多 Vol.15: 2018-01-07 (日) 15:00〜:
 ```
 
 ```sql
