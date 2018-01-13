@@ -232,7 +232,9 @@ yk-MacBookAir-2015:training_hackerzlab yk$ sqlite3 -version
 3.19.3 2017-06-27 16:48:08 2b0954060fe10d6de6d479287dd88890f1bef6cc1beca11bc6cdb79f72e2377b
 [training@tk2-257-38266 ~]$ sqlite3 -version
 3.6.20
-[training@tk2-257-38266 ~]$ 
+[training@tk2-257-38266 ~]$
+開発サーバー(CentOS6 の sqlite3 のバージョンが古いせいか csv インポートが一部失敗)
+q 14, 20, 43 を一部修正
 ```
 
 ```sql
