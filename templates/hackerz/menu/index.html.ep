@@ -22,11 +22,13 @@
   <div class="container">
     <h2 class="page-header">問題集 Collected</h2>
     <h2>PASS CODE -> <span class="text-warning">hackerz999</span></h2>
-    <p class="text-primary">今回の問題集を解くためのパスコードはこちらだ</p>
+    <p class="text-primary">今回の問題集を解くためのパスコードだ!!</p>
     <div class="row">
-      % for my $title (@{$collected}) {
+      % for my $collected (@{$collecteds}) {
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-        <a href="" class="btn btn-default btn-lg btn-block"><%= $title %></a>
+        <a href="" class="btn btn-default btn-lg btn-block text-warning"><%= $collected->{title} %>
+        <br><small class="text-primary"><%= $collected->{description} %></small>
+        </a>
       </div>
       % }
     </div>

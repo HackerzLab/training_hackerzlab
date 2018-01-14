@@ -208,8 +208,6 @@ wab api
         explain(40) -> 問題とその詳細から解答と導き出してテキスト入力で解答
         file(50) -> 問題文とダウンロードファイルから解答を導き出してテキスト入力で解答
 
-- GET - `/hackerz/question/collected/:collected_id/:sort_id/think` - think - 問題集からの各問題画面
-
 sqlite バージョン
 yk-MacBookAir-2015:training_hackerzlab yk$ sqlite3 -version
 3.19.3 2017-06-27 16:48:08 2b0954060fe10d6de6d479287dd88890f1bef6cc1beca11bc6cdb79f72e2377b

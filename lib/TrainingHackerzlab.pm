@@ -96,6 +96,10 @@ sub startup {
     # ヒント開封履歴
     my $hint = $r->under('/hackerz/hint');
     $hint->post('/opened')->to('Hackerz::Hint#opened');
+
+    # 問題集
+    my $collected = $r->under('/hackerz/question/collected');
+    $collected->get('')->to('Hackerz::Question::Collected#index');
 }
 
 1;
