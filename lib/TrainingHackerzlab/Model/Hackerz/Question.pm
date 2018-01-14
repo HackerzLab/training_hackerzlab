@@ -1,5 +1,11 @@
 package TrainingHackerzlab::Model::Hackerz::Question;
 use Mojo::Base 'TrainingHackerzlab::Model::Base';
+use TrainingHackerzlab::Model::Hackerz::Question::Collected;
+
+has collected => sub {
+    TrainingHackerzlab::Model::Hackerz::Question::Collected->new(
+        +{ conf => shift->conf } );
+};
 
 has [
     qw{is_question_choice is_question_form is_question_survey

@@ -1,9 +1,24 @@
 package TrainingHackerzlab::Controller::Hackerz::Question::Collected;
 use Mojo::Base 'TrainingHackerzlab::Controller::Base';
 
-sub index {
+sub show {
     my $self = shift;
-    $self->render(text => 'index');
+
+    my $params           = +{ collected_id => $self->stash->{id}, };
+    my $hackerz          = $self->model->hackerz;
+    my $collected        = $hackerz->question->collected->req_params($params);
+    my $to_template_show = $collected->to_template_show;
+
+    $self->stash(
+        %{$to_template_show},
+        user     => $self->login_user->get_columns,
+        template => 'hackerz/question/Collected/show',
+        format   => 'html',
+        handler  => 'ep',
+    );
+    $self->render();
+    return;
+
 }
 
 1;

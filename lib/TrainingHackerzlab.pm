@@ -99,7 +99,7 @@ sub startup {
 
     # 問題集
     my $collected = $r->under('/hackerz/question/collected');
-    $collected->get('')->to('Hackerz::Question::Collected#index');
+    $collected->get( '/:id', $id )->to('Hackerz::Question::Collected#show');
 }
 
 1;
