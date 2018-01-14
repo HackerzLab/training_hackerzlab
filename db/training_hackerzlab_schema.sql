@@ -21,6 +21,26 @@ CREATE TABLE question (                                 -- 問題
     created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
     modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
 );
+DROP TABLE IF EXISTS collected;
+CREATE TABLE collected (                                -- 問題集
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
+    title           TEXT,                               -- タイトル (例: '第１回 2016-01-31')
+    description     TEXT,                               -- 問題集の説明 (例: '簡単なものから難しいものまで')
+    passcode        TEXT,                               -- 問題集の解くための認証 (例: 'hackerz999')
+    deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
+    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
+    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
+);
+DROP TABLE IF EXISTS collected_sort;
+CREATE TABLE collected_sort (                           -- 問題集と問題の順番
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
+    collected_id    INTEGER,                            -- 問題集ID (例 1)
+    question_id     INTEGER,                            -- 問題ID (例: 1)
+    sort_id         INTEGER,                            -- 問題集の中での問題の順番 (例: 1)
+    deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
+    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
+    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
+);
 DROP TABLE IF EXISTS choice;
 CREATE TABLE choice (                                   -- 問題の答え選択
     id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)

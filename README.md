@@ -210,27 +210,6 @@ wab api
 
 - GET - `/hackerz/question/collected/:collected_id/:sort_id/think` - think - 問題集からの各問題画面
 
-問題集を解くためのパスコード
-過去問題のための「問題集」
-CREATE TABLE collected (                                -- 問題集
-    id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
-    title           TEXT,                               -- タイトル (例: '第１回 2016-01-31')
-    description     TEXT,                               -- 問題集の説明 (例: '簡単なものから難しいものまで')
-    passcode        TEXT,                               -- 問題集の解くための認証 (例: 'hackerz999')
-    deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
-    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
-    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
-);
-
-CREATE TABLE collected_sort (                                   -- 問題集と問題の順番
-    id                      INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
-    collected_id            INTEGER,                            -- 問題集ID (例 1)
-    question_id             INTEGER,                            -- 問題ID (例: 1)
-    sort_id                 INTEGER,                            -- 問題集の中での問題の順番 (例: 1)
-    deleted                 INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
-    created_ts              TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
-    modified_ts             TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
-);
 sqlite バージョン
 yk-MacBookAir-2015:training_hackerzlab yk$ sqlite3 -version
 3.19.3 2017-06-27 16:48:08 2b0954060fe10d6de6d479287dd88890f1bef6cc1beca11bc6cdb79f72e2377b
