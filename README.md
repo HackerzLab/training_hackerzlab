@@ -208,9 +208,11 @@ wab api
         explain(40) -> 問題とその詳細から解答と導き出してテキスト入力で解答
         file(50) -> 問題文とダウンロードファイルから解答を導き出してテキスト入力で解答
 
+- GET - `/hackerz/question/collected/:collected_id/:sort_id/think` - think - 問題集からの各問題画面
+
 問題集を解くためのパスコード
 過去問題のための「問題集」
-CREATE TABLE question_collected (                       -- 問題集
+CREATE TABLE collected (                                -- 問題集
     id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
     title           TEXT,                               -- タイトル (例: '第１回 2016-01-31')
     description     TEXT,                               -- 問題集の説明 (例: '簡単なものから難しいものまで')
@@ -220,11 +222,11 @@ CREATE TABLE question_collected (                       -- 問題集
     modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
 );
 
-CREATE TABLE question_collect_ids (                             -- 問題集と問題の順番
+CREATE TABLE collected_sort (                                   -- 問題集と問題の順番
     id                      INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
-    question_collected_id   INTEGER,                            -- 問題集ID (例 1)
+    collected_id            INTEGER,                            -- 問題集ID (例 1)
     question_id             INTEGER,                            -- 問題ID (例: 1)
-    collected_id            INTEGER,                            -- 問題集の中での問題の順番 (例: 1)
+    sort_id                 INTEGER,                            -- 問題集の中での問題の順番 (例: 1)
     deleted                 INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
     created_ts              TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
     modified_ts             TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
