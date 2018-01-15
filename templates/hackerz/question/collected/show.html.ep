@@ -64,7 +64,7 @@
     <div class="row">
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
         <h2 class="page-header">問題はこっちだ</h2>
-        <a href="/hackerz/question/1/think" class="btn btn-default btn-lg btn-block">問題を始める</a>
+        <a href="/hackerz/question/collected/<%= $collected->{id} %>/<%= $collected_list->[0]->{sort_id} %>/think" class="btn btn-default btn-lg btn-block">問題を始める</a>
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
         <h2 class="page-header">ログアウトはこっちだ</h2>

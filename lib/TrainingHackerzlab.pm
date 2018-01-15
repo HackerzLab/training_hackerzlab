@@ -98,8 +98,10 @@ sub startup {
     $hint->post('/opened')->to('Hackerz::Hint#opened');
 
     # 問題集
+    my $collected_id = [ collected_id => qr/[0-9]+/, sort_id => qr/[0-9]+/ ];
     my $collected = $r->under('/hackerz/question/collected');
     $collected->get( '/:id', $id )->to('Hackerz::Question::Collected#show');
+    $collected->get( '/:collected_id/:sort_id/think', $collected_id )->to('Hackerz::Question::Collected#think');
 }
 
 1;

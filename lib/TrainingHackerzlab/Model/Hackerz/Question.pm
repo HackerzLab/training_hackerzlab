@@ -32,6 +32,18 @@ sub to_template_think {
     # 存在しない問題の場合
     $self->select_template('hackerz/question/not_found');
 
+    # 問題集からの呼び出しに対応
+    if (!$cond->{id}) {
+        my $sort_cond = +{
+            collected_id => $self->req_params->{collected_id},
+            sort_id      => $self->req_params->{sort_id},
+            deleted      => 0,
+        };
+        my $collected_sort_row = $self->db->teng->single('collected_sort', $sort_cond);
+        return $think if !$collected_sort_row;
+        $cond->{id} = $collected_sort_row->question_id;
+    }
+
     my $question_row = $self->db->teng->single( 'question', $cond );
     return $think if !$question_row;
     $think->{question} = $question_row->get_columns;

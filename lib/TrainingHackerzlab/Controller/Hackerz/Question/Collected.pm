@@ -18,7 +18,28 @@ sub show {
     );
     $self->render();
     return;
-
 }
+
+# 各問題集経由の問題画面
+sub think {
+    my $self   = shift;
+    my $params = +{
+        collected_id => $self->stash->{collected_id},
+        sort_id      => $self->stash->{sort_id},
+    };
+    my $hackerz           = $self->model->hackerz;
+    my $question          = $hackerz->question->req_params($params);
+    my $to_template_think = $question->to_template_think;
+    $self->stash(
+        %{$to_template_think},
+        template => $question->select_template,
+        user     => $self->login_user->get_columns,
+        format   => 'html',
+        handler  => 'ep',
+    );
+    $self->render();
+    return;
+}
+
 
 1;
