@@ -12,7 +12,7 @@ sub show {
     $self->stash(
         %{$to_template_show},
         user     => $self->login_user->get_columns,
-        template => 'hackerz/question/Collected/show',
+        template => 'hackerz/question/collected/show',
         format   => 'html',
         handler  => 'ep',
     );
