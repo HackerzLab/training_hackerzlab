@@ -9,6 +9,14 @@
   <!-- body head -->
   <%= include('inc/body_head', format => 'html') =%>
 
+  % if ( my $is_answer_ended = stash('is_answer_ended') ) {
+  <div class="container">
+    <div class="alert alert-danger text-center">
+    <a href="/hackerz/question/collected/<%= $collected->{id} %>/<%= $next_sort_id %>/think" class="btn btn-danger">  <span class=""> この問題は解答済みです「次の問題へ」</span></a>
+    </div>
+  </div>
+  % }
+
   <!-- body content -->
   <%= content =%>
 

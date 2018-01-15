@@ -37,6 +37,20 @@ sub fetch_survey {
     return $self->handle->single( 'survey', $cond );
 }
 
+# この問題は解答済み
+sub is_answer_ended {
+    my $self    = shift;
+    my $user_id = shift;
+    my $cond = +{
+        user_id     => $user_id,
+        question_id => $self->id,
+        deleted     => 0,
+    };
+    my $answer = $self->handle->single( 'answer', $cond );
+    return 1 if $answer;
+    return;
+}
+
 1;
 
 __END__

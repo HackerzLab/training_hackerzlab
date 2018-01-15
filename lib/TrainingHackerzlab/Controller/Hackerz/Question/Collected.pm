@@ -26,6 +26,7 @@ sub think {
     my $params = +{
         collected_id => $self->stash->{collected_id},
         sort_id      => $self->stash->{sort_id},
+        user_id      => $self->login_user->id,
     };
     my $hackerz           = $self->model->hackerz;
     my $question          = $hackerz->question->req_params($params);
@@ -40,6 +41,5 @@ sub think {
     $self->render();
     return;
 }
-
 
 1;

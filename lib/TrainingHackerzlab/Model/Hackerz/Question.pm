@@ -17,11 +17,15 @@ sub to_template_think {
     my $self = shift;
 
     my $think = +{
-        question  => undef,
-        hint_word => undef,
-        hint_id   => undef,
-        choice    => undef,
-        survey    => undef,
+        question        => undef,
+        is_answer_ended => undef,
+        collected       => undef,
+        collected_sort  => undef,
+        next_sort_id    => undef,
+        hint_word       => undef,
+        hint_id         => undef,
+        choice          => undef,
+        survey          => undef,
     };
 
     my $cond = +{
@@ -33,20 +37,29 @@ sub to_template_think {
     $self->select_template('hackerz/question/not_found');
 
     # 問題集からの呼び出しに対応
-    if (!$cond->{id}) {
+    if ( !$cond->{id} ) {
         my $sort_cond = +{
             collected_id => $self->req_params->{collected_id},
             sort_id      => $self->req_params->{sort_id},
             deleted      => 0,
         };
-        my $collected_sort_row = $self->db->teng->single('collected_sort', $sort_cond);
+        my $collected_sort_row
+            = $self->db->teng->single( 'collected_sort', $sort_cond );
         return $think if !$collected_sort_row;
         $cond->{id} = $collected_sort_row->question_id;
+        $think->{collected}
+            = $collected_sort_row->fetch_collected->get_columns;
+        $think->{collected_sort} = $collected_sort_row->get_columns;
+        $think->{next_sort_id} = $collected_sort_row->next_question_sort_id;
     }
 
     my $question_row = $self->db->teng->single( 'question', $cond );
     return $think if !$question_row;
     $think->{question} = $question_row->get_columns;
+
+    # 解答ずみかであるかの確認
+    $think->{is_answer_ended}
+        = $question_row->is_answer_ended( $self->req_params->{user_id} );
 
     $self->_analysis_pattern($question_row);
 
