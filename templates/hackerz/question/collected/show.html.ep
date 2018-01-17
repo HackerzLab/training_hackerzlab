@@ -38,22 +38,25 @@
       </div>
       <div class="panel-body"> <%= $collected->{description} %> </div>
     </div>
+
     <table class="table table-striped table-hover ">
       <thead>
         <tr>
-          <th>問</th>
+          <th>How?</th>
+          <th>No</th>
           <th>問題</th>
           <th>難易度</th>
           <th>得点</th>
         </tr>
       </thead>
       <tbody>
-        % for my $collected (@{$collected_list}) {
-        <tr class="active">
-          <td><%= $collected->{sort_id} %></td>
-          <td><%== $collected->{short_question} %></td>
-          <td><%= $collected->{level} %></td>
-          <td><%= $collected->{score} %></td>
+        % for my $list (@{$collected_list}) {
+        <tr class="text-<%= $list->{how_text} %>">
+          <td class=""><%= $list->{how} %></td>
+          <td><a href="/hackerz/question/collected/<%= $list->{collected_id} %>/<%= $list->{sort_id} %>/think" class="btn btn-primary btn-xs"><%= $list->{sort_id} %></a></td>
+          <td><%== $list->{short_question} %></td>
+          <td><%= $list->{level} %></td>
+          <td><%= $list->{score} %></td>
         </tr>
         % }
       </tbody>
@@ -63,19 +66,12 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-        <h2 class="page-header">問題はこっちだ</h2>
-        <a href="/hackerz/question/collected/<%= $collected->{id} %>/<%= $collected_list->[0]->{sort_id} %>/think" class="btn btn-default btn-lg btn-block">問題を始める</a>
+        <h2 class="page-header">メニューへもどるぞ!!</h2>
+        <a href="/hackerz/menu" class="btn btn-default btn-lg btn-block">メニュー</a>
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-        <h2 class="page-header">ログアウトはこっちだ</h2>
-        <form name="form_logout" method="post" action="/auth/logout">
-          <button type="submit" class="btn btn-default btn-lg btn-block" style="">ログアウトする</button>
-        </form>
+        <h2 class="page-header">得点確認はこっちだ</h2>
+        <a href="/hackerz/answer/score" class="btn btn-default btn-lg btn-block">得点確認</a>
       </div>
     </div>
-  </div>
-
-  <div class="container">
-    <h2 class="page-header">得点確認はこっちだ</h2>
-    <a href="/hackerz/answer/score" class="btn btn-default btn-lg btn-block">得点確認</a>
   </div>

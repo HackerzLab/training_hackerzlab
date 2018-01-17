@@ -22,13 +22,30 @@ sub to_template_show {
     my $collected_sorts = $collected_row->fetch_collected_sorts;
     my $collected_list;
     for my $collected_sort ( @{$collected_sorts} ) {
-        my $data = $collected_sort->fetch_question->get_columns;
-        $data->{sort_id} = $collected_sort->sort_id;
+        my $question = $collected_sort->fetch_question;
+        my $data     = $question->get_columns;
+        $data->{sort_id}      = $collected_sort->sort_id;
+        $data->{collected_id} = $collected_sort->collected_id;
 
         # 短くした問題文章
         $data->{short_question} = substr( $data->{question}, 0, 20 ) . ' ...';
+
+        # 問題の解答状況
+        $data->{how}      = '未';
+        $data->{how_text} = 'primary';
+
+        my $answer = $question->fetch_answer( $self->req_params->{staff_id} );
+        if ($answer) {
+            $data->{how}      = '不正解';
+            $data->{how_text} = 'danger';
+            if ( $answer->user_answer eq $question->answer ) {
+                $data->{how}      = '正解';
+                $data->{how_text} = 'success';
+            }
+        }
         push @{$collected_list}, $data;
     }
+    warn dumper $collected_list;
     $show->{collected_list} = $collected_list;
     return $show;
 }

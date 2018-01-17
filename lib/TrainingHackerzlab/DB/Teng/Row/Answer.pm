@@ -8,7 +8,7 @@ sub fetch_question {
     return $self->handle->single( 'question', $cond );
 }
 
-# 解答は正解
+# 解答結果は正解
 sub is_correct {
     my $self         = shift;
     my $question_row = $self->fetch_question;

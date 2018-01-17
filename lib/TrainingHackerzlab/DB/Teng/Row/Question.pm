@@ -37,11 +37,23 @@ sub fetch_survey {
     return $self->handle->single( 'survey', $cond );
 }
 
+# 該当の入力済みの解答を取得
+sub fetch_answer {
+    my $self    = shift;
+    my $user_id = shift;
+    my $cond    = +{
+        user_id     => $user_id,
+        question_id => $self->id,
+        deleted     => 0,
+    };
+    return $self->handle->single( 'answer', $cond );
+}
+
 # この問題は解答済み
 sub is_answer_ended {
     my $self    = shift;
     my $user_id = shift;
-    my $cond = +{
+    my $cond    = +{
         user_id     => $user_id,
         question_id => $self->id,
         deleted     => 0,
