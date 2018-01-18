@@ -12,13 +12,22 @@
   % if ( my $is_answer_ended = stash('is_answer_ended') ) {
   <div class="container">
     <div class="alert alert-danger text-center">
-    <a href="/hackerz/question/collected/<%= $collected->{id} %>/<%= $next_sort_id %>/think" class="btn btn-danger">  <span class=""> この問題は解答済みです「次の問題へ」</span></a>
+    <a href="<%= $collected_url %>" class="btn btn-danger"><span class=""> この問題は解答済みです「問題一覧へ」</span></a>
     </div>
   </div>
   % }
 
   <!-- body content -->
   <%= content =%>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <h2 class="page-header">問題一覧はこっちだ!!</h2>
+        <a href="<%= $collected_url %>" class="btn btn-default btn-lg btn-block">問題一覧</a>
+      </div>
+    </div>
+  </div>
 
   <!-- body footer bar -->
   <%= include('inc/body_footer_bar', format => 'html') =%>

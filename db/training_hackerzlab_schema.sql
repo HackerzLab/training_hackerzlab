@@ -87,6 +87,7 @@ DROP TABLE IF EXISTS answer;
 CREATE TABLE answer (                                   -- 入力された解答
     id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
     question_id     INTEGER,                            -- 問題ID (例: 5)
+    collected_id    INTEGER,                            -- 問題集ID (例: 5)
     user_id         INTEGER,                            -- ユーザーID (例: 5)
     user_answer     TEXT,                               -- 入力した答え (例: 'Stay Hungry')
     deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)

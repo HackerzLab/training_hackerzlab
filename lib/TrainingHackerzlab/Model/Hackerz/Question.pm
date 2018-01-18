@@ -21,6 +21,7 @@ sub to_template_think {
         is_answer_ended => undef,
         collected       => undef,
         collected_sort  => undef,
+        collected_url   => '/hackerz/question',
         next_sort_id    => undef,
         hint_word       => undef,
         hint_id         => undef,
@@ -49,6 +50,7 @@ sub to_template_think {
         $cond->{id} = $collected_sort_row->question_id;
         $think->{collected}
             = $collected_sort_row->fetch_collected->get_columns;
+        $think->{collected_url} .= '/collected/' . $self->req_params->{collected_id};
         $think->{collected_sort} = $collected_sort_row->get_columns;
         $think->{next_sort_id} = $collected_sort_row->next_question_sort_id;
     }

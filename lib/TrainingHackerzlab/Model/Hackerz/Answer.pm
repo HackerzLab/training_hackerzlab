@@ -87,10 +87,11 @@ sub store {
     my $self   = shift;
     my $master = $self->db->master;
     my $params = +{
-        question_id => $self->req_params->{question_id},
-        user_id     => $self->req_params->{user_id},
-        user_answer => $self->req_params->{user_answer},
-        deleted     => $master->deleted->constant('NOT_DELETED'),
+        question_id  => $self->req_params->{question_id},
+        collected_id => $self->req_params->{collected_id},
+        user_id      => $self->req_params->{user_id},
+        user_answer  => $self->req_params->{user_answer},
+        deleted      => $master->deleted->constant('NOT_DELETED'),
     };
     return $self->db->teng_fast_insert( 'answer', $params );
 }
@@ -141,7 +142,11 @@ sub to_template_result {
     my $question_id = $question_row->id;
     $question_id += 1;
     $result->{next_question_id} = $question_id;
-
+    $result->{collected_url}    = '/hackerz/question';
+    if (my $collected = $answer_row->fetch_collected) {
+        $result->{collected} = $collected->get_columns;
+        $result->{collected_url} .= '/collected/' . $collected->id;
+    }
     return $result;
 }
 

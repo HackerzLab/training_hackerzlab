@@ -14,6 +14,7 @@
             <div class="row">
               <input type="hidden" name="user_id" value="<%= $user->{id} %>">
               <input type="hidden" name="question_id" value="<%= $question->{id} %>">
+              <input type="hidden" name="collected_id" value="<%= $collected->{id} %>">
             % for my $val (1..4) {
               <div class="radio col-xs-12 col-sm-6 col-md-6 col-lg-6">
                 <label>
