@@ -23,8 +23,12 @@ sub think {
 
 # 問題をとくんだな画面
 sub index {
-    my $self = shift;
+    my $self   = shift;
+    my $params = +{ user_id => $self->login_user->id, };
+    my $model  = $self->model->hackerz->question->req_params($params);
+    my $to_template_index = $model->to_template_index;
     $self->stash(
+        %{$to_template_index},
         user     => $self->login_user->get_columns,
         template => 'hackerz/question/index',
         format   => 'html',

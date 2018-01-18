@@ -6,7 +6,7 @@ sub show {
 
     my $params = +{
         collected_id => $self->stash->{id},
-        staff_id     => $self->login_user->id,
+        user_id      => $self->login_user->id,
     };
     my $hackerz          = $self->model->hackerz;
     my $collected        = $hackerz->question->collected->req_params($params);

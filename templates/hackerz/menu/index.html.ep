@@ -6,15 +6,9 @@
   <!-- ログイン後の画面選択 -->
   <div class="container">
     <div class="row">
-      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-        <h2 class="page-header">問題はこっちだ</h2>
-        <a href="/hackerz/question" class="btn btn-default btn-lg btn-block">問題をとく</a>
-      </div>
-      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-        <h2 class="page-header">ログアウトはこっちだ</h2>
-        <form name="form_logout" method="post" action="/auth/logout">
-          <button type="submit" class="btn btn-default btn-lg btn-block" style="">ログアウトする</button>
-        </form>
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <h2 class="page-header">全ての問題はこっちだ</h2>
+        <a href="/hackerz/question" class="btn btn-default btn-lg btn-block text-warning">全ての問題をとく</a>
       </div>
     </div>
   </div>
@@ -37,15 +31,6 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <h2 class="page-header">自分の解答一覧はこっちだ</h2>
-        <a href="/hackerz/answer/list" class="btn btn-default btn-lg btn-block">自分の解答一覧</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <h2 class="page-header">ランキングはこっちだ</h2>
         <a href="/hackerz/ranking" class="btn btn-default btn-lg btn-block">総合ランキング</a>
       </div>
@@ -54,7 +39,26 @@
 
   <div class="container">
     <div class="row">
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <h2 class="page-header">得点確認はこっちだ</h2>
+        <a href="/hackerz/answer/score" class="btn btn-default btn-lg btn-block">得点確認</a>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <h2 class="page-header">自分の解答一覧はこっちだ</h2>
+        <a href="/hackerz/answer/list" class="btn btn-default btn-lg btn-block">解答一覧</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <h2 class="page-header">ログアウトはこっちだ</h2>
+        <form name="form_logout" method="post" action="/auth/logout">
+          <button type="submit" class="btn btn-warning btn-lg btn-block" style="">Logout</button>
+        </form>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
         <h2 class="page-header">登録情報を削除</h2>
         <a href="" class="btn btn-danger btn-lg btn-block">Danger</a>
       </div>

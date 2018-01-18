@@ -34,7 +34,7 @@ sub to_template_show {
         $data->{how}      = '未';
         $data->{how_text} = 'primary';
 
-        my $answer = $question->fetch_answer( $self->req_params->{staff_id} );
+        my $answer = $question->fetch_answer( $self->req_params->{user_id} );
         if ($answer) {
             $data->{how}      = '不正解';
             $data->{how_text} = 'danger';
@@ -45,7 +45,6 @@ sub to_template_show {
         }
         push @{$collected_list}, $data;
     }
-    warn dumper $collected_list;
     $show->{collected_list} = $collected_list;
     return $show;
 }

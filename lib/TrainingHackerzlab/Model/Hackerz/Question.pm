@@ -12,6 +12,44 @@ has [
         is_question_survey_and_file is_question_explain select_template}
 ] => undef;
 
+# 問題をとくんだな画面
+sub to_template_index {
+    my $self = shift;
+
+    my $template_index = +{ question_list => undef, };
+
+    my $cond = +{ deleted => 0, };
+
+    my @question_rows = $self->db->teng->search( 'question', $cond );
+    return $template_index if scalar @question_rows eq 0;
+
+    my $question_list;
+    for my $question (@question_rows) {
+        my $data = $question->get_columns;
+        $data->{sort_id} = $question->id;
+
+        # 短くした問題文章
+        $data->{short_question} = substr( $data->{question}, 0, 20 ) . ' ...';
+
+        # 問題の解答状況
+        $data->{how}      = '未';
+        $data->{how_text} = 'primary';
+
+        my $answer = $question->fetch_answer( $self->req_params->{user_id} );
+        if ($answer) {
+            $data->{how}      = '不正解';
+            $data->{how_text} = 'danger';
+            if ( $answer->user_answer eq $question->answer ) {
+                $data->{how}      = '正解';
+                $data->{how_text} = 'success';
+            }
+        }
+        push @{$question_list}, $data;
+    }
+    $template_index->{question_list} = $question_list;
+    return $template_index;
+}
+
 # 問題画面パラメーター
 sub to_template_think {
     my $self = shift;
@@ -50,9 +88,10 @@ sub to_template_think {
         $cond->{id} = $collected_sort_row->question_id;
         $think->{collected}
             = $collected_sort_row->fetch_collected->get_columns;
-        $think->{collected_url} .= '/collected/' . $self->req_params->{collected_id};
+        $think->{collected_url}
+            .= '/collected/' . $self->req_params->{collected_id};
         $think->{collected_sort} = $collected_sort_row->get_columns;
-        $think->{next_sort_id} = $collected_sort_row->next_question_sort_id;
+        $think->{next_sort_id}   = $collected_sort_row->next_question_sort_id;
     }
 
     my $question_row = $self->db->teng->single( 'question', $cond );
