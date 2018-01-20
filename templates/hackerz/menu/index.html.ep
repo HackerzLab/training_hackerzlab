@@ -44,7 +44,7 @@
         <a href="/hackerz/answer/score" class="btn btn-default btn-lg btn-block">得点確認</a>
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-        <h2 class="page-header">自分の解答一覧はこっちだ</h2>
+        <h2 class="page-header">解答一覧はこっちだ</h2>
         <a href="/hackerz/answer/list" class="btn btn-default btn-lg btn-block">解答一覧</a>
       </div>
     </div>

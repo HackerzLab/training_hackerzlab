@@ -29,3 +29,6 @@
       </div>
     </div>
   </div>
+
+  <!-- アプリメニューへ -->
+  <%= include('inc/question_menu', format => 'html') =%>

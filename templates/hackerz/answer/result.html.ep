@@ -13,11 +13,5 @@
     </div>
   </div>
 
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <h2 class="page-header">問題一覧はこっちだ!!</h2>
-        <a href="<%= $collected_url %>" class="btn btn-default btn-lg btn-block">問題一覧</a>
-      </div>
-    </div>
-  </div>
+  <!-- 問題一覧へ -->
+  <%= include('inc/question_index', format => 'html') =%>

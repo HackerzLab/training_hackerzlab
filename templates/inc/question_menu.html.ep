@@ -1,0 +1,4 @@
+  <div class="container">
+    <h2 class="page-header">メニューへもどるぞ!!</h2>
+    <a href="/hackerz/menu" class="btn btn-default btn-lg btn-block">メニュー</a>
+  </div>

@@ -37,7 +37,5 @@
     </table>
   </div>
 
-  <div class="container">
-    <h2 class="page-header">メニューへもどるぞ!!</h2>
-    <a href="/hackerz/menu" class="btn btn-default btn-lg btn-block">メニュー</a>
-  </div>
+  <!-- アプリメニューへ -->
+  <%= include('inc/question_menu', format => 'html') =%>
