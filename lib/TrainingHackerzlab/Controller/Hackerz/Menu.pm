@@ -7,9 +7,10 @@ sub index {
     my $to_template_index = $self->model->hackerz->menu->to_template_index;
     $self->render(
         %{$to_template_index},
-        template  => 'hackerz/menu/index',
-        format    => 'html',
-        handler   => 'ep',
+        user     => $self->login_user->get_columns,
+        template => 'hackerz/menu/index',
+        format   => 'html',
+        handler  => 'ep',
     );
     return;
 }

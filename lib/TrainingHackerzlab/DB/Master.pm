@@ -31,6 +31,7 @@ sub auth {
         5 => 'ログインが必要です',
         6 => '有効な値を入力してください',
         7 => 'ユーザー登録完了',
+        8 => 'ユーザー情報を削除しました',
     };
 
     my $constant = +{
@@ -42,6 +43,7 @@ sub auth {
         NEED_LOGIN      => 5,
         HAS_ERROR_INPUT => 6,
         DONE_ENTRY      => 7,
+        USER_DELETED    => 8,
     };
 
     $self->master_hash($hash);

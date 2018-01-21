@@ -104,10 +104,24 @@ sub update {
     return;
 }
 
-# ユーザー削除実行 (未実装)
+# ユーザー削除実行
 sub remove {
     my $self = shift;
-    $self->render( text => 'remove' );
+    if ( $self->req->method eq 'POST' ) {
+        $self->session( expires => 1 );
+        my $params = +{ user_id => $self->stash->{id}, };
+        my $model = $self->model->auth->req_params($params);
+        $model->remove;
+        $self->redirect_to('/auth/remove');
+        return;
+    }
+    my $master = $self->model->auth->db->master;
+    $self->render(
+        msg      => $master->auth->to_word('USER_DELETED'),
+        template => 'auth/remove',
+        format   => 'html',
+        handler  => 'ep',
+    );
     return;
 }
 

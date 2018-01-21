@@ -20,6 +20,23 @@ sub has_error_easy {
     return;
 }
 
+# 削除
+sub remove {
+    my $self = shift;
+    my $cond = +{
+        id      => $self->req_params->{user_id},
+        deleted => $self->db->master->deleted->constant('NOT_DELETED'),
+    };
+    my $user = $self->db->teng->single( 'user', $cond );
+
+    # 存在確認
+    die if !$user;
+
+    # 関連情報も全て削除
+    $user->soft_delete;
+    return;
+}
+
 # 登録実行
 sub store {
     my $self   = shift;

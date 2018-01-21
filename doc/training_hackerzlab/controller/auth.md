@@ -11,10 +11,11 @@ training_hackerzlab/controller/auth - TrainingHackerzlab 認証
 - GET - `/auth/:id` - show ユーザー情報詳細 (未実装)
 - GET - `/auth` - index - ログイン入力画面
 - GET - `/auth/logout` - logout - ユーザーログアウト画面
+- GET - `/auth/remove` - remove ユーザー削除画面
 - POST - `/auth/login` - login - ユーザーログイン実行
 - POST - `/auth/logout` - logout - ユーザーログアウト実行
 - POST - `/auth/:id/update` - update ユーザーパスワード変更実行 (未実装)
-- POST - `/auth/:id/remove` - remove ユーザー削除実行 (未実装)
+- POST - `/auth/:id/remove` - remove ユーザー削除実行
 - POST - `/auth` - store ユーザー新規登録実行
 
 # DESCRIPTION

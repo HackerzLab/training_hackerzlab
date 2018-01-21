@@ -60,7 +60,27 @@
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
         <h2 class="page-header">登録情報を削除</h2>
-        <a href="" class="btn btn-danger btn-lg btn-block">Danger</a>
+        <button type="button" class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#removeModal">Danger</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="removeModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">登録情報削除</h4>
+        </div>
+        <div class="modal-body">
+          <p>本当に登録情報を削除するんだな!!</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn-lg btn-block" data-dismiss="modal">閉じる</button>
+          <form name="form_remove" method="post" action="/auth/<%= $user->{id} %>/remove">
+            <button type="submit" class="btn btn-danger btn-lg btn-block">削除</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
