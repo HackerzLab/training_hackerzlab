@@ -5,8 +5,8 @@ use Mojo::Util qw{dumper};
 sub to_template_show {
     my $self = shift;
     my $show = +{
-        collected      => undef,
-        collected_list => undef,
+        collected     => undef,
+        question_list => undef,
     };
 
     my $cond = +{
@@ -20,15 +20,22 @@ sub to_template_show {
 
     # 問題集の順番も含める
     my $collected_sorts = $collected_row->fetch_collected_sorts;
-    my $collected_list;
+    my $question_list;
     for my $collected_sort ( @{$collected_sorts} ) {
-        my $question = $collected_sort->fetch_question;
-        my $data     = $question->get_columns;
-        $data->{sort_id}      = $collected_sort->sort_id;
-        $data->{collected_id} = $collected_sort->collected_id;
+        my $question     = $collected_sort->fetch_question;
+        my $data         = $question->get_columns;
+        my $sort_id      = $collected_sort->sort_id;
+        my $collected_id = $collected_sort->collected_id;
+
+        $data->{sort_id}      = $sort_id;
+        $data->{collected_id} = $collected_id;
 
         # 短くした問題文章
         $data->{short_question} = substr( $data->{question}, 0, 20 ) . ' ...';
+
+        # 問題へのurl
+        $data->{q_url}
+            = "/hackerz/question/collected/$collected_id/$sort_id/think";
 
         # 問題の解答状況
         $data->{how}      = '未';
@@ -43,9 +50,9 @@ sub to_template_show {
                 $data->{how_text} = 'success';
             }
         }
-        push @{$collected_list}, $data;
+        push @{$question_list}, $data;
     }
-    $show->{collected_list} = $collected_list;
+    $show->{question_list} = $question_list;
     return $show;
 }
 

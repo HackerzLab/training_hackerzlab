@@ -1,0 +1,24 @@
+  <div class="container">
+    <table class="table table-striped table-hover ">
+      <thead>
+        <tr>
+          <th>How?</th>
+          <th>No</th>
+          <th>タイトル</th>
+          <th>難易度</th>
+          <th>得点</th>
+        </tr>
+      </thead>
+      <tbody>
+        % for my $list (@{$question_list}) {
+        <tr class="text-<%= $list->{how_text} %>">
+          <td class=""><%= $list->{how} %></td>
+          <td><a href="<%= $list->{q_url} %>" class="btn btn-primary btn-xs"><%= $list->{sort_id} %></a></td>
+          <td><%= $list->{title} %></td>
+          <td><%= $list->{level} %></td>
+          <td><%= $list->{score} %></td>
+        </tr>
+        % }
+      </tbody>
+    </table>
+  </div>

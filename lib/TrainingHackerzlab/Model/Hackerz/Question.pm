@@ -25,11 +25,15 @@ sub to_template_index {
 
     my $question_list;
     for my $question (@question_rows) {
-        my $data = $question->get_columns;
-        $data->{sort_id} = $question->id;
+        my $data    = $question->get_columns;
+        my $sort_id = $question->id;
+        $data->{sort_id} = $sort_id;
 
         # 短くした問題文章
         $data->{short_question} = substr( $data->{question}, 0, 20 ) . ' ...';
+
+        # 問題へのurl
+        $data->{q_url} = "/hackerz/question/$sort_id/think";
 
         # 問題の解答状況
         $data->{how}      = '未';

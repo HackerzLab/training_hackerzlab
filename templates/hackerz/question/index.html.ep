@@ -5,37 +5,11 @@
   <%= include('inc/question_user', format => 'html') =%>
 
   <div class="container">
-    <h2 class="page-header">この問題集の問題を解くんだな!!</h2>
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title"><span class="glyphicon glyphicon-question-sign"></span>&emsp;&ensp;</h3>
-      </div>
-      <div class="panel-body">  </div>
-    </div>
-
-    <table class="table table-striped table-hover ">
-      <thead>
-        <tr>
-          <th>How?</th>
-          <th>No</th>
-          <th>問題</th>
-          <th>難易度</th>
-          <th>得点</th>
-        </tr>
-      </thead>
-      <tbody>
-        % for my $list (@{$question_list}) {
-        <tr class="text-<%= $list->{how_text} %>">
-          <td class=""><%= $list->{how} %></td>
-          <td><a href="/hackerz/question/<%= $list->{sort_id} %>/think" class="btn btn-primary btn-xs"><%= $list->{sort_id} %></a></td>
-          <td><%== $list->{short_question} %></td>
-          <td><%= $list->{level} %></td>
-          <td><%= $list->{score} %></td>
-        </tr>
-        % }
-      </tbody>
-    </table>
+    <h2 class="page-header">全ての問題を解くんだな!!</h2>
   </div>
+
+  <!-- 問題一覧テーブル -->
+  <%= include('inc/question_table', format => 'html') =%>
 
   <!-- アプリメニューへ -->
   <%= include('inc/question_menu', format => 'html') =%>

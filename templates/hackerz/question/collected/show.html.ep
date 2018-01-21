@@ -12,30 +12,10 @@
       </div>
       <div class="panel-body"> <%= $collected->{description} %> </div>
     </div>
-
-    <table class="table table-striped table-hover ">
-      <thead>
-        <tr>
-          <th>How?</th>
-          <th>No</th>
-          <th>問題</th>
-          <th>難易度</th>
-          <th>得点</th>
-        </tr>
-      </thead>
-      <tbody>
-        % for my $list (@{$collected_list}) {
-        <tr class="text-<%= $list->{how_text} %>">
-          <td class=""><%= $list->{how} %></td>
-          <td><a href="/hackerz/question/collected/<%= $list->{collected_id} %>/<%= $list->{sort_id} %>/think" class="btn btn-primary btn-xs"><%= $list->{sort_id} %></a></td>
-          <td><%== $list->{short_question} %></td>
-          <td><%= $list->{level} %></td>
-          <td><%= $list->{score} %></td>
-        </tr>
-        % }
-      </tbody>
-    </table>
   </div>
+
+  <!-- 問題一覧テーブル -->
+  <%= include('inc/question_table', format => 'html') =%>
 
   <!-- アプリメニューへ -->
   <%= include('inc/question_menu', format => 'html') =%>
