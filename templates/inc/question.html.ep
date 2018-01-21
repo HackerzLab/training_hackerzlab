@@ -3,9 +3,10 @@
       <div class="panel-heading">
         <h3 class="panel-title">
         <span class="glyphicon glyphicon-question-sign"></span>
-        &emsp;第&ensp;<%= $collected_sort->{sort_id} %>&ensp;問
-        「問題集&ensp;<%= $collected->{title} %>&ensp;より」
-        (q<%= $question->{id} %>)
+        &emsp;第&ensp;<%= $sort_id %>&ensp;問
+        &ensp;<%= $question->{title} %>
+        &ensp;<%= $collected->{title} %>
+        &ensp;(q<%= $question->{id} %>)
         </h3>
       </div>
       <div class="panel-body">

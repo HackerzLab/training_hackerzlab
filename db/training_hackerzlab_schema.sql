@@ -12,6 +12,7 @@ CREATE TABLE user (                                     -- ユーザー
 DROP TABLE IF EXISTS question;
 CREATE TABLE question (                                 -- 問題
     id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
+    title           TEXT,                               -- タイトル (例: '文字列を解読せよ')
     question        TEXT,                               -- 問題文 (例: '以下の暗号を解読し、元の文字列を解読せよ。')
     answer          TEXT,                               -- 問題の答え (例: 'Stay Hungry')
     score           INTEGER,                            -- 得点 (例 10)
