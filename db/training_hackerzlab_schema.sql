@@ -95,12 +95,3 @@ CREATE TABLE answer (                                   -- 入力された解答
     created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
     modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
 );
-DROP TABLE IF EXISTS scores;
-CREATE TABLE scores (                                   -- 得点
-    id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
-    user_id         INTEGER,                            -- ユーザーID (例: 5)
-    score           INTEGER,                            -- 得点の合計 (例: 80)
-    deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
-    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
-    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
-);

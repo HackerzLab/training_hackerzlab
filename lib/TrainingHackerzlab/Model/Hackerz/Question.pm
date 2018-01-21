@@ -48,6 +48,7 @@ sub to_template_index {
                 $data->{how_text} = 'success';
             }
         }
+        $data->{question} = $question->get_columns;
         push @{$question_list}, $data;
     }
     $template_index->{question_list} = $question_list;
@@ -80,6 +81,7 @@ sub to_template_think {
     $self->select_template('hackerz/question/not_found');
 
     # 問題集からの呼び出しに対応
+    my $collected_id = '';
     if ( !$cond->{id} ) {
         my $sort_cond = +{
             collected_id => $self->req_params->{collected_id},
@@ -96,6 +98,7 @@ sub to_template_think {
             .= '/collected/' . $self->req_params->{collected_id};
         $think->{collected_sort} = $collected_sort_row->get_columns;
         $think->{sort_id}        = $collected_sort_row->sort_id;
+        $collected_id            = $self->req_params->{collected_id};
     }
 
     my $question_row = $self->db->teng->single( 'question', $cond );
@@ -108,7 +111,8 @@ sub to_template_think {
 
     # 解答ずみかであるかの確認
     $think->{is_answer_ended}
-        = $question_row->is_answer_ended( $self->req_params->{user_id} );
+        = $question_row->is_answer_ended( $self->req_params->{user_id},
+        $collected_id );
 
     $self->_analysis_pattern($question_row);
 

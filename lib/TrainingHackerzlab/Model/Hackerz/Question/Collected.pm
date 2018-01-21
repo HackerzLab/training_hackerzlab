@@ -18,39 +18,50 @@ sub to_template_show {
     return $show if !$collected_row;
     $show->{collected} = $collected_row->get_columns;
 
-    # 問題集の順番も含める
-    my $collected_sorts = $collected_row->fetch_collected_sorts;
-    my $question_list;
-    for my $collected_sort ( @{$collected_sorts} ) {
-        my $question     = $collected_sort->fetch_question;
-        my $data         = $question->get_columns;
-        my $sort_id      = $collected_sort->sort_id;
-        my $collected_id = $collected_sort->collected_id;
+    # my $show = +{
+    #     collected => +{},
+    #     question_list => [
+    #         +{  collected_sort => +{},
+    #             question => +{},
+    #             answer => +{},
+    #             q_url => '',
+    #             how => '',
+    #             how_text => '',
+    #         },
+    #     ],
+    # };
+    my $question_list = $collected_row->fetch_question_list_to_hash(
+        $self->req_params->{user_id} );
 
-        $data->{sort_id}      = $sort_id;
-        $data->{collected_id} = $collected_id;
+    # 問題集の順番も含める
+    for my $list ( @{$question_list} ) {
+        my $sort_id      = $list->{collected_sort}->{sort_id};
+        my $collected_id = $list->{collected_sort}->{collected_id};
+        $list->{sort_id}      = $sort_id;
+        $list->{collected_id} = $collected_id;
 
         # 短くした問題文章
-        $data->{short_question} = substr( $data->{question}, 0, 20 ) . ' ...';
+        $list->{short_question}
+            = substr( $list->{question}->{question}, 0, 20 ) . ' ...';
 
         # 問題へのurl
-        $data->{q_url}
+        $list->{q_url}
             = "/hackerz/question/collected/$collected_id/$sort_id/think";
 
         # 問題の解答状況
-        $data->{how}      = '未';
-        $data->{how_text} = 'primary';
+        $list->{how}      = '未';
+        $list->{how_text} = 'primary';
 
-        my $answer = $question->fetch_answer( $self->req_params->{user_id} );
-        if ($answer) {
-            $data->{how}      = '不正解';
-            $data->{how_text} = 'danger';
-            if ( $answer->user_answer eq $question->answer ) {
-                $data->{how}      = '正解';
-                $data->{how_text} = 'success';
+        if ( exists $list->{answer} ) {
+            $list->{how}      = '不正解';
+            $list->{how_text} = 'danger';
+            if ( $list->{answer}->{user_answer} eq $list->{question}->{answer}
+                )
+            {
+                $list->{how}      = '正解';
+                $list->{how_text} = 'success';
             }
         }
-        push @{$question_list}, $data;
     }
     $show->{question_list} = $question_list;
     return $show;

@@ -6,7 +6,7 @@ training_hackerzlab/controller/hackerz/question/collected - TrainingHackerzlab
 
 ## URL
 
-- GET - `/hackerz/question/collected/:id` - index - 各問題集をとく画面
+- GET - `/hackerz/question/collected/:id` - show - 各問題集をとく画面
 - GET - `/hackerz/question/collected/:collected_id/:sort_id/think` - think - 問題集からの各問題画面
 
 # DESCRIPTION

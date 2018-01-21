@@ -14,9 +14,9 @@
         <tr class="text-<%= $list->{how_text} %>">
           <td class=""><%= $list->{how} %></td>
           <td><a href="<%= $list->{q_url} %>" class="btn btn-primary btn-xs"><%= $list->{sort_id} %></a></td>
-          <td><%= $list->{title} %></td>
-          <td><%= $list->{level} %></td>
-          <td><%= $list->{score} %></td>
+          <td><%= $list->{question}->{title} %></td>
+          <td><%= $list->{question}->{level} %></td>
+          <td><%= $list->{question}->{score} %></td>
         </tr>
         % }
       </tbody>

@@ -15,6 +15,19 @@ sub fetch_collected {
     return $self->handle->single( 'collected', $cond );
 }
 
+# 該当の入力済みの解答を取得
+sub fetch_answer {
+    my $self    = shift;
+    my $user_id = shift;
+    my $cond = +{
+        question_id  => $self->question_id,
+        collected_id => $self->collected_id,
+        user_id      => $user_id,
+        deleted      => 0,
+    };
+    return $self->handle->single( 'answer', $cond );
+}
+
 # 次の問題の順番
 sub next_question_sort_id {
     my $self         = shift;

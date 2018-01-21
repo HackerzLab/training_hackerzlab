@@ -12,12 +12,14 @@ sub has_error_easy {
     return 1 if !$params->{user_id};
     return 1 if !$params->{user_answer};
     return 1 if !$params->{question_id};
+    my $collected_id = $params->{collected_id} || '';
 
     # 二重登録防止
     my $cond = +{
-        user_id     => $params->{user_id},
-        question_id => $params->{question_id},
-        deleted     => $self->db->master->deleted->constant('NOT_DELETED'),
+        user_id      => $params->{user_id},
+        question_id  => $params->{question_id},
+        collected_id => $collected_id,
+        deleted      => $self->db->master->deleted->constant('NOT_DELETED'),
     };
     my $answer = $self->db->teng->single( 'answer', $cond );
     $self->error_msg( $master->answer->to_word('EXISTS_ANSWER') );
@@ -143,7 +145,7 @@ sub to_template_result {
     $question_id += 1;
     $result->{next_question_id} = $question_id;
     $result->{collected_url}    = '/hackerz/question';
-    if (my $collected = $answer_row->fetch_collected) {
+    if ( my $collected = $answer_row->fetch_collected ) {
         $result->{collected} = $collected->get_columns;
         $result->{collected_url} .= '/collected/' . $collected->id;
     }
