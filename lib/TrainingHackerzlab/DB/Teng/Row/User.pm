@@ -55,6 +55,24 @@ sub soft_delete {
     return;
 }
 
+# 解答結果を含む問題集に関連する情報一式
+sub fetch_collected_list_to_hash {
+    my $self           = shift;
+    my $cond           = +{ deleted => 0, };
+    my @collected_rows = $self->handle->search( 'collected', $cond );
+    my $collected_list;
+    for my $collected_row (@collected_rows) {
+        my $question_list
+            = $collected_row->fetch_question_list_to_hash( $self->id );
+        push @{$collected_list},
+            +{
+            collected     => $collected_row->get_columns,
+            question_list => $question_list,
+            };
+    }
+    return $collected_list;
+}
+
 1
 
 __END__

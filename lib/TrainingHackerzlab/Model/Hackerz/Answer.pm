@@ -1,6 +1,6 @@
 package TrainingHackerzlab::Model::Hackerz::Answer;
 use Mojo::Base 'TrainingHackerzlab::Model::Base';
-
+use Mojo::Util qw{dumper};
 has [qw{error_msg}] => undef;
 
 # 簡易的なバリデート
@@ -34,9 +34,68 @@ sub to_template_score {
     my $master  = $self->db->master;
     my $user_id = $self->req_params->{user_id};
     my $score   = +{
-        result => 0,
-        list   => [],
+        result         => 0,
+        list           => [],
+        collected_list => undef,
     };
+
+    # my $score = +{
+    #     collected_list => [
+    #         +{  collected     => +{},
+    #             question_list => [
+    #                 +{  collected_sort => +{},
+    #                     question       => +{},
+    #                     answer         => +{},
+    #                     q_url          => '',
+    #                     how            => '',
+    #                     how_text       => '',
+    #                 },
+    #             ],
+    #         },
+    #         +{},
+    #     ],
+    # };
+    my $user_row = $self->db->teng->single(
+        'user',
+        +{  id      => $user_id,
+            deleted => 0,
+        }
+    );
+    my $collected_list = $user_row->fetch_collected_list_to_hash();
+    for my $list ( @{$collected_list} ) {
+        for my $question_list ( @{ $list->{question_list} } ) {
+            my $sort_id = $question_list->{collected_sort}->{sort_id};
+            my $collected_id
+                = $question_list->{collected_sort}->{collected_id};
+            $question_list->{sort_id}      = $sort_id;
+            $question_list->{collected_id} = $collected_id;
+
+            # 短くした問題文章
+            $question_list->{short_question}
+                = substr( $question_list->{question}->{question}, 0, 20 )
+                . ' ...';
+
+            # 問題へのurl
+            $question_list->{q_url}
+                = "/hackerz/question/collected/$collected_id/$sort_id/think";
+
+            # 問題の解答状況
+            $question_list->{how}      = '未';
+            $question_list->{how_text} = 'primary';
+
+            if ( exists $question_list->{answer} ) {
+                $question_list->{how}      = '不正解';
+                $question_list->{how_text} = 'danger';
+                if ( $question_list->{answer}->{user_answer} eq
+                    $question_list->{question}->{answer} )
+                {
+                    $question_list->{how}      = '正解';
+                    $question_list->{how_text} = 'success';
+                }
+            }
+        }
+    }
+    $score->{collected_list} = $collected_list;
 
     my $cond = +{
         user_id => $user_id,
