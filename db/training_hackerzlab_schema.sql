@@ -78,6 +78,7 @@ DROP TABLE IF EXISTS hint_opened;
 CREATE TABLE hint_opened (                              -- 問題のヒント開封履歴
     id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
     user_id         INTEGER,                            -- ユーザーID (例: 5)
+    collected_id    INTEGER,                            -- 問題集ID (例: 5)
     hint_id         INTEGER,                            -- 問題のヒントID (例: 5)
     opened          INTEGER,                            -- 開封記録 (例: 0: 開封していない, 1: 開封済み )
     deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)

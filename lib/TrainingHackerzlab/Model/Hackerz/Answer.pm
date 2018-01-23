@@ -12,7 +12,12 @@ sub has_error_easy {
     return 1 if !$params->{user_id};
     return 1 if !$params->{user_answer};
     return 1 if !$params->{question_id};
-    my $collected_id = $params->{collected_id} || '';
+    my $collected_id = $params->{collected_id};
+
+    # 全ての問題の場合は collected_id は 0 にする
+    if ( !$collected_id ) {
+        $collected_id = 0;
+    }
 
     # 二重登録防止
     my $cond = +{
@@ -112,22 +117,32 @@ sub to_template_score {
 
         my $question_row = $answer_row->fetch_question;
         my $data         = +{
-            question_id       => $question_row->id,
-            question_score    => $question_row->score,
+            question          => $question_row->get_columns,
+            collected         => undef,
             answer_result     => '不正解',
             hint_opened_level => [],
             get_score         => 0,
         };
 
+        # 問題集の情報
+        my $collected    = $answer_row->fetch_collected;
+        my $collected_id = 0;
+        if ($collected) {
+            $data->{collected} = $collected->get_columns;
+            $collected_id = $collected->id;
+        }
+
         # 問題のヒントが開封ずみのヒントを取得
-        my $hint_rows = $question_row->search_opened_hint($user_id);
+        my $hint_rows
+            = $question_row->search_opened_hint( $user_id, $collected_id );
         $data->{hint_opened_level} = [ map { $_->level } @{$hint_rows} ];
 
         # 不正解の場合は 0 点
         if ( $answer_row->is_correct ) {
 
             # ヒントの開封を考慮した獲得点数
-            $data->{get_score} = $answer_row->get_score_opened_hint($user_id);
+            $data->{get_score} = $answer_row->get_score_opened_hint( $user_id,
+                $collected_id );
             $data->{answer_result} = '正解';
         }
         push @{$list}, $data;
@@ -149,7 +164,7 @@ sub store {
     my $master = $self->db->master;
     my $params = +{
         question_id  => $self->req_params->{question_id},
-        collected_id => $self->req_params->{collected_id},
+        collected_id => $self->req_params->{collected_id} || 0,
         user_id      => $self->req_params->{user_id},
         user_answer  => $self->req_params->{user_answer},
         deleted      => $master->deleted->constant('NOT_DELETED'),

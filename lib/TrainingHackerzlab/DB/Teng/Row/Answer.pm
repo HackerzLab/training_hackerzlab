@@ -25,13 +25,15 @@ sub is_correct {
 
 # ヒントの開封を考慮した獲得点数
 sub get_score_opened_hint {
-    my $self    = shift;
-    my $user_id = shift;
+    my $self         = shift;
+    my $user_id      = shift;
+    my $collected_id = shift;
 
     # 問題のヒントが開封ずみのヒントを取得
     my $question_row = $self->fetch_question;
-    my $hint_rows    = $question_row->search_opened_hint($user_id);
-    my $count        = scalar @{$hint_rows};
+    my $hint_rows
+        = $question_row->search_opened_hint( $user_id, $collected_id );
+    my $count = scalar @{$hint_rows};
     return $question_row->score - ( $count * 2 );
 }
 

@@ -25,7 +25,8 @@ sub get_score_opened_hint {
     # ヒントの開封を考慮した獲得点数
     for my $answer_row ( @{$answer_rows} ) {
         next if !$answer_row->is_correct;
-        $score_all += $answer_row->get_score_opened_hint( $self->id );
+        $score_all += $answer_row->get_score_opened_hint( $self->id,
+            $answer_row->collected_id );
     }
     return $score_all;
 }

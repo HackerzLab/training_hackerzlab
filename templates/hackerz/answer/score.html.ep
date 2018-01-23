@@ -6,7 +6,8 @@
 
       <ul class="list-group">
         % for my $row (@{$list}) {
-        <li class="list-group-item"> 第<%= $row->{question_id} %>問 <%= $row->{answer_result} %>
+        <li class="list-group-item"> 第<%= $row->{question}->{id} %>問 <%= $row->{answer_result} %>
+          <%= $row->{collected}->{title} %>
           <span class="badge">get <%= $row->{get_score} %></span>
           % for my $level (@{$row->{hint_opened_level}}) {
           <span class="badge"><%= $level %></span>
