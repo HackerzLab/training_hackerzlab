@@ -66,39 +66,57 @@ sub to_template_score {
             deleted => 0,
         }
     );
-    my $collected_list = $user_row->fetch_collected_list_to_hash();
-    for my $list ( @{$collected_list} ) {
-        for my $question_list ( @{ $list->{question_list} } ) {
-            my $sort_id = $question_list->{collected_sort}->{sort_id};
-            my $collected_id
-                = $question_list->{collected_sort}->{collected_id};
-            $question_list->{sort_id}      = $sort_id;
-            $question_list->{collected_id} = $collected_id;
+
+    # 関連情報一式
+    my $collected_row_list = $user_row->fetch_collected_row_list();
+    my $collected_list;
+    for my $list ( @{$collected_row_list} ) {
+        my $question_list_array = [];
+        for my $question_list ( @{ $list->{question_row_list} } ) {
+            my $hash;
+            my $collected_sort
+                = $question_list->{collected_sort_row}->get_columns;
+            my $question     = $question_list->{question_row}->get_columns;
+            my $sort_id      = $collected_sort->{sort_id};
+            my $collected_id = $collected_sort->{collected_id};
+            $hash->{collected_sort} = $collected_sort;
+            $hash->{question}       = $question;
+            $hash->{sort_id}        = $sort_id;
+            $hash->{collected_id}   = $collected_id;
 
             # 短くした問題文章
-            $question_list->{short_question}
-                = substr( $question_list->{question}->{question}, 0, 20 )
-                . ' ...';
+            $hash->{short_question}
+                = substr( $question->{question}, 0, 20 ) . ' ...';
 
             # 問題へのurl
-            $question_list->{q_url}
+            $hash->{q_url}
                 = "/hackerz/question/collected/$collected_id/$sort_id/think";
 
             # 問題の解答状況
-            $question_list->{how}      = '未';
-            $question_list->{how_text} = 'primary';
+            $hash->{how}      = '未';
+            $hash->{how_text} = 'primary';
 
-            if ( exists $question_list->{answer} ) {
-                $question_list->{how}      = '不正解';
-                $question_list->{how_text} = 'danger';
-                if ( $question_list->{answer}->{user_answer} eq
-                    $question_list->{question}->{answer} )
-                {
-                    $question_list->{how}      = '正解';
-                    $question_list->{how_text} = 'success';
+            # 問題のヒントが開封ずみのヒントを取得
+            my $hint_rows = $question_list->{hint_opened_rows};
+            $hash->{hint_opened_level} = [ map { $_->level } @{$hint_rows} ];
+
+            if ( exists $question_list->{answer_row} ) {
+                my $answer = $question_list->{answer_row}->get_columns;
+                $hash->{answer}   = $answer;
+                $hash->{how}      = '不正解';
+                $hash->{how_text} = 'danger';
+                if ( $answer->{user_answer} eq $question->{answer} ) {
+                    $hash->{how}      = '正解';
+                    $hash->{how_text} = 'success';
                 }
             }
+            push @{$question_list_array}, $hash;
         }
+        push @{$collected_list},
+            +{
+            collected     => $list->{collected_row}->get_columns,
+            question_list => $question_list_array,
+            };
     }
     $score->{collected_list} = $collected_list;
 

@@ -58,7 +58,7 @@
                     <th>How?</th>
                     <th>No</th>
                     <th>タイトル</th>
-                    <th>難易度</th>
+                    <th>ヒント開封</th>
                     <th>得点</th>
                   </tr>
                 </thead>
@@ -68,7 +68,11 @@
                     <td class=""><%= $list->{how} %></td>
                     <td><a href="<%= $list->{q_url} %>" class="btn btn-primary btn-xs"><%= $list->{collected_sort}->{sort_id} %></a></td>
                     <td><%= $list->{question}->{title} %></td>
-                    <td><%= $list->{question}->{level} %></td>
+                    <td>
+                    % for my $level (@{$list->{hint_opened_level}}) {
+                    <span class="badge"><%= $level %></span>
+                    % }
+                    </td>
                     <td><%= $list->{question}->{score} %></td>
                   </tr>
                   % }
