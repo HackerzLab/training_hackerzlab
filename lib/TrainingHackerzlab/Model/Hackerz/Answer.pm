@@ -33,6 +33,87 @@ sub has_error_easy {
     return;
 }
 
+# 問題へのurl
+sub _question_url {
+    my $self           = shift;
+    my $collected_sort = shift;
+    my $sort_id        = $collected_sort->{sort_id};
+    my $collected_id   = $collected_sort->{collected_id};
+    my $url = "/hackerz/question/collected/$collected_id/$sort_id/think";
+    return $url;
+}
+
+# 解答関連データ一式
+sub _answer_data_hash {
+    my $self = shift;
+    my $data = shift;
+
+    my $answer   = $data->{answer_row}->get_columns;
+    my $question = $data->{question_row}->get_columns;
+
+    my $hash = +{
+        answer    => $answer,
+        how       => '不正解',
+        how_text  => 'danger',
+        get_score => 0,
+    };
+    return $hash if $answer->{user_answer} ne $question->{answer};
+
+    $hash->{how}      = '正解';
+    $hash->{how_text} = 'success';
+
+    # TODO: ヒントの開封を考慮した獲得点数
+    return $hash;
+}
+
+# 問題関連データ一式
+sub _question_data_hash {
+    my $self = shift;
+    my $data = shift;
+
+    my $collected_sort = $data->{collected_sort_row}->get_columns;
+    my $question       = $data->{question_row}->get_columns;
+    my $hint_rows      = $data->{hint_opened_rows};
+
+    my $hash = +{
+        collected_sort => $collected_sort,
+        question       => $question,
+        sort_id        => $collected_sort->{sort_id},
+        collected_id   => $collected_sort->{collected_id},
+        q_url          => $self->_question_url($collected_sort),
+        short_question => substr( $question->{question}, 0, 20 ) . ' ...',
+        how            => '未',
+        how_text       => 'primary',
+        hint_opened_level => [ map { $_->level } @{$hint_rows} ],
+        get_score         => 0,
+    };
+
+    if ( exists $data->{answer_row} ) {
+        my $answer_hash = $self->_answer_data_hash($data);
+        $hash->{answer}    = $answer_hash->{answer};
+        $hash->{how}       = $answer_hash->{how};
+        $hash->{how_text}  = $answer_hash->{how_text};
+        $hash->{get_score} = $answer_hash->{get_score};
+    }
+    return $hash;
+}
+
+# 問題集関連データ一式
+sub _collected_data_hash {
+    my $self = shift;
+    my $data = shift;
+
+    # 問題関連データ一式
+    my $question_list = [];
+    for my $question_data ( @{ $data->{question_row_list} } ) {
+        push @{$question_list}, $self->_question_data_hash($question_data);
+    }
+    return +{
+        collected     => $data->{collected_row}->get_columns,
+        question_list => $question_list,
+    };
+}
+
 # 解答結果点数
 sub to_template_score {
     my $self    = shift;
@@ -67,56 +148,13 @@ sub to_template_score {
         }
     );
 
-    # 関連情報一式
+    # 関連情報一式取得
     my $collected_row_list = $user_row->fetch_collected_row_list();
+
+    # 問題集関連データ一式
     my $collected_list;
-    for my $list ( @{$collected_row_list} ) {
-        my $question_list_array = [];
-        for my $question_list ( @{ $list->{question_row_list} } ) {
-            my $hash;
-            my $collected_sort
-                = $question_list->{collected_sort_row}->get_columns;
-            my $question     = $question_list->{question_row}->get_columns;
-            my $sort_id      = $collected_sort->{sort_id};
-            my $collected_id = $collected_sort->{collected_id};
-            $hash->{collected_sort} = $collected_sort;
-            $hash->{question}       = $question;
-            $hash->{sort_id}        = $sort_id;
-            $hash->{collected_id}   = $collected_id;
-
-            # 短くした問題文章
-            $hash->{short_question}
-                = substr( $question->{question}, 0, 20 ) . ' ...';
-
-            # 問題へのurl
-            $hash->{q_url}
-                = "/hackerz/question/collected/$collected_id/$sort_id/think";
-
-            # 問題の解答状況
-            $hash->{how}      = '未';
-            $hash->{how_text} = 'primary';
-
-            # 問題のヒントが開封ずみのヒントを取得
-            my $hint_rows = $question_list->{hint_opened_rows};
-            $hash->{hint_opened_level} = [ map { $_->level } @{$hint_rows} ];
-
-            if ( exists $question_list->{answer_row} ) {
-                my $answer = $question_list->{answer_row}->get_columns;
-                $hash->{answer}   = $answer;
-                $hash->{how}      = '不正解';
-                $hash->{how_text} = 'danger';
-                if ( $answer->{user_answer} eq $question->{answer} ) {
-                    $hash->{how}      = '正解';
-                    $hash->{how_text} = 'success';
-                }
-            }
-            push @{$question_list_array}, $hash;
-        }
-        push @{$collected_list},
-            +{
-            collected     => $list->{collected_row}->get_columns,
-            question_list => $question_list_array,
-            };
+    for my $collected_data ( @{$collected_row_list} ) {
+        push @{$collected_list}, $self->_collected_data_hash($collected_data);
     }
     $score->{collected_list} = $collected_list;
 

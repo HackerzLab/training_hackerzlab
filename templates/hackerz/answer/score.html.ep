@@ -59,7 +59,7 @@
                     <th>No</th>
                     <th>タイトル</th>
                     <th>ヒント開封</th>
-                    <th>得点</th>
+                    <th>獲得点</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -73,7 +73,7 @@
                     <span class="badge"><%= $level %></span>
                     % }
                     </td>
-                    <td><%= $list->{question}->{score} %></td>
+                    <td><%= $list->{get_score} %></td>
                   </tr>
                   % }
                 </tbody>
