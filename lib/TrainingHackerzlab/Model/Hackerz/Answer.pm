@@ -159,11 +159,11 @@ sub to_template_score {
     );
 
     # 関連情報一式取得
-    my $collected_row_list = $user_row->fetch_collected_row_list();
+    my $collected_rows_list = $user_row->fetch_collected_rows_list();
 
     # 問題集関連データ一式
     my $collected_list;
-    for my $collected_data ( @{$collected_row_list} ) {
+    for my $collected_data ( @{$collected_rows_list} ) {
         push @{$collected_list}, $self->_collected_data_hash($collected_data);
     }
     $score->{collected_list} = $collected_list;

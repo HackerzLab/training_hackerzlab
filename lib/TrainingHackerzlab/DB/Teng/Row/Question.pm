@@ -14,7 +14,7 @@ sub search_hint {
 sub search_opened_hint {
     my $self         = shift;
     my $user_id      = shift;
-    my $collected_id = shift;
+    my $collected_id = shift || 0;
 
     # 問題のヒントを取得
     my $hint_rows = $self->search_hint;

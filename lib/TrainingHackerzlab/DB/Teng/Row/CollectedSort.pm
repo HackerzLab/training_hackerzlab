@@ -8,6 +8,15 @@ sub fetch_question {
     return $self->handle->single( 'question', $cond );
 }
 
+# 問題のヒントが開封ずみのヒントを取得
+sub search_opened_hint {
+    my $self         = shift;
+    my $user_id      = shift;
+    my $collected_id = shift || 0;
+    my $question_row = $self->fetch_question;
+    return $question_row->search_opened_hint( $user_id, $collected_id );
+}
+
 # 該当の問題集
 sub fetch_collected {
     my $self = shift;
@@ -19,7 +28,7 @@ sub fetch_collected {
 sub fetch_answer {
     my $self    = shift;
     my $user_id = shift;
-    my $cond = +{
+    my $cond    = +{
         question_id  => $self->question_id,
         collected_id => $self->collected_id,
         user_id      => $user_id,

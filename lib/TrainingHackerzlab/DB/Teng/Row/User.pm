@@ -56,68 +56,82 @@ sub soft_delete {
     return;
 }
 
-# 解答結果を含む問題集に関連する情報一式
-sub fetch_collected_list_to_hash {
-    my $self           = shift;
-    my $cond           = +{ deleted => 0, };
-    my @collected_rows = $self->handle->search( 'collected', $cond );
-    my $collected_list;
-    for my $collected_row (@collected_rows) {
-        my $question_list
-            = $collected_row->fetch_question_list_to_hash( $self->id );
-        push @{$collected_list},
-            +{
-            collected     => $collected_row->get_columns,
-            question_list => $question_list,
-            };
-    }
-    return $collected_list;
-}
+# # 解答結果を含む問題集に関連する情報一式
+# sub fetch_collected_list_to_hash {
+#     my $self           = shift;
+#     my $cond           = +{ deleted => 0, };
+#     my @collected_rows = $self->handle->search( 'collected', $cond );
+#     my $collected_list;
+#     for my $collected_row (@collected_rows) {
+#         my $question_list
+#             = $collected_row->fetch_question_list_to_hash( $self->id );
+#         push @{$collected_list},
+#             +{
+#             collected     => $collected_row->get_columns,
+#             question_list => $question_list,
+#             };
+#     }
+#     return $collected_list;
+# }
 
 # 解答結果を含む問題集に関連する情報一式
-# +{  collected_row_list => [
-#         +{  collected_row     => $collected_row,
-#             question_row_list => [
-#                 +{  collected_sort_row => $collected_sort_row,
-#                     question_row       => $question_row,
-#                     hint_opened_rows   => $hint_opened_row || [],
-#                     answer_row         => $answer_row || undef,
-#                 },
-#             ],
+# [   +{  collected_row     => $collected_row,
+#         question_row_list => [
+#             +{  collected_sort_row => $collected_sort_row,
+#                 question_row       => $question_row,
+#                 hint_opened_rows   => $hint_opened_row || [],
+#                 answer_row         => $answer_row || undef,
+#             },
+#         ],
+#     },
+#     +{},
+#     ...
+# ];
+sub fetch_collected_rows_list {
+    my $self = shift;
+    my $cond = +{ deleted => 0, };
+    my $collected_rows_list;
+    my @collected_rows = $self->handle->search( 'collected', $cond );
+    for my $collected_row (@collected_rows) {
+
+        # 問題集にひもづく問題の順番を取得
+        my $row_list = +{
+            collected_row => $collected_row,
+            question_row_list =>
+                $collected_row->fetch_question_row_list( $self->id ),
+        };
+        push @{$collected_rows_list}, $row_list;
+    }
+    return $collected_rows_list;
+}
+
+# 解答結果を含む指定の問題集に関連する情報一式
+# +{  collected_row     => $collected_row,
+#     question_row_list => [
+#         +{  collected_sort_row => $collected_sort_row,
+#             question_row       => $question_row,
+#             hint_opened_rows   => $hint_opened_row || [],
+#             answer_row         => $answer_row || undef,
 #         },
-#         +{},
 #     ],
 # };
 sub fetch_collected_row_list {
-    my $self = shift;
-    my $cond = +{ deleted => 0, };
-    my $collected_row_list;
-    my @collected_rows = $self->handle->search( 'collected', $cond );
-    for my $collected_row (@collected_rows) {
-        my $row_list->{collected_row} = $collected_row;
+    my $self         = shift;
+    my $collected_id = shift;
 
-        # 問題集にひもづく問題の順番を取得
-        my $collected_sort_rows = $collected_row->fetch_collected_sorts;
-        my $question_row_list;
-        for my $collected_sort_row ( @{$collected_sort_rows} ) {
-            my $hash = +{
-                collected_sort_row => $collected_sort_row,
-                question_row       => $collected_sort_row->fetch_question,
-                hint_opened_rows =>
-                    $collected_sort_row->fetch_question->search_opened_hint(
-                    $self->id, $collected_row->id
-                    ),
-            };
-            my $answer_row = $collected_sort_row->fetch_answer( $self->id );
-            if ($answer_row) {
-                $hash->{answer_row} = $answer_row;
-            }
-            push @{$question_row_list}, $hash;
-        }
-        $row_list->{question_row_list} = $question_row_list;
-        push @{$collected_row_list}, $row_list;
-    }
-    return $collected_row_list;
+    my $cond = +{
+        id      => $collected_id,
+        deleted => 0,
+    };
+    my $collected_row = $self->handle->single( 'collected', $cond );
+    return if !$collected_row;
+
+    # 問題集にひもづく問題の順番を取得
+    return +{
+        collected_row => $collected_row,
+        question_row_list =>
+            $collected_row->fetch_question_row_list( $self->id ),
+    };
 }
 
 1

@@ -25,6 +25,15 @@ sub has_error_easy {
     };
     my $hint_opened = $self->db->teng->single( 'hint_opened', $cond );
     return 1 if $hint_opened;
+
+    # 解答済みの場合はヒントの開封履歴をとらない
+    my $hint_cond = +{
+        id      => $params->{hint_id},
+        deleted => $self->db->master->deleted->constant('NOT_DELETED'),
+    };
+    my $hint_row = $self->db->teng->single( 'hint', $hint_cond );
+    return 1
+        if $hint_row->is_answer_ended( $params->{user_id}, $collected_id );
     return;
 }
 
