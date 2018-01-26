@@ -37,6 +37,18 @@ sub get_score_opened_hint {
     return $question_row->score - ( $count * 2 );
 }
 
+# ヒントの開封を考慮した獲得点数
+sub get_score_opened_hint_from_answer {
+    my $self = shift;
+
+    # 問題のヒントが開封ずみのヒントを取得
+    my $question_row = $self->fetch_question;
+    my $hint_rows
+        = $question_row->search_opened_hint( $self->user_id, $self->collected_id );
+    my $count = scalar @{$hint_rows};
+    return $question_row->score - ( $count * 2 );
+}
+
 1;
 
 __END__

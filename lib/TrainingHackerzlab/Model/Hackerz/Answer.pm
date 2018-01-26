@@ -62,7 +62,8 @@ sub _answer_data_hash {
     $hash->{how}      = '正解';
     $hash->{how_text} = 'success';
 
-    # TODO: ヒントの開封を考慮した獲得点数
+    # ヒントの開封を考慮した獲得点数
+    $hash->{get_score} = $data->{answer_row}->get_score_opened_hint_from_answer();
     return $hash;
 }
 
@@ -108,8 +109,16 @@ sub _collected_data_hash {
     for my $question_data ( @{ $data->{question_row_list} } ) {
         push @{$question_list}, $self->_question_data_hash($question_data);
     }
+
+    # 獲得点数の計算
+    my $total_score = 0;
+    for my $question_data ( @{$question_list} ) {
+        $total_score += $question_data->{get_score};
+    }
+
     return +{
         collected     => $data->{collected_row}->get_columns,
+        total_score   => $total_score,
         question_list => $question_list,
     };
 }
@@ -128,6 +137,7 @@ sub to_template_score {
     # my $score = +{
     #     collected_list => [
     #         +{  collected     => +{},
+    #             total_score   => 0,
     #             question_list => [
     #                 +{  collected_sort => +{},
     #                     question       => +{},
