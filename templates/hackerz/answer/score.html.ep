@@ -32,8 +32,15 @@
   </div>
 
   <div class="container">
-    <h2 class="page-header">得点確認 Score</h2>
+    <h2 class="page-header">得点確認 「全ての問題をとく」</h2>
     <p class="text-primary">お前の獲得した得点だ!!</p>
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <a href="/hackerz/question" class="btn btn-default btn-lg btn-block text-warning">全ての問題をとくの得点状況</a>
+      </div>
+    </div>
+
+    <h2 class="page-header">得点確認 「問題集」</h2>
     <div class="row">
       % for my $list (@{$collected_list}) {
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
