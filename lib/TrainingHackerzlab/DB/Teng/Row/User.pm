@@ -76,7 +76,7 @@ sub soft_delete {
 
 # 解答結果を含む問題集に関連する情報一式
 # [   +{  collected_row     => $collected_row,
-#         question_row_list => [
+#         question_rows_list => [
 #             +{  collected_sort_row => $collected_sort_row,
 #                 question_row       => $question_row,
 #                 hint_opened_rows   => $hint_opened_row || [],
@@ -97,8 +97,8 @@ sub fetch_collected_rows_list {
         # 問題集にひもづく問題の順番を取得
         my $row_list = +{
             collected_row => $collected_row,
-            question_row_list =>
-                $collected_row->fetch_question_row_list( $self->id ),
+            question_rows_list =>
+                $collected_row->fetch_question_rows_list( $self->id ),
         };
         push @{$collected_rows_list}, $row_list;
     }
@@ -107,7 +107,7 @@ sub fetch_collected_rows_list {
 
 # 解答結果を含む指定の問題集に関連する情報一式
 # +{  collected_row     => $collected_row,
-#     question_row_list => [
+#     question_rows_list => [
 #         +{  collected_sort_row => $collected_sort_row,
 #             question_row       => $question_row,
 #             hint_opened_rows   => $hint_opened_row || [],
@@ -129,8 +129,8 @@ sub fetch_collected_row_list {
     # 問題集にひもづく問題の順番を取得
     return +{
         collected_row => $collected_row,
-        question_row_list =>
-            $collected_row->fetch_question_row_list( $self->id ),
+        question_rows_list =>
+            $collected_row->fetch_question_rows_list( $self->id ),
     };
 }
 

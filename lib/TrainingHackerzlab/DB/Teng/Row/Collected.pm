@@ -45,29 +45,20 @@ sub fetch_question_list_to_hash {
 #         answer_row         => $answer_row || undef,
 #     },
 # ];
-sub fetch_question_row_list {
+sub fetch_question_rows_list {
     my $self         = shift;
     my $user_id      = shift;
     my $collected_id = $self->id;
 
     # 問題集にひもづく問題の順番を取得
     my $collected_sort_rows = $self->fetch_collected_sorts;
-    my $question_row_list;
+    my $question_rows_list;
     for my $collected_sort_row ( @{$collected_sort_rows} ) {
-        my $hash = +{
-            collected_sort_row => $collected_sort_row,
-            question_row       => $collected_sort_row->fetch_question,
-            hint_opened_rows   => $collected_sort_row->search_opened_hint(
-                $user_id, $collected_id
-            ),
-        };
-        my $answer_row = $collected_sort_row->fetch_answer($user_id);
-        if ($answer_row) {
-            $hash->{answer_row} = $answer_row;
-        }
-        push @{$question_row_list}, $hash;
+        my $hash = $collected_sort_row->fetch_question_row_list($user_id);
+        $hash->{collected_sort_row} = $collected_sort_row;
+        push @{$question_rows_list}, $hash;
     }
-    return $question_row_list;
+    return $question_rows_list;
 }
 
 1;

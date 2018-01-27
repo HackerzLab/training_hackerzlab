@@ -12,7 +12,7 @@ sub fetch_question {
 sub search_opened_hint {
     my $self         = shift;
     my $user_id      = shift;
-    my $collected_id = shift || 0;
+    my $collected_id = $self->collected_id;
     my $question_row = $self->fetch_question;
     return $question_row->search_opened_hint( $user_id, $collected_id );
 }
@@ -49,6 +49,25 @@ sub next_question_sort_id {
     my $collected_sort_row = $self->handle->single( 'collected_sort', $cond );
     return if !$collected_sort_row;
     return $next_sort_id;
+}
+
+# 解答結果を含む該当の問題ひとつに関連する情報一式
+# +{  question_row     => $question_row,
+#     hint_opened_rows => $hint_opened_row || [],
+#     answer_row       => $answer_row || undef,
+# };
+sub fetch_question_row_list {
+    my $self              = shift;
+    my $user_id           = shift;
+    my $question_row_list = +{
+        question_row     => $self->fetch_question,
+        hint_opened_rows => $self->search_opened_hint($user_id),
+    };
+    my $answer_row = $self->fetch_answer($user_id);
+    if ($answer_row) {
+        $question_row_list->{answer_row} = $answer_row;
+    }
+    return $question_row_list;
 }
 
 1;

@@ -106,7 +106,7 @@ sub _collected_data_hash {
 
     # 問題関連データ一式
     my $question_list = [];
-    for my $question_data ( @{ $data->{question_row_list} } ) {
+    for my $question_data ( @{ $data->{question_rows_list} } ) {
         push @{$question_list}, $self->_question_data_hash($question_data);
     }
 
