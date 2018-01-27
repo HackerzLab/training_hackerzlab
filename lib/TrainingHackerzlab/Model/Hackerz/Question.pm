@@ -12,47 +12,70 @@ has [
         is_question_survey_and_file is_question_explain select_template}
 ] => undef;
 
+# 解答関連データ一式
+sub _answer_data_hash {
+    my $self     = shift;
+    my $data_row = shift;
+
+    my $answer   = $data_row->{answer_row}->get_columns;
+    my $question = $data_row->{question_row}->get_columns;
+
+    my $data_hash = +{
+        answer   => $answer,
+        how      => '不正解',
+        how_text => 'danger',
+    };
+    return $data_hash if $answer->{user_answer} ne $question->{answer};
+
+    $data_hash->{how}      = '正解';
+    $data_hash->{how_text} = 'success';
+    return $data_hash;
+}
+
+# 問題関連データ一式
+sub _question_data_hash {
+    my $self     = shift;
+    my $data_row = shift;
+
+    my $question_row = $data_row->{question_row};
+    my $sort_id      = $question_row->id;
+    my $data_hash    = +{
+        sort_id  => $sort_id,
+        question => $question_row->get_columns,
+        q_url    => "/hackerz/question/$sort_id/think",
+        how      => '未',
+        how_text => 'primary',
+    };
+
+    # 問題の解答状況
+    my $answer_row = $data_row->{answer_row};
+    if ($answer_row) {
+        my $answer_hash = $self->_answer_data_hash($data_row);
+        while ( my ( $key, $val ) = each %{$answer_hash} ) {
+            $data_hash->{$key} = $val;
+        }
+    }
+    return $data_hash;
+}
+
 # 問題をとくんだな画面
 sub to_template_index {
     my $self = shift;
+    my $cond = +{
+        id      => $self->req_params->{user_id},
+        deleted => 0,
+    };
+    my $user_row = $self->db->teng->single( 'user', $cond );
 
-    my $template_index = +{ question_list => undef, };
+    # 関連情報一式取得
+    my $question_rows_list = $user_row->fetch_question_rows_list();
 
-    my $cond = +{ deleted => 0, };
-
-    my @question_rows = $self->db->teng->search( 'question', $cond );
-    return $template_index if scalar @question_rows eq 0;
-
+    # 問題関連データ一式に整形
     my $question_list;
-    for my $question (@question_rows) {
-        my $data    = $question->get_columns;
-        my $sort_id = $question->id;
-        $data->{sort_id} = $sort_id;
-
-        # 短くした問題文章
-        $data->{short_question} = substr( $data->{question}, 0, 20 ) . ' ...';
-
-        # 問題へのurl
-        $data->{q_url} = "/hackerz/question/$sort_id/think";
-
-        # 問題の解答状況
-        $data->{how}      = '未';
-        $data->{how_text} = 'primary';
-
-        my $answer = $question->fetch_answer( $self->req_params->{user_id} );
-        if ($answer) {
-            $data->{how}      = '不正解';
-            $data->{how_text} = 'danger';
-            if ( $answer->user_answer eq $question->answer ) {
-                $data->{how}      = '正解';
-                $data->{how_text} = 'success';
-            }
-        }
-        $data->{question} = $question->get_columns;
-        push @{$question_list}, $data;
+    for my $data_row ( @{$question_rows_list} ) {
+        push @{$question_list}, $self->_question_data_hash($data_row);
     }
-    $template_index->{question_list} = $question_list;
-    return $template_index;
+    return +{ question_list => $question_list, };
 }
 
 # 問題画面パラメーター

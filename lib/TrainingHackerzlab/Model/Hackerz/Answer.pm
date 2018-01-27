@@ -63,7 +63,8 @@ sub _answer_data_hash {
     $hash->{how_text} = 'success';
 
     # ヒントの開封を考慮した獲得点数
-    $hash->{get_score} = $data->{answer_row}->get_score_opened_hint_from_answer();
+    $hash->{get_score}
+        = $data->{answer_row}->get_score_opened_hint_from_answer();
     return $hash;
 }
 
@@ -91,10 +92,9 @@ sub _question_data_hash {
 
     if ( exists $data->{answer_row} ) {
         my $answer_hash = $self->_answer_data_hash($data);
-        $hash->{answer}    = $answer_hash->{answer};
-        $hash->{how}       = $answer_hash->{how};
-        $hash->{how_text}  = $answer_hash->{how_text};
-        $hash->{get_score} = $answer_hash->{get_score};
+        while ( my ( $key, $val ) = each %{$answer_hash} ) {
+            $hash->{$key} = $val;
+        }
     }
     return $hash;
 }

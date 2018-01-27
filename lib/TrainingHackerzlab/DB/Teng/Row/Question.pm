@@ -69,6 +69,21 @@ sub is_answer_ended {
     return;
 }
 
+# 問題に該当するの解答結果に関連する情報一式
+# +{  hint_opened_rows => $hint_opened_row || [],
+#     answer_row       => $answer_row      || undef,
+# };
+sub fetch_answer_row_list {
+    my $self         = shift;
+    my $user_id      = shift;
+    my $collected_id = shift || 0;
+    return +{
+        hint_opened_rows =>
+            $self->search_opened_hint( $user_id, $collected_id ),
+        answer_row => $self->fetch_answer( $user_id, $collected_id ),
+    };
+}
+
 1;
 
 __END__

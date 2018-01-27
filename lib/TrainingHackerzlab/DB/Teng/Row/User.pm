@@ -56,24 +56,6 @@ sub soft_delete {
     return;
 }
 
-# # 解答結果を含む問題集に関連する情報一式
-# sub fetch_collected_list_to_hash {
-#     my $self           = shift;
-#     my $cond           = +{ deleted => 0, };
-#     my @collected_rows = $self->handle->search( 'collected', $cond );
-#     my $collected_list;
-#     for my $collected_row (@collected_rows) {
-#         my $question_list
-#             = $collected_row->fetch_question_list_to_hash( $self->id );
-#         push @{$collected_list},
-#             +{
-#             collected     => $collected_row->get_columns,
-#             question_list => $question_list,
-#             };
-#     }
-#     return $collected_list;
-# }
-
 # 解答結果を含む問題集に関連する情報一式
 # [   +{  collected_row     => $collected_row,
 #         question_rows_list => [
@@ -105,33 +87,26 @@ sub fetch_collected_rows_list {
     return $collected_rows_list;
 }
 
-# 解答結果を含む指定の問題集に関連する情報一式
-# +{  collected_row     => $collected_row,
-#     question_rows_list => [
-#         +{  collected_sort_row => $collected_sort_row,
-#             question_row       => $question_row,
-#             hint_opened_rows   => $hint_opened_row || [],
-#             answer_row         => $answer_row || undef,
-#         },
-#     ],
-# };
-sub fetch_collected_row_list {
-    my $self         = shift;
-    my $collected_id = shift;
-
-    my $cond = +{
-        id      => $collected_id,
-        deleted => 0,
-    };
-    my $collected_row = $self->handle->single( 'collected', $cond );
-    return if !$collected_row;
-
-    # 問題集にひもづく問題の順番を取得
-    return +{
-        collected_row => $collected_row,
-        question_rows_list =>
-            $collected_row->fetch_question_rows_list( $self->id ),
-    };
+# 解答結果を含むすべての問題に関連する情報一式
+# [   +{  question_row     => $question_row,
+#         hint_opened_rows => $hint_opened_row || [],
+#         answer_row       => $answer_row || undef,
+#     },
+#     +{},
+#     ...
+# ];
+sub fetch_question_rows_list {
+    my $self          = shift;
+    my $user_id       = $self->id;
+    my $cond          = +{ deleted => 0, };
+    my @question_rows = $self->handle->search( 'question', $cond );
+    my $question_rows_list;
+    for my $question_row (@question_rows) {
+        my $list = $question_row->fetch_answer_row_list($user_id);
+        $list->{question_row} = $question_row;
+        push @{$question_rows_list}, $list;
+    }
+    return $question_rows_list;
 }
 
 1
