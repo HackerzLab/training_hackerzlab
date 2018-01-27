@@ -1,46 +1,73 @@
 % layout 'base';
 % title 'HackerzLab.博多';
   <div class="container">
-    <div class="jumbotron">
-    <h2>解答結果 [ <%= $user->{login_id} %> さん ]</h2>
-
-      <ul class="list-group">
-        % for my $row (@{$list}) {
-        <li class="list-group-item"> 第<%= $row->{question}->{id} %>問 <%= $row->{answer_result} %>
-          <%= $row->{collected}->{title} %>
-          <span class="badge">get <%= $row->{get_score} %></span>
-          % for my $level (@{$row->{hint_opened_level}}) {
-          <span class="badge"><%= $level %></span>
-          % }
-          <span class="badge">hint</span>
-        </li>
-        % }
-      </ul>
-
-      <div class="panel panel-danger">
-        <div class="panel-heading">
-          <h3 class="panel-title">現在の得点</h3>
-        </div>
-        <div class="panel-body">
-          <div class="progress progress-striped active">
-            <div class="progress-bar" style="width: <%= $result %>%"></div>
-          </div>
-          <%= $result %>点
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
-    <h2 class="page-header">得点確認 「全ての問題をとく」</h2>
+    <h2 class="page-header">得点確認  [ <%= $user->{login_id} %> さん ]</h2>
     <p class="text-primary">お前の獲得した得点だ!!</p>
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <a href="/hackerz/question" class="btn btn-default btn-lg btn-block text-warning">全ての問題をとくの得点状況</a>
+        <button type="button" class="btn btn-default btn-lg btn-block text-warning" data-toggle="modal" data-target="#myModalAllQ">
+          全ての問題をとくの得点状況
+        <br><small class="text-primary">問題の得点結果はこっち</small>
+        </button>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="myModalAllQ" tabindex="-1" role="dialog" aria-labelledby="myModalLabelAllQ">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabelAllQ">全ての問題</h4>
+            </div>
+            <div class="modal-body">
+              <div class="panel panel-danger">
+                <div class="panel-heading">
+                  <h3 class="panel-title">現在の得点 <span class=""><%= $question_list_total_score %>点</span></h3>
+                </div>
+                <div class="panel-body">
+                  <div class="progress progress-striped active">
+                    <div class="progress-bar" style="width: <%= $question_list_total_score %>%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <table class="table table-striped table-hover ">
+                <thead>
+                  <tr>
+                    <th>How?</th>
+                    <th>No</th>
+                    <th>タイトル</th>
+                    <th>ヒント開封</th>
+                    <th>獲得点</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  % for my $list (@{$question_list}) {
+                  <tr class="text-<%= $list->{how_text} %>">
+                    <td class=""><%= $list->{how} %></td>
+                    <td><a href="<%= $list->{q_url} %>" class="btn btn-primary btn-xs"><%= $list->{sort_id} %></a></td>
+                    <td><%= $list->{question}->{title} %></td>
+                    <td>
+                    % for my $level (@{$list->{hint_opened_level}}) {
+                    <span class="badge"><%= $level %></span>
+                    % }
+                    </td>
+                    <td><%= $list->{get_score} %></td>
+                  </tr>
+                  % }
+                </tbody>
+              </table>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <h2 class="page-header">得点確認 「問題集」</h2>
+    <h2 class="page-header">「問題集」</h2>
     <div class="row">
       % for my $list (@{$collected_list}) {
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
