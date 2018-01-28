@@ -8,6 +8,13 @@ sub fetch_question {
     return $self->handle->single( 'question', $cond );
 }
 
+# 該当の問題集
+sub fetch_collected {
+    my $self = shift;
+    my $cond = +{ id => $self->collected_id, deleted => 0, };
+    return $self->handle->single( 'collected', $cond );
+}
+
 # 解答結果は正解
 sub is_correct {
     my $self         = shift;

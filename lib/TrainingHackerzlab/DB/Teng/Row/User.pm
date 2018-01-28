@@ -55,6 +55,26 @@ sub soft_delete {
     return;
 }
 
+# 解答結果を含む指定の問題集に関連する情報一式
+# +{  collected_row      => $collected_row,
+#     question_rows_list => [
+#         +{  collected_sort_row => $collected_sort_row,
+#             question_row       => $question_row,
+#             hint_opened_rows   => $hint_opened_row || [],
+#             answer_row         => $answer_row || undef,
+#         },
+#     ],
+# };
+sub fetch_collected_row_list {
+    my $self         = shift;
+    my $collected_id = shift;
+    my $ids          = [$collected_id];
+
+    my $collected_rows_list = $self->fetch_collected_rows_list($ids);
+    my $collected_row_list  = shift @{$collected_rows_list};
+    return $collected_row_list;
+}
+
 # 解答結果を含む問題集に関連する情報一式
 # [   +{  collected_row     => $collected_row,
 #         question_rows_list => [
@@ -69,8 +89,13 @@ sub soft_delete {
 #     ...
 # ];
 sub fetch_collected_rows_list {
-    my $self = shift;
+    my $self          = shift;
+    my $collected_ids = shift;
+
     my $cond = +{ deleted => 0, };
+    if ($collected_ids) {
+        $cond->{id} = $collected_ids;
+    }
     my $collected_rows_list;
     my @collected_rows = $self->handle->search( 'collected', $cond );
     for my $collected_row (@collected_rows) {

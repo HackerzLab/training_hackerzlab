@@ -11,32 +11,6 @@ sub fetch_collected_sorts {
     return \@collected_sorts;
 }
 
-# 該当の問題一覧を取得
-#     $question_list = [
-#         +{  collected_sort => +{},
-#             question => +{},
-#             answer => +{},
-#         },
-#     ],
-sub fetch_question_list_to_hash {
-    my $self            = shift;
-    my $user_id         = shift;
-    my $collected_sorts = $self->fetch_collected_sorts;
-    my $question_list;
-    for my $collected_sort ( @{$collected_sorts} ) {
-        my $hash = +{
-            collected_sort => $collected_sort->get_columns,
-            question       => $collected_sort->fetch_question->get_columns,
-        };
-        my $answer = $collected_sort->fetch_answer($user_id);
-        if ($answer) {
-            $hash->{answer} = $answer->get_columns;
-        }
-        push @{$question_list}, $hash;
-    }
-    return $question_list;
-}
-
 # 解答結果を含む該当の問題に関連する情報一式
 # [
 #     +{  collected_sort_row => $collected_sort_row,
