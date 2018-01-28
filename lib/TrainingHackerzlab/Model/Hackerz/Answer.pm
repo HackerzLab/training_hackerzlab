@@ -64,7 +64,7 @@ sub _answer_data_hash {
 
     # ヒントの開封を考慮した獲得点数
     $hash->{get_score}
-        = $data->{answer_row}->get_score_opened_hint_from_answer();
+        = $data->{answer_row}->get_score_opened_hint();
     return $hash;
 }
 
@@ -173,7 +173,7 @@ sub _answer_data_hash_all {
 
     # ヒントの開封を考慮した獲得点数
     $data_hash->{get_score}
-        = $data_row->{answer_row}->get_score_opened_hint_from_answer();
+        = $data_row->{answer_row}->get_score_opened_hint();
 
     return $data_hash;
 }
