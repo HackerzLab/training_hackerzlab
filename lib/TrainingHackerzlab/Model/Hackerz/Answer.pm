@@ -90,7 +90,7 @@ sub _question_data_hash {
         get_score         => 0,
     };
 
-    if ( exists $data->{answer_row} ) {
+    if ( $data->{answer_row} ) {
         my $answer_hash = $self->_answer_data_hash($data);
         while ( my ( $key, $val ) = each %{$answer_hash} ) {
             $hash->{$key} = $val;

@@ -62,11 +62,8 @@ sub fetch_question_row_list {
     my $question_row_list = +{
         question_row     => $self->fetch_question,
         hint_opened_rows => $self->search_opened_hint($user_id),
+        answer_row       => $self->fetch_answer($user_id),
     };
-    my $answer_row = $self->fetch_answer($user_id);
-    if ($answer_row) {
-        $question_row_list->{answer_row} = $answer_row;
-    }
     return $question_row_list;
 }
 
