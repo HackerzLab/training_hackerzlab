@@ -33,195 +33,46 @@ sub has_error_easy {
     return;
 }
 
-# 問題へのurl
-sub _question_url {
-    my $self           = shift;
-    my $collected_sort = shift;
-    my $sort_id        = $collected_sort->{sort_id};
-    my $collected_id   = $collected_sort->{collected_id};
-    my $url = "/hackerz/question/collected/$collected_id/$sort_id/think";
-    return $url;
-}
-
-# 解答関連データ一式
-sub _answer_data_hash {
-    my $self = shift;
-    my $data = shift;
-
-    my $answer   = $data->{answer_row}->get_columns;
-    my $question = $data->{question_row}->get_columns;
-
-    my $hash = +{
-        answer    => $answer,
-        how       => '不正解',
-        how_text  => 'danger',
-        get_score => 0,
-    };
-    return $hash if $answer->{user_answer} ne $question->{answer};
-
-    $hash->{how}      = '正解';
-    $hash->{how_text} = 'success';
-
-    # ヒントの開封を考慮した獲得点数
-    $hash->{get_score}
-        = $data->{answer_row}->get_score_opened_hint();
-    return $hash;
-}
-
-# 問題関連データ一式
-sub _question_data_hash {
-    my $self = shift;
-    my $data = shift;
-
-    my $collected_sort = $data->{collected_sort_row}->get_columns;
-    my $question       = $data->{question_row}->get_columns;
-    my $hint_rows      = $data->{hint_opened_rows};
-
-    my $hash = +{
-        collected_sort => $collected_sort,
-        question       => $question,
-        sort_id        => $collected_sort->{sort_id},
-        collected_id   => $collected_sort->{collected_id},
-        q_url          => $self->_question_url($collected_sort),
-        short_question => substr( $question->{question}, 0, 20 ) . ' ...',
-        how            => '未',
-        how_text       => 'primary',
-        hint_opened_level => [ map { $_->level } @{$hint_rows} ],
-        get_score         => 0,
-    };
-
-    if ( $data->{answer_row} ) {
-        my $answer_hash = $self->_answer_data_hash($data);
-        while ( my ( $key, $val ) = each %{$answer_hash} ) {
-            $hash->{$key} = $val;
-        }
-    }
-    return $hash;
-}
-
-# 問題集関連データ一式
-sub _collected_data_hash {
-    my $self = shift;
-    my $data = shift;
-
-    # 問題関連データ一式
-    my $question_list = [];
-    for my $question_data ( @{ $data->{question_rows_list} } ) {
-        push @{$question_list}, $self->_question_data_hash($question_data);
-    }
-
-    # 獲得点数の計算
-    my $total_score = 0;
-    for my $question_data ( @{$question_list} ) {
-        $total_score += $question_data->{get_score};
-    }
-
-    return +{
-        collected     => $data->{collected_row}->get_columns,
-        total_score   => $total_score,
-        question_list => $question_list,
-    };
-}
-
-# 問題関連データ一式
-sub _question_data_hash_all {
-    my $self     = shift;
-    my $data_row = shift;
-
-    my $question_row = $data_row->{question_row};
-    my $hint_rows    = $data_row->{hint_opened_rows};
-
-    my $sort_id   = $question_row->id;
-    my $data_hash = +{
-        sort_id           => $sort_id,
-        question          => $question_row->get_columns,
-        q_url             => "/hackerz/question/$sort_id/think",
-        how               => '未',
-        how_text          => 'primary',
-        hint_opened_level => [ map { $_->level } @{$hint_rows} ],
-        get_score         => 0,
-    };
-
-    # 問題の解答状況
-    my $answer_row = $data_row->{answer_row};
-    if ($answer_row) {
-        my $answer_hash = $self->_answer_data_hash_all($data_row);
-        while ( my ( $key, $val ) = each %{$answer_hash} ) {
-            $data_hash->{$key} = $val;
-        }
-    }
-    return $data_hash;
-}
-
-# 解答関連データ一式
-sub _answer_data_hash_all {
-    my $self     = shift;
-    my $data_row = shift;
-
-    my $answer   = $data_row->{answer_row}->get_columns;
-    my $question = $data_row->{question_row}->get_columns;
-
-    my $data_hash = +{
-        answer   => $answer,
-        how      => '不正解',
-        how_text => 'danger',
-    };
-    return $data_hash if $answer->{user_answer} ne $question->{answer};
-
-    $data_hash->{how}      = '正解';
-    $data_hash->{how_text} = 'success';
-
-    # ヒントの開封を考慮した獲得点数
-    $data_hash->{get_score}
-        = $data_row->{answer_row}->get_score_opened_hint();
-
-    return $data_hash;
-}
-
 # 解答結果点数
+# +{  question_list             => [],
+#     question_list_total_score => 0,
+#     collected_list            => [
+#         +{  collected     => +{},
+#             total_score   => 0,
+#             question_list => [
+#                 +{  collected_sort => +{},
+#                     question       => +{},
+#                     answer         => +{},
+#                     q_url          => '',
+#                     how            => '',
+#                     how_text       => '',
+#                     sort_id           => '',
+#                     collected_id      => '',
+#                     short_question    => '',
+#                     hint_opened_level => [],
+#                     get_score         => 0,
+#                 },
+#             ],
+#         },
+#         +{},
+#     ],
+# };
 sub to_template_score {
-    my $self    = shift;
-    my $master  = $self->db->master;
-    my $user_id = $self->req_params->{user_id};
-    my $score   = +{
-        collected_list            => undef,
+    my $self  = shift;
+    my $score = +{
         question_list             => undef,
         question_list_total_score => 0,
+        collected_list            => undef,
     };
 
-    # my $score = +{
-    #     collected_list => [
-    #         +{  collected     => +{},
-    #             total_score   => 0,
-    #             question_list => [
-    #                 +{  collected_sort => +{},
-    #                     question       => +{},
-    #                     answer         => +{},
-    #                     q_url          => '',
-    #                     how            => '',
-    #                     how_text       => '',
-    #                 },
-    #             ],
-    #         },
-    #         +{},
-    #     ],
-    # };
-    my $user_row = $self->db->teng->single(
-        'user',
-        +{  id      => $user_id,
-            deleted => 0,
-        }
-    );
+    my $user_id = $self->req_params->{user_id};
 
-    # 関連情報一式取得
-    my $collected_rows_list = $user_row->fetch_collected_rows_list();
-
-    # 問題集関連データ一式
-    my $collected_list;
-    for my $collected_data ( @{$collected_rows_list} ) {
-        push @{$collected_list}, $self->_collected_data_hash($collected_data);
-    }
-    $score->{collected_list} = $collected_list;
+    my $cond = +{
+        id      => $user_id,
+        deleted => 0,
+    };
+    my $user_row = $self->db->teng->single( 'user', $cond );
+    return $score if !$user_row;
 
     # 全ての問題をとくの得点状況
     my $question_rows_list = $user_row->fetch_question_rows_list();
@@ -229,16 +80,27 @@ sub to_template_score {
     # 問題関連データ一式に整形
     my $question_list;
     for my $data_row ( @{$question_rows_list} ) {
-        push @{$question_list}, $self->_question_data_hash_all($data_row);
+        push @{$question_list}, $self->question_data_hash_all($data_row);
     }
-    $score->{question_list} = $question_list;
 
     # 獲得点数の計算
     my $question_list_total_score = 0;
     for my $question_data ( @{$question_list} ) {
         $question_list_total_score += $question_data->{get_score};
     }
+
+    $score->{question_list}             = $question_list;
     $score->{question_list_total_score} = $question_list_total_score;
+
+    # 関連情報一式取得
+    my $collected_rows_list = $user_row->fetch_collected_rows_list();
+
+    # 問題集関連データ一式
+    my $collected_list;
+    for my $collected_data ( @{$collected_rows_list} ) {
+        push @{$collected_list}, $self->collected_data_hash($collected_data);
+    }
+    $score->{collected_list} = $collected_list;
     return $score;
 }
 
