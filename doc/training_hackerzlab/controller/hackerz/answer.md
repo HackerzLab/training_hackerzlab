@@ -8,10 +8,20 @@ training_hackerzlab/controller/hackerz/answer - TrainingHackerzlab 解答
 
 - GET - `/hackerz/answer/list` - list - 解答一覧画面
 - GET - `/hackerz/answer/score` - score - 解答結果画面
+- GET - `/hackerz/answer/report` - report - 成績一覧画面
 - GET - `/hackerz/answer/:id/result` - result - 解答を送信したぞ画面
 - POST - `/hackerz/answer` - store - 解答内容送信
 
 # DESCRIPTION
+
+## - GET - `/hackerz/answer/report` - report - 成績一覧画面
+
+```
+問題集ごとに表示
+テーブル表示項目
+問題ごとに、正解、不正解、問題、入力解答、ヒント開封履歴、獲得点数
+問題集ごとに、問題集の情報、合計点
+```
 
 ## - GET - `/hackerz/answer/list` - list - 解答一覧画面
 
