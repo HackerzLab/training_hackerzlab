@@ -33,6 +33,11 @@ sub has_error_easy {
     return;
 }
 
+sub to_template_report {
+    my $self  = shift;
+    return $self->to_template_score;
+}
+
 # 解答結果点数
 # +{  question_list             => [],
 #     question_list_total_score => 0,

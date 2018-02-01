@@ -61,6 +61,7 @@ sub question_data_hash_collected {
     my $data_hash = +{
         collected_sort => $collected_sort,
         question       => $question,
+        short_title => _short_cut($question->{title}),
         sort_id        => $collected_sort->{sort_id},
         collected_id   => $collected_sort->{collected_id},
         q_url          => $self->create_question_url(
@@ -82,6 +83,16 @@ sub question_data_hash_collected {
     return $data_hash;
 }
 
+# 20文字以上は ...
+sub _short_cut {
+    my $text = shift;
+    my $short_str = substr( $text, 0, 20 );
+    if ( length $short_str >= 20 ) {
+        $short_str .= ' ...';
+    }
+    return $short_str;
+}
+
 # 問題関連データ一式 (すべての問題)
 sub question_data_hash_all {
     my $self     = shift;
@@ -92,11 +103,12 @@ sub question_data_hash_all {
     my $sort_id      = $question_row->id;
 
     my $data_hash = +{
-        sort_id           => $sort_id,
-        question          => $question_row->get_columns,
-        q_url             => $self->create_question_url($sort_id),
-        how               => '未',
-        how_text          => 'primary',
+        sort_id     => $sort_id,
+        question    => $question_row->get_columns,
+        short_title => _short_cut($question_row->title),
+        q_url       => $self->create_question_url($sort_id),
+        how         => '未',
+        how_text    => 'primary',
         hint_opened_level => [ map { $_->level } @{$hint_rows} ],
         get_score         => 0,
     };

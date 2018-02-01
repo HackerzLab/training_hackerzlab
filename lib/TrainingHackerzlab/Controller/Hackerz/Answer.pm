@@ -1,6 +1,25 @@
 package TrainingHackerzlab::Controller::Hackerz::Answer;
 use Mojo::Base 'TrainingHackerzlab::Controller::Base';
 
+# 成績一覧画面
+sub report {
+    my $self    = shift;
+    my $params  = +{ user_id => $self->login_user->id, };
+    my $hackerz = $self->model->hackerz;
+    my $answer  = $hackerz->answer->req_params($params);
+
+    my $to_template_report = $answer->to_template_report;
+    $self->stash(
+        %{$to_template_report},
+        user     => $self->login_user->get_columns,
+        template => 'hackerz/answer/report',
+        format   => 'html',
+        handler  => 'ep',
+    );
+    $self->render();
+    return;
+}
+
 # 解答一覧画面
 sub list {
     my $self    = shift;

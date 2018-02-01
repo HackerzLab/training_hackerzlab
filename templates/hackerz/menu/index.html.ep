@@ -39,6 +39,15 @@
 
   <div class="container">
     <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <h2 class="page-header">解答結果はこっちだ</h2>
+        <a href="/hackerz/answer/report" class="btn btn-default btn-lg btn-block">成績一覧</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
         <h2 class="page-header">得点確認はこっちだ</h2>
         <a href="/hackerz/answer/score" class="btn btn-default btn-lg btn-block">得点確認</a>
