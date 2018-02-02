@@ -8,8 +8,46 @@ training_hackerzlab/controller/hackerz/question - TrainingHackerzlab
 
 - GET - `/hackerz/question` - index - 問題をとく画面
 - GET - `/hackerz/question/:id/think` - think - 各問題画面
+- GET - `/hackerz/question/search` - search - 問題の一覧と検索
+- GET - `/hackerz/question/create` - create - 問題新規追加画面
+- POST - `/hackerz/question` - store - 問題新規追加実行
+- GET - `/hackerz/question/:id/edit` - edit - 問題編集画面
+- POST - `/hackerz/question/:id/update` - update - 問題編集実行
 
 # DESCRIPTION
+
+## - GET - `/hackerz/question/search` - search - 問題の一覧と検索
+
+```
+問題集との結びつきを表示
+新規追加ボタン
+編集ボタン
+削除ボタン
+問題表示画面へのリンク
+```
+
+## - GET - `/hackerz/question/create` - create - 問題新規追加画面
+
+```
+登録実行ボタン
+```
+
+## - POST - `/hackerz/question` - store - 問題新規追加実行
+
+```
+```
+
+## - GET - `/hackerz/question/:id/edit` - edit - 問題編集画面
+
+```
+編集実行ボタン
+```
+
+## - POST - `/hackerz/question/:id/update` - update - 問題編集実行
+
+```
+実行後は問題の一覧画面に遷移
+```
 
 ## - GET - `/hackerz/question` - index - 問題をとく画面
 
