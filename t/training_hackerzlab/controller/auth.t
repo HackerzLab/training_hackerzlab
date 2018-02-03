@@ -314,7 +314,7 @@ subtest 'post /auth/:id/update update' => sub {
     };
 };
 
-# ユーザー削除実行 (未実装)
+# ユーザー削除実行
 subtest 'post /auth/:id/remove remove' => sub {
     subtest 'template' => sub {
         ok(1);
@@ -323,7 +323,37 @@ subtest 'post /auth/:id/remove remove' => sub {
         ok(1);
     };
     subtest 'success' => sub {
-        ok(1);
+        my $user_id = 1;
+        my $master  = $t->app->test_db->master;
+        my $teng    = $t->app->test_db->teng;
+        my $msg     = $master->auth->to_word('USER_DELETED');
+        my $cond    = +{ id => $user_id, deleted => 0 };
+
+        # 存在するユーザー
+        ok( $teng->single( 'user', $cond ) );
+
+        # ログイン
+        $test_util->login( $t, $user_id );
+
+        # 削除実行 (メニュー画面から)
+        my $dom        = $t->tx->res->dom;
+        my $form       = 'form[name=form_remove]';
+        my $action_url = $dom->at($form)->attr('action');
+
+        # 完了画面、ログインできない
+        $t->post_ok($action_url)->status_is(302);
+        my $location_url = $t->tx->res->headers->location;
+        $t->get_ok($location_url)->status_is(200);
+        $t->content_like(qr{\Q<b>$msg</b>\E});
+
+        # DB 確認
+        is( $teng->single( 'user', $cond ), undef, 'db count' );
+
+        # ログインができない
+        $test_util->not_login( $t, $user_id );
+
+        # DB をリセット
+        $test_util->init;
     };
 };
 

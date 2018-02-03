@@ -21,8 +21,8 @@ sub init {
     return $t;
 }
 
-# ログインする
-sub login {
+# ログイン入力実行する値を取得
+sub _submit_params_login {
     my $self    = shift;
     my $t       = shift;
     my $user_id = shift || 1;
@@ -30,8 +30,6 @@ sub login {
     my $user = $t->app->test_db->teng->single( 'user', +{ id => $user_id } );
     my $login_id = $user->login_id;
     my $password = $user->password;
-    my $master   = $t->app->test_db->master;
-    my $msg      = $master->auth->to_word('IS_LOGIN');
 
     # セッション確認
     my $session_id = $t->app->build_controller( $t->tx )->session('user');
@@ -49,6 +47,44 @@ sub login {
 
     # input val 取得
     my $params = $self->get_input_val( $dom, $form );
+    return +{ action_url => $action_url, params => $params };
+}
+
+# ログインができない
+sub not_login {
+    my $self    = shift;
+    my $t       = shift;
+    my $user_id = shift || 1;
+    my $master  = $t->app->test_db->master;
+    my $msg     = $master->auth->to_word('NOT_LOGIN_ID');
+
+    my $submit_params = $self->_submit_params_login( $t, $user_id );
+    my $action_url    = $submit_params->{action_url};
+    my $params        = $submit_params->{params};
+
+    # ログイン実行 (ログインできない)
+    $t->post_ok( $action_url => form => $params )->status_is(200);
+
+    # ログイン失敗画面
+    $t->content_like(qr{\Q<b>$msg</b>\E});
+
+    # セッション確認
+    my $session_id = $t->app->build_controller( $t->tx )->session('user');
+    is( $session_id, undef, 'session_id' );
+    return;
+}
+
+# ログインする
+sub login {
+    my $self    = shift;
+    my $t       = shift;
+    my $user_id = shift || 1;
+    my $master  = $t->app->test_db->master;
+    my $msg     = $master->auth->to_word('IS_LOGIN');
+
+    my $submit_params = $self->_submit_params_login( $t, $user_id );
+    my $action_url    = $submit_params->{action_url};
+    my $params        = $submit_params->{params};
 
     # ログイン実行
     $t->post_ok( $action_url => form => $params )->status_is(302);
@@ -59,7 +95,7 @@ sub login {
     $t->content_like(qr{\Q<b>$msg</b>\E});
 
     # セッション確認
-    $session_id = $t->app->build_controller( $t->tx )->session('user');
+    my $session_id = $t->app->build_controller( $t->tx )->session('user');
     ok( $session_id, 'session_id' );
     return;
 }

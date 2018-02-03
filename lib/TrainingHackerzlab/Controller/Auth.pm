@@ -106,16 +106,22 @@ sub update {
 
 # ユーザー削除実行
 sub remove {
-    my $self = shift;
+    my $self   = shift;
+    my $master = $self->model->auth->db->master;
     if ( $self->req->method eq 'POST' ) {
-        $self->session( expires => 1 );
         my $params = +{ user_id => $self->stash->{id}, };
         my $model = $self->model->auth->req_params($params);
-        $model->remove;
-        $self->redirect_to('/auth/remove');
+
+        # 削除対象なしの場合はトップへ
+        if ( $model->remove ) {
+            $self->session( expires => 1 );
+            $self->redirect_to('/auth/remove');
+            return;
+        }
+        $self->flash( msg => $master->auth->to_word('NOT_LOGIN_ID') );
+        $self->redirect_to('/');
         return;
     }
-    my $master = $self->model->auth->db->master;
     $self->render(
         msg      => $master->auth->to_word('USER_DELETED'),
         template => 'auth/remove',

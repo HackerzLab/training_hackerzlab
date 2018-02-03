@@ -30,11 +30,13 @@ sub remove {
     my $user = $self->db->teng->single( 'user', $cond );
 
     # 存在確認
-    die if !$user;
+    return if !$user;
 
     # 関連情報も全て削除
+    my $txn = $self->db->teng->txn_scope;
     $user->soft_delete;
-    return;
+    $txn->commit;
+    return 1;
 }
 
 # 登録実行
