@@ -10,10 +10,13 @@ my $t         = $test_util->init;
 sub _url_list {
     my $id = shift || '';
     return +{
-        top           => "/",
-        index         => "/hackerz/menu",
-        logout        => "/auth/logout",
-        ranking_index => "/hackerz/ranking",
+        top       => "/",
+        index     => "/hackerz/menu",
+        logout    => "/auth/logout",
+        ranking   => "/hackerz/ranking",
+        report    => "/hackerz/answer/report",
+        remove    => "/auth/$id/remove",
+        collected => "/hackerz/question/collected/$id",
     };
 }
 
@@ -30,19 +33,35 @@ subtest 'get /hackerz/menu index' => sub {
         my $user_id = 1;
         $test_util->login( $t, $user_id );
 
-        my $url = _url_list();
+        my $url = _url_list($user_id);
         $t->get_ok( $url->{index} )->status_is(200);
 
-        # form
+        # 各問題集ボタン
+        my $cond = +{ deleted => 0 };
+        my @collected_rows
+            = $t->app->test_db->teng->search( 'collected', $cond );
+        for my $row (@collected_rows) {
+            my $url = _url_list( $row->id );
+            $t->element_exists("a[href=$url->{collected}]");
+        }
+
+        # 総合ランキングボタン
+        $t->element_exists("a[href=$url->{ranking}]");
+
+        # 成績一覧ボタン
+        $t->element_exists("a[href=$url->{report}]");
+
+        # ログアウトボタン
         my $form
             = "form[name=form_logout][method=post][action=$url->{logout}]";
         $t->element_exists($form);
-
-        # 他 button, link
         $t->element_exists("$form button[type=submit]");
-        $t->element_exists("a[href=$url->{ranking_index}]");
 
-        # $t->element_exists("a[href=$url->{top}]");
+        # 登録情報削除ボタン
+        $form = "form[name=form_remove][method=post][action=$url->{remove}]";
+        $t->element_exists($form);
+        $t->element_exists("$form button[type=submit]");
+
         $test_util->logout($t);
     };
     subtest 'fail' => sub {
