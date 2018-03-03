@@ -9,18 +9,13 @@ sub has_error_easy {
     return 1 if !$params->{hint_id};
     return 1 if !$params->{opened};
     return 1 if !$params->{user_id};
-    my $collected_id = $params->{collected_id};
-
-    # 全ての問題の場合は collected_id は 0 にする
-    if ( !$collected_id ) {
-        $collected_id = 0;
-    }
+    return 1 if !$params->{collected_id};
 
     # 二重登録防止
     my $cond = +{
         user_id      => $params->{user_id},
         hint_id      => $params->{hint_id},
-        collected_id => $collected_id,
+        collected_id => $params->{collected_id},
         deleted      => $self->db->master->deleted->constant('NOT_DELETED'),
     };
     my $hint_opened = $self->db->teng->single( 'hint_opened', $cond );
@@ -33,7 +28,7 @@ sub has_error_easy {
     };
     my $hint_row = $self->db->teng->single( 'hint', $hint_cond );
     return 1
-        if $hint_row->is_answer_ended( $params->{user_id}, $collected_id );
+        if $hint_row->is_answer_ended( $params->{user_id}, $params->{collected_id} );
     return;
 }
 
@@ -43,7 +38,7 @@ sub opened {
     my $params = +{
         user_id      => $self->req_params->{user_id},
         hint_id      => $self->req_params->{hint_id},
-        collected_id => $self->req_params->{collected_id} || 0,
+        collected_id => $self->req_params->{collected_id},
         opened       => $self->req_params->{opened},
         deleted      => $master->deleted->constant('NOT_DELETED'),
     };

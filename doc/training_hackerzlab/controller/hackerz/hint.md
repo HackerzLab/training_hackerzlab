@@ -6,19 +6,16 @@ training_hackerzlab/controller/hackerz/hint - TrainingHackerzlab
 
 ## URL
 
-- POST - `/hackerz/hint/opened` - store - ヒント開封履歴記録
+- POST - `/hackerz/hint/opened` - opened - ヒント開封履歴記録
 
 # DESCRIPTION
 
-## - POST - `/hackerz/hint/opened` - store - ヒント開封履歴記録
+## - POST - `/hackerz/hint/opened` - opened - ヒント開封履歴記録
 
 ```
-params:
-    user_id:
-    hint_id:
-    opened:
-
-ヒントを回覧したタイミングで hint_opened テーブルに記録
+- GET - `/hackerz/question/collected/:collected_id/:sort_id/think` - think - 問題集からの各問題画面
+の下部に現れる、ヒントの回覧履歴の記録機能
+[ヒント] タブをクリック(回覧)するたびに開封記録 hint_opened テーブルに記録
 ```
 
 # TODO
