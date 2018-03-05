@@ -8,7 +8,7 @@
   <%= include('inc/question_survey', format => 'html') =%>
 
   <!-- 解答入力フォーム -->
-  <%= include('inc/question_form', format => 'html') =%>
+  <%= include('inc/question_form', format => 'html', inc_form => 'inc/input_form') =%>
 
   <!-- 得点と難易度 -->
   <%= include('inc/question_level', format => 'html') =%>

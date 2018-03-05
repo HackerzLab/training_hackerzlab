@@ -23,12 +23,8 @@ training_hackerzlab/controller/hackerz/answer - TrainingHackerzlab 解答
 
 ## - GET - `/hackerz/answer/:id/result` - result - 解答を送信したぞ画面
 
-- params:
-    - question
-    - question_list
-
 ```
-解答を送信したぞ画面
+問題を解く画面 -> 解答を送信 -> 解答を送信したぞ画面
     おまえの解答だ
     入力した解答
     正解 or 間違い

@@ -1,17 +1,11 @@
   <div class="container">
-    <form action="/hackerz/answer"  method="POST" class="form-horizontal well">
+    <form action="/hackerz/answer" name="form_answer" method="POST" class="form-horizontal well">
       <fieldset>
         <legend><span class="glyphicon glyphicon-pencil"></span>&emsp;解答を入力</legend>
-        <div class="form-group has-feedback">
-          <label for="user_answer" class="col-lg-2 control-label"><span class="glyphicon glyphicon-pencil"></span></label>
-          <div class="col-lg-10">
-            <input type="hidden" name="user_id" value="<%= $user->{id} %>">
-            <input type="hidden" name="question_id" value="<%= $question->{id} %>">
-            <input type="hidden" name="collected_id" value="<%= $collected->{id} %>">
-            <input type="text" class="form-control" id="user_answer" placeholder="解答" name="user_answer" value="">
-            <span class="glyphicon glyphicon-check form-control-feedback"></span>
-          </div>
-        </div>
+
+        <!-- input 入力フォーム -->
+        <%= include($inc_form, format => 'html') =%>
+
         <div class="form-group">
           <div class="col-lg-10 col-lg-offset-2">
             <button type="submit" class="btn btn-primary" name="send" value="ボタン">送信</button>
