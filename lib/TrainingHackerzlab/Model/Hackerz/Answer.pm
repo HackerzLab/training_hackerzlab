@@ -12,18 +12,13 @@ sub has_error_easy {
     return 1 if !$params->{user_id};
     return 1 if !$params->{user_answer};
     return 1 if !$params->{question_id};
-    my $collected_id = $params->{collected_id};
-
-    # 全ての問題の場合は collected_id は 0 にする
-    if ( !$collected_id ) {
-        $collected_id = 0;
-    }
+    return 1 if !$params->{collected_id};
 
     # 二重登録防止
     my $cond = +{
         user_id      => $params->{user_id},
         question_id  => $params->{question_id},
-        collected_id => $collected_id,
+        collected_id => $params->{collected_id},
         deleted      => $self->db->master->deleted->constant('NOT_DELETED'),
     };
     my $answer = $self->db->teng->single( 'answer', $cond );
@@ -110,7 +105,7 @@ sub store {
     my $master = $self->db->master;
     my $params = +{
         question_id  => $self->req_params->{question_id},
-        collected_id => $self->req_params->{collected_id} || 0,
+        collected_id => $self->req_params->{collected_id},
         user_id      => $self->req_params->{user_id},
         user_answer  => $self->req_params->{user_answer},
         deleted      => $master->deleted->constant('NOT_DELETED'),
@@ -122,12 +117,10 @@ sub to_template_result {
     my $self   = shift;
     my $master = $self->db->master;
     my $result = +{
-        answer           => undef,
-        result           => undef,
-        next_question_id => undef,
-        collected_url    => undef,
-        collected        => undef,
-        collected_url    => undef,
+        answer        => undef,
+        result        => undef,
+        collected     => undef,
+        collected_url => undef,
     };
 
     my $cond = +{
@@ -147,15 +140,9 @@ sub to_template_result {
         $result->{result} = '間違いだ！';
     }
 
-    # 次の問題
-    my $question_id = $question_row->id;
-    $question_id += 1;
-    $result->{next_question_id} = $question_id;
-    $result->{collected_url}    = '/hackerz/question';
-    if ( my $collected = $answer_row->fetch_collected ) {
-        $result->{collected} = $collected->get_columns;
-        $result->{collected_url} .= '/collected/' . $collected->id;
-    }
+    my $collected = $answer_row->fetch_collected;
+    $result->{collected} = $collected->get_columns;
+    $result->{collected_url} .= '/collected/' . $collected->id;
     return $result;
 }
 

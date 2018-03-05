@@ -11,9 +11,9 @@ subtest 'router' => sub {
     my $user_id = 1;
     $test_util->login( $t, $user_id );
     my $id = 9999;
-    $t->get_ok( "/hackerz/answer/report" )->status_is(200);
-    $t->get_ok( "/hackerz/answer/$id/result" )->status_is(200);
-    $t->post_ok( "/hackerz/answer" )->status_is(200);
+    $t->get_ok("/hackerz/answer/report")->status_is(200);
+    $t->get_ok("/hackerz/answer/$id/result")->status_is(200);
+    $t->post_ok("/hackerz/answer")->status_is(200);
     $test_util->logout($t);
 };
 
@@ -22,7 +22,7 @@ subtest 'get /hackerz/answer/report report' => sub {
     subtest 'template' => sub {
         my $user_id = 1;
         $test_util->login( $t, $user_id );
-        $t->get_ok( "/hackerz/answer/report" )->status_is(200);
+        $t->get_ok("/hackerz/answer/report")->status_is(200);
 
         # 問題集のタイトル表示、クリックすると解答履歴
         my $cond = +{ deleted => 0 };
@@ -32,7 +32,7 @@ subtest 'get /hackerz/answer/report report' => sub {
             my $title   = $row->title;
             my $element = "[id=myModalLabel" . $row->id . "]";
             $t->element_exists($element);
-            $t->text_is($element, $title);
+            $t->text_is( $element, $title );
         }
         $test_util->logout($t);
     };
@@ -59,13 +59,19 @@ subtest 'get /hackerz/answer/:id/result result' => sub {
         # 問題の答え
         my $collected_id = 1;
         my $sort_id      = 1;
-        my $cond = +{collected_id => $collected_id, sort_id => $sort_id, deleted => 0};
-        my $collected_sort_row = $t->app->test_db->teng->single('collected_sort', $cond);
+        my $cond         = +{
+            collected_id => $collected_id,
+            sort_id      => $sort_id,
+            deleted      => 0
+        };
+        my $collected_sort_row
+            = $t->app->test_db->teng->single( 'collected_sort', $cond );
         my $user_answer = $collected_sort_row->fetch_question->answer;
         my $question_id = $collected_sort_row->fetch_question->id;
 
         # 問題を解く画面
-        $t->get_ok( "/hackerz/question/collected/$collected_id/$sort_id/think" )->status_is(200);
+        $t->get_ok("/hackerz/question/collected/$collected_id/$sort_id/think")
+            ->status_is(200);
         my $name   = 'form_answer';
         my $action = '/hackerz/answer';
 
@@ -95,14 +101,17 @@ subtest 'get /hackerz/answer/:id/result result' => sub {
         $t->content_like(qr{\Q$user_answer\E});
 
         # db 確認
-        my @rows = $t->app->test_db->teng->single('answer', +{});
-        is(scalar @rows, 1, 'count');
+        my @rows = $t->app->test_db->teng->single( 'answer', +{} );
+        is( scalar @rows, 1, 'count' );
         my $row = shift @rows;
-        is($row->question_id,  $question_id,  'question_id');
-        is($row->collected_id, $collected_id, 'collected_id');
-        is($row->user_id,      $user_id,      'user_id');
-        is($row->user_answer,  $user_answer,  'user_answer');
+        is( $row->question_id,  $question_id,  'question_id' );
+        is( $row->collected_id, $collected_id, 'collected_id' );
+        is( $row->user_id,      $user_id,      'user_id' );
+        is( $row->user_answer,  $user_answer,  'user_answer' );
         $test_util->logout($t);
+
+        # db 初期化
+        $t->app->commands->run( 'generatemore', 'sqlitedb' );
     };
 };
 
@@ -111,11 +120,28 @@ subtest 'post /hackerz/answer store' => sub {
     subtest 'template' => sub {
         ok(1);
     };
-    subtest 'fail' => sub {
-        ok(1);
-    };
-    subtest 'success' => sub {
-        ok(1);
+    subtest 'logic' => sub {
+        my $user_id = 1;
+        $test_util->login( $t, $user_id );
+
+        my $master     = $t->app->test_db->master;
+        my $msg        = $master->answer->to_word('NOT_INPUT');
+        my $action_url = '/hackerz/answer';
+
+        # バリデート
+        my $params = +{
+            question_id  => 1,
+            collected_id => undef,
+            user_id      => $user_id,
+            user_answer  => 'test answer',
+        };
+
+        # 解答を送信
+        $t->post_ok( $action_url => form => $params )->status_is(200);
+
+        # 失敗時の画面
+        $t->content_like(qr{\Q<b>$msg</b>\E});
+        $test_util->logout($t);
     };
 };
 

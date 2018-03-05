@@ -33,11 +33,6 @@ training_hackerzlab/controller/hackerz/answer - TrainingHackerzlab 解答
 
 ## - POST - `/hackerz/answer` - store - 解答内容送信
 
-- params:
-    - user_id
-    - user_answer
-    - question_id
-
 ```
 各問題画面
     送信ボタン -> 入力値を送信
