@@ -1,0 +1,7 @@
+% layout 'base';
+% title 'HackerzLab.博多';
+
+  <div class="container">
+    <h2 class="page-header">ページが存在しません</h2>
+    <div class="alert alert-warning"><b>そんなページはありません!!</b></div>
+  </div>

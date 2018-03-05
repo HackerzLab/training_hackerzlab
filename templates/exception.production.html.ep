@@ -1,0 +1,7 @@
+% layout 'base';
+% title 'HackerzLab.博多';
+
+  <div class="container">
+    <h2 class="page-header">システムエラー</h2>
+    <div class="alert alert-danger"><b>開発者へ連絡せよ!!</b></div>
+  </div>

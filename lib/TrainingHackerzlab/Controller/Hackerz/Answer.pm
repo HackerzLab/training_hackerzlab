@@ -20,43 +20,6 @@ sub report {
     return;
 }
 
-# 解答一覧画面
-sub list {
-    my $self    = shift;
-    my $params  = +{ user_id => $self->login_user->id, };
-    my $hackerz = $self->model->hackerz;
-    my $answer  = $hackerz->answer->req_params($params);
-
-    my $to_template_list = $answer->to_template_list;
-    $self->stash(
-        %{$to_template_list},
-        template => 'hackerz/answer/list',
-        format   => 'html',
-        handler  => 'ep',
-    );
-    $self->render();
-    return;
-}
-
-# 解答結果画面
-sub score {
-    my $self    = shift;
-    my $params  = +{ user_id => $self->login_user->id, };
-    my $hackerz = $self->model->hackerz;
-    my $answer  = $hackerz->answer->req_params($params);
-
-    my $to_template_score = $answer->to_template_score;
-    $self->stash(
-        %{$to_template_score},
-        user     => $self->login_user->get_columns,
-        template => 'hackerz/answer/score',
-        format   => 'html',
-        handler  => 'ep',
-    );
-    $self->render();
-    return;
-}
-
 # 解答を送信したぞ画面
 sub result {
     my $self    = shift;

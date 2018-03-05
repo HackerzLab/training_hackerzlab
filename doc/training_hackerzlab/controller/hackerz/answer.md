@@ -6,8 +6,6 @@ training_hackerzlab/controller/hackerz/answer - TrainingHackerzlab 解答
 
 ## URL
 
-- GET - `/hackerz/answer/list` - list - 解答一覧画面
-- GET - `/hackerz/answer/score` - score - 解答結果画面
 - GET - `/hackerz/answer/report` - report - 成績一覧画面
 - GET - `/hackerz/answer/:id/result` - result - 解答を送信したぞ画面
 - POST - `/hackerz/answer` - store - 解答内容送信
@@ -21,28 +19,6 @@ training_hackerzlab/controller/hackerz/answer - TrainingHackerzlab 解答
 テーブル表示項目
 問題ごとに、正解、不正解、問題、入力解答、ヒント開封履歴、獲得点数
 問題集ごとに、問題集の情報、合計点
-```
-
-## - GET - `/hackerz/answer/list` - list - 解答一覧画面
-
-```
-GET - `/hackerz/menu`
-トップページ (ログイン中)
-    自分の解答一覧ボタン -> 解答一覧画面
-
-解答一覧画面
-    解答した問題の答えのリスト
-```
-
-## - GET - `/hackerz/answer/score` - score - 解答結果画面
-
-```
-問題を解く画面
-    得点確認ボタン -> 解答結果画面
-
-解答結果画面
-    解答結果、ユーザーID表示
-    現在の得点表示
 ```
 
 ## - GET - `/hackerz/answer/:id/result` - result - 解答を送信したぞ画面

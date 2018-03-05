@@ -33,11 +33,6 @@ sub has_error_easy {
     return;
 }
 
-sub to_template_report {
-    my $self  = shift;
-    return $self->to_template_score;
-}
-
 # 解答結果点数
 # +{  question_list             => [],
 #     question_list_total_score => 0,
@@ -62,7 +57,7 @@ sub to_template_report {
 #         +{},
 #     ],
 # };
-sub to_template_score {
+sub to_template_report {
     my $self  = shift;
     my $score = +{
         question_list             => undef,
@@ -123,29 +118,17 @@ sub store {
     return $self->db->teng_fast_insert( 'answer', $params );
 }
 
-sub to_template_list {
-    my $self   = shift;
-    my $master = $self->db->master;
-    my $list   = +{ answers => [], };
-
-    my $cond = +{
-        id      => $self->req_params->{user_id},
-        deleted => $master->deleted->constant('NOT_DELETED'),
-    };
-    my $user_row = $self->db->teng->single( 'user', $cond );
-    return $list if !$user_row;
-
-    my $answer_rows = $user_row->search_answer;
-    return $list if !$answer_rows;
-
-    $list->{answers} = [ map { $_->get_columns } @{$answer_rows} ];
-    return $list;
-}
-
 sub to_template_result {
     my $self   = shift;
     my $master = $self->db->master;
-    my $result = +{};
+    my $result = +{
+        answer           => undef,
+        result           => undef,
+        next_question_id => undef,
+        collected_url    => undef,
+        collected        => undef,
+        collected_url    => undef,
+    };
 
     my $cond = +{
         id      => $self->req_params->{answer_id},
@@ -153,11 +136,10 @@ sub to_template_result {
     };
 
     my $answer_row = $self->db->teng->single( 'answer', $cond );
-    return if !$answer_row;
+    return $result if !$answer_row;
+
     $result->{answer} = $answer_row->get_columns;
-
     my $question_row = $answer_row->fetch_question;
-
     if ( $answer_row->user_answer eq $question_row->answer ) {
         $result->{result} = '正解だ！';
     }

@@ -7,44 +7,34 @@ use t::Util;
 my $test_util = t::Util->new();
 my $t         = $test_util->init;
 
-sub _url_list {
-    my $id = shift || '';
-    return +{
-        top    => "/",
-        list   => "/hackerz/answer/$id/list",
-        score  => "/hackerz/answer/$id/score",
-        result => "/hackerz/answer/$id/result",
-        store  => "/hackerz/answer",
-    };
-}
-
 subtest 'router' => sub {
-    my $url = _url_list(9999);
-    $t->ua->max_redirects(1);
-    $t->get_ok( $url->{list} )->status_is(200);
-    $t->get_ok( $url->{score} )->status_is(200);
-    $t->get_ok( $url->{result} )->status_is(200);
-    $t->post_ok( $url->{store} )->status_is(200);
-    $t->ua->max_redirects(0);
+    my $user_id = 1;
+    $test_util->login( $t, $user_id );
+    my $id = 9999;
+    $t->get_ok( "/hackerz/answer/report" )->status_is(200);
+    $t->get_ok( "/hackerz/answer/$id/result" )->status_is(200);
+    $t->post_ok( "/hackerz/answer" )->status_is(200);
+    $test_util->logout($t);
 };
 
-# 解答一覧画面
-subtest 'get /hackerz/answer/:id/list list' => sub {
+# 成績一覧画面
+subtest 'get /hackerz/answer/report report' => sub {
     subtest 'template' => sub {
-        ok(1);
-    };
-    subtest 'fail' => sub {
-        ok(1);
-    };
-    subtest 'success' => sub {
-        ok(1);
-    };
-};
+        my $user_id = 1;
+        $test_util->login( $t, $user_id );
+        $t->get_ok( "/hackerz/answer/report" )->status_is(200);
 
-# 解答結果画面
-subtest 'get /hackerz/answer/:id/score score' => sub {
-    subtest 'template' => sub {
-        ok(1);
+        # 問題集のタイトル表示、クリックすると解答履歴
+        my $cond = +{ deleted => 0 };
+        my @collected_rows
+            = $t->app->test_db->teng->search( 'collected', $cond );
+        for my $row (@collected_rows) {
+            my $title   = $row->title;
+            my $element = "[id=myModalLabel" . $row->id . "]";
+            $t->element_exists($element);
+            $t->text_is($element, $title);
+        }
+        $test_util->logout($t);
     };
     subtest 'fail' => sub {
         ok(1);
