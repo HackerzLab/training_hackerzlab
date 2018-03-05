@@ -21,6 +21,7 @@ sub to_template_show {
 
     my $collected_row_list
         = $user_row->fetch_collected_row_list($collected_id);
+    return $show if !$collected_row_list;
 
     # 問題集関連データ一式
     my $collected_list = $self->collected_data_hash($collected_row_list);
