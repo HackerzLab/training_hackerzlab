@@ -142,7 +142,7 @@ sub to_template_result {
 
     my $collected = $answer_row->fetch_collected;
     $result->{collected} = $collected->get_columns;
-    $result->{collected_url} .= '/collected/' . $collected->id;
+    $result->{collected_url} .= '/hackerz/question/collected/' . $collected->id;
     return $result;
 }
 

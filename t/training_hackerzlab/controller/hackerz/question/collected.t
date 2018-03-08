@@ -45,124 +45,84 @@ subtest 'get /hackerz/question/collected/:id show' => sub {
     };
 };
 
-# - GET - `/hackerz/question/collected/:collected_id/:sort_id/think` - think - 問題集からの各問題画面
-subtest 'get /hackerz/question/collected/:collected_id/:sort_id/think think' => sub {
+# 問題集からの各問題画面
+# - GET - `/hackerz/question/collected/:collected_id/:sort_id/think` - think -
+subtest 'get /:collected_id/:sort_id/think think' => sub {
     subtest 'template' => sub {
         ok(1);
     };
     subtest 'logic' => sub {
 
-        # ログイン
-        my $user_id = 1;
-        $test_util->login( $t, $user_id );
+        subtest 'all q for pattern 10' => sub {
 
-        # 問題集選択
-        # menu 画面にいる
-        warn $t->tx->res->body;
+            # 初期値
+            my $user_id      = 1;
+            my $collected_id = 1;
+            my $sort_id      = 1;
+            my $cond         = +{
+                collected_id => $collected_id,
+                sort_id      => $sort_id,
+                deleted      => 0
+            };
+            my $collected_sort_row
+                = $t->app->test_db->teng->single( 'collected_sort', $cond );
+            my $user_answer = $collected_sort_row->fetch_question->answer;
+            my $question_id = $collected_sort_row->fetch_question->id;
 
-        my $collected_id = 1;
+            $test_util->login( $t, $user_id );
 
-        # 選択した問題集をリクエスト(全ての問題)
-        my $menu_params =+{
-            collected_id => $collected_id,
+            # menu 画面
+            my $link = "a[href=/hackerz/question/collected/$collected_id]";
+            $t->element_exists($link);
+            my $link_url = $t->tx->res->dom->at($link)->attr('href');
+
+            # 問題集画面
+            $t->get_ok($link_url)->status_is(200);
+            my $q_link
+                = "a[href=/hackerz/question/collected/$collected_id/$sort_id/think]";
+            $t->element_exists($q_link);
+            my $q_link_url = $t->tx->res->dom->at($q_link)->attr('href');
+
+            # 問題を解く画面
+            $t->get_ok($q_link_url)->status_is(200);
+
+            # 解答を送信 (dom に 値を埋め込み、再取得)
+            my $name   = 'form_answer';
+            my $action = '/hackerz/answer';
+            my $form   = "form[name=$name][method=POST][action=$action]";
+            $t->element_exists($form);
+            my $dom        = $t->tx->res->dom;
+            my $action_url = $dom->at($form)->attr('action');
+            my $val        = +{ user_answer => $user_answer, };
+            $dom = $test_util->input_val_in_dom( $dom, $form, $val );
+            my $params = $test_util->get_input_val( $dom, $form );
+
+            # 解答を送信
+            $t->post_ok( $action_url => form => $params )->status_is(302);
+
+            # 解答結果
+            my $location_url = $t->tx->res->headers->location;
+            $t->get_ok($location_url)->status_is(200);
+            $t->content_like(qr{\Qおまえの解答だ！\E});
+            $t->content_like(qr{\Q$user_answer\E});
+            $t->element_exists($link);
+
+            # 問題集画面
+            $link_url = $t->tx->res->dom->at($link)->attr('href');
+            $t->get_ok($link_url)->status_is(200);
+
+            # DB 確認
+            my @rows = $t->app->test_db->teng->single( 'answer', +{} );
+            is( scalar @rows, 1, 'count' );
+            my $row = shift @rows;
+            is( $row->question_id,  $question_id,  'question_id' );
+            is( $row->collected_id, $collected_id, 'collected_id' );
+            is( $row->user_id,      $user_id,      'user_id' );
+            is( $row->user_answer,  $user_answer,  'user_answer' );
+
+            $test_util->logout($t);
         };
-        $t = _menu_for_collected($t, $menu_params,);
-
-        # 問題選択
-        warn $t->tx->res->body;
-
-        # 1問目を
-        # my $q_link = "a[href=/hackerz/question/collected/1/1/think]";
-        # $t->element_exists($q_link);
-        # my $q_link_url = $t->tx->res->dom->at($q_link)->attr('href');
-        # $t->get_ok( $q_link_url )->status_is(200);
-
-        # my $collected_id = 1;
-        # my $sort_id      = 1;
-        # my $cond         = +{
-        #     collected_id => $collected_id,
-        #     sort_id      => $sort_id,
-        #     deleted      => 0
-        # };
-        # my $collected_sort_row
-        #     = $t->app->test_db->teng->single( 'collected_sort', $cond );
-        # my $user_answer = $collected_sort_row->fetch_question->answer;
-        # my $question_id = $collected_sort_row->fetch_question->id;
-
-        # # 問題を解く画面
-        # $t->get_ok("/hackerz/question/collected/$collected_id/$sort_id/think")
-        #     ->status_is(200);
-        # my $name   = 'form_answer';
-        # my $action = '/hackerz/answer';
-
-        # # form
-        # my $form = "form[name=$name][method=POST][action=$action]";
-        # $t->element_exists($form);
-
-        # my $dom        = $t->tx->res->dom;
-        # my $action_url = $dom->at($form)->attr('action');
-
-        # # 入力データーの元
-        # my $msg_hash = +{ user_answer => $user_answer, };
-
-        # # dom に 値を埋め込み
-        # $dom = $test_util->input_val_in_dom( $dom, $form, $msg_hash );
-
-        # # input val 取得
-        # my $params = $test_util->get_input_val( $dom, $form );
-
-        # # 解答を送信
-        # $t->post_ok( $action_url => form => $params )->status_is(302);
-
-        # # 解答を送信したぞ画面
-        # my $location_url = $t->tx->res->headers->location;
-        # $t->get_ok($location_url)->status_is(200);
-
-        # warn $t->tx->res->body;
-
-        # 入力結果
-
-        # 問題一覧へもどる
-
-        $test_util->logout($t);
-        ok(1);
     };
 };
-
-# ログイン後のメニュー画面から問題集へ
-sub _menu_for_collected {
-    my $t            = shift;
-    my $params       = shift;
-    my $collected_id = $params->{collected_id};
-
-    my $link = "a[href=/hackerz/question/collected/$collected_id]";
-    $t->element_exists($link);
-    my $link_url = $t->tx->res->dom->at($link)->attr('href');
-    $t->get_ok($link_url)->status_is(200);
-    return $t;
-}
-
-# 問題を解く画面
-sub _show_question {
-    my $t            = shift;
-    my $params       = shift;
-    my $collected_id = $params->{collected_id};
-    my $sort_id      = $params->{sort_id};
-
-    my $cond = +{
-        collected_id => $collected_id,
-        sort_id      => $sort_id,
-        deleted      => 0
-    };
-    my $collected_sort_row = $t->app->test_db->teng->single('collected_sort', $cond);
-    my $user_answer        = $collected_sort_row->fetch_question->answer;
-    my $question_id        = $collected_sort_row->fetch_question->id;
-
-    # 問題を解く画面
-    $t->get_ok("/hackerz/question/collected/$collected_id/$sort_id/think")->status_is(200);
-    return $t;
-}
-
-# 解答を入力する
 
 done_testing();
