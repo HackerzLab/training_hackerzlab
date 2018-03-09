@@ -281,10 +281,13 @@ sub _get_input_radio_names {
     for my $e ( $dom->find("$form input[type=radio]")->each ) {
         my $name = $e->attr('name');
         next if !$name;
-        my $tag = $e->to_string;
-        if ( $tag =~ /checked/ ) {
-            push @{$names}, $name;
-        }
+        push @{$names}, $name;
+    }
+
+    # 重複している name を解消
+    if ($names) {
+        my $collection = Mojo::Collection->new( @{$names} );
+        $names = $collection->uniq->to_array;
     }
     return $names;
 }

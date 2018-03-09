@@ -64,10 +64,12 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
                 sort_id      => $sort_id,
                 deleted      => 0
             };
-            my $collected_sort_row
+            my $row
                 = $t->app->test_db->teng->single( 'collected_sort', $cond );
-            my $user_answer = $collected_sort_row->fetch_question->answer;
-            my $question_id = $collected_sort_row->fetch_question->id;
+            my $user_answer = $row->fetch_question->answer;
+            my $question_id = $row->fetch_question->id;
+            my $pattern     = $row->fetch_question->pattern;
+            is( $pattern, 10, 'pattern' );
 
             $test_util->login( $t, $user_id );
 
@@ -121,6 +123,80 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             is( $row->user_answer,  $user_answer,  'user_answer' );
 
             $test_util->logout($t);
+            $t->app->commands->run( 'generatemore', 'sqlitedb' );
+        };
+
+        subtest 'all q for pattern 20' => sub {
+
+            # 初期値
+            my $user_id      = 1;
+            my $collected_id = 1;
+            my $sort_id      = 2;
+            my $cond         = +{
+                collected_id => $collected_id,
+                sort_id      => $sort_id,
+                deleted      => 0
+            };
+            my $row
+                = $t->app->test_db->teng->single( 'collected_sort', $cond );
+            my $user_answer = $row->fetch_question->answer;
+            my $question_id = $row->fetch_question->id;
+            my $pattern     = $row->fetch_question->pattern;
+            is( $pattern, 20, 'pattern' );
+
+            $test_util->login( $t, $user_id );
+
+            # menu 画面から問題集リンク取得
+            my $link = "a[href=/hackerz/question/collected/$collected_id]";
+            $t->element_exists($link);
+            my $link_url = $t->tx->res->dom->at($link)->attr('href');
+
+            # 問題集画面から問題画面リンク取得
+            $t->get_ok($link_url)->status_is(200);
+            $t->content_unlike(qr{\Q正解\E});
+            my $q_link
+                = "a[href=/hackerz/question/collected/$collected_id/$sort_id/think]";
+            $t->element_exists($q_link);
+            my $q_link_url = $t->tx->res->dom->at($q_link)->attr('href');
+
+            # 問題画面から解答送信の値を作成
+            $t->get_ok($q_link_url)->status_is(200);
+            my $name   = 'form_answer';
+            my $action = '/hackerz/answer';
+            my $form   = "form[name=$name][method=POST][action=$action]";
+            $t->element_exists($form);
+            my $dom        = $t->tx->res->dom;
+            my $action_url = $dom->at($form)->attr('action');
+            my $val        = +{ user_answer => $user_answer, };
+            $dom = $test_util->input_val_in_dom( $dom, $form, $val );
+            my $params = $test_util->get_input_val( $dom, $form );
+
+            # 解答を送信から解答結果画面
+            $t->post_ok( $action_url => form => $params )->status_is(302);
+            my $location_url = $t->tx->res->headers->location;
+            $t->get_ok($location_url)->status_is(200);
+            $t->content_like(qr{\Qおまえの解答だ！\E});
+            $t->content_like(qr{\Q$user_answer\E});
+
+            # 解答結果画面から問題集リンク取得
+            $t->element_exists($link);
+            $link_url = $t->tx->res->dom->at($link)->attr('href');
+
+            # 問題集画面から解答結果の表示の確認
+            $t->get_ok($link_url)->status_is(200);
+            $t->content_like(qr{\Q正解\E});
+
+            # DB 確認
+            my @rows = $t->app->test_db->teng->single( 'answer', +{} );
+            is( scalar @rows, 1, 'count' );
+            my $row = shift @rows;
+            is( $row->question_id,  $question_id,  'question_id' );
+            is( $row->collected_id, $collected_id, 'collected_id' );
+            is( $row->user_id,      $user_id,      'user_id' );
+            is( $row->user_answer,  $user_answer,  'user_answer' );
+
+            $test_util->logout($t);
+            $t->app->commands->run( 'generatemore', 'sqlitedb' );
         };
     };
 };
