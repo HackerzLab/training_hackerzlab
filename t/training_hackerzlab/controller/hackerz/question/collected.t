@@ -71,22 +71,21 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
 
             $test_util->login( $t, $user_id );
 
-            # menu 画面
+            # menu 画面から問題集リンク取得
             my $link = "a[href=/hackerz/question/collected/$collected_id]";
             $t->element_exists($link);
             my $link_url = $t->tx->res->dom->at($link)->attr('href');
 
-            # 問題集画面
+            # 問題集画面から問題画面リンク取得
             $t->get_ok($link_url)->status_is(200);
+            $t->content_unlike(qr{\Q正解\E});
             my $q_link
                 = "a[href=/hackerz/question/collected/$collected_id/$sort_id/think]";
             $t->element_exists($q_link);
             my $q_link_url = $t->tx->res->dom->at($q_link)->attr('href');
 
-            # 問題を解く画面
+            # 問題画面から解答送信の値を作成
             $t->get_ok($q_link_url)->status_is(200);
-
-            # 解答を送信 (dom に 値を埋め込み、再取得)
             my $name   = 'form_answer';
             my $action = '/hackerz/answer';
             my $form   = "form[name=$name][method=POST][action=$action]";
@@ -97,19 +96,20 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             $dom = $test_util->input_val_in_dom( $dom, $form, $val );
             my $params = $test_util->get_input_val( $dom, $form );
 
-            # 解答を送信
+            # 解答を送信から解答結果画面
             $t->post_ok( $action_url => form => $params )->status_is(302);
-
-            # 解答結果
             my $location_url = $t->tx->res->headers->location;
             $t->get_ok($location_url)->status_is(200);
             $t->content_like(qr{\Qおまえの解答だ！\E});
             $t->content_like(qr{\Q$user_answer\E});
-            $t->element_exists($link);
 
-            # 問題集画面
+            # 解答結果画面から問題集リンク取得
+            $t->element_exists($link);
             $link_url = $t->tx->res->dom->at($link)->attr('href');
+
+            # 問題集画面から解答結果の表示の確認
             $t->get_ok($link_url)->status_is(200);
+            $t->content_like(qr{\Q正解\E});
 
             # DB 確認
             my @rows = $t->app->test_db->teng->single( 'answer', +{} );
