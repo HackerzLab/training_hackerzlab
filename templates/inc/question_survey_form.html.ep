@@ -1,16 +1,40 @@
   <div class="container">
-    <form action="/cracking" method="POST" class="form-horizontal well">
+    <form action="/hackerz/question/collected/<%= $collected->{id} %>/<%= $sort_id %>/survey<%= $survey->{page_url} %>" method="POST" class="form-horizontal well">
       <fieldset>
         <legend><span class="glyphicon glyphicon-pencil"></span>&emsp;パスワードクラッキングせよ</legend>
+
+        <p class="text-warning">
+        % if ($survey_answer) {
+          % if ($survey_answer == 1) {
+            <span>IDが入力されていません</span>
+          % }
+
+          % if ($survey_answer == 2) {
+            <span>パスワードが入力されていません</span>
+          % }
+
+          % if ($survey_answer == 3) {
+            <span>IDかパスワードが違います</span>
+          % }
+
+          % if ($survey_answer eq 'success') {
+            <span>やるじゃんクラック成功！！</span><br>
+            第<%= $sort_id %>問のページ戻って、以下のパスワードをテキストボックスへ入力して下さい<br>
+            <br>
+            <span>パスワード : <%= $secret_password %></span>
+          % }
+        % }
+        </p>
+
         <div class="form-group has-feedback">
           <label for="id" class="col-lg-2 control-label"><span class="glyphicon glyphicon-pencil"></span>&emsp;IDを入力</label>
           <div class="col-lg-10">
-            <input type="text" class="form-control" id="id" placeholder="IDを入力" name="id" value="">
+            <input type="text" class="form-control" id="id" placeholder="IDを入力" name="secret_id" value="">
             <span class="glyphicon glyphicon-check form-control-feedback"></span>
           </div>
           <label for="password" class="col-lg-2 control-label"><span class="glyphicon glyphicon-pencil"></span>&emsp;パスワードを入力</label>
           <div class="col-lg-10">
-            <input type="password" class="form-control" id="password" placeholder="パスワードを入力" name="password" value="">
+            <input type="password" class="form-control" id="password" placeholder="パスワードを入力" name="secret_password" value="">
             <span class="glyphicon glyphicon-check form-control-feedback"></span>
           </div>
         </div>

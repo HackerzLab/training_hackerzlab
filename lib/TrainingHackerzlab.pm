@@ -101,8 +101,9 @@ sub startup {
     my $collected_id = [ collected_id => qr/[0-9]+/, sort_id => qr/[0-9]+/ ];
     my $collected = $r->under('/hackerz/question/collected');
     $collected->get( '/:id', $id )->to('Hackerz::Question::Collected#show');
-    $collected->get( '/:collected_id/:sort_id/think', $collected_id )
-        ->to('Hackerz::Question::Collected#think');
+    $collected->get( '/:collected_id/:sort_id/think', $collected_id )->to('Hackerz::Question::Collected#think');
+    $collected->get( '/:collected_id/:sort_id/survey/:action', $collected_id )->to('Hackerz::Question::Survey#');
+    $collected->post( '/:collected_id/:sort_id/survey/:action', $collected_id )->to('Hackerz::Question::Survey#');
 }
 
 1;

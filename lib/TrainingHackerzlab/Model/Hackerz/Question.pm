@@ -1,9 +1,16 @@
 package TrainingHackerzlab::Model::Hackerz::Question;
 use Mojo::Base 'TrainingHackerzlab::Model::Base';
 use TrainingHackerzlab::Model::Hackerz::Question::Collected;
+use TrainingHackerzlab::Model::Hackerz::Question::Survey;
+use Mojo::Util qw{dumper};
 
 has collected => sub {
     TrainingHackerzlab::Model::Hackerz::Question::Collected->new(
+        +{ conf => shift->conf } );
+};
+
+has survey => sub {
+    TrainingHackerzlab::Model::Hackerz::Question::Survey->new(
         +{ conf => shift->conf } );
 };
 

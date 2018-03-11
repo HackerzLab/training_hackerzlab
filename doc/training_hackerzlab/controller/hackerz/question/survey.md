@@ -6,11 +6,13 @@ training_hackerzlab/controller/hackerz/question/survey - TrainingHackerzlab
 
 ## URL
 
-- GET - `/hackerz/question/:id/survey/cracking` - cracking - クラッキングページ
+- GET - `/hackerz/question/collected/:collected_id/:sort_id/survey/cracking` - cracking - クラッキングページ
+- POST - `/hackerz/question/collected/:collected_id/:sort_id/survey/cracking` - cracking - クラッキングページ (解答)
 
 # DESCRIPTION
 
-## - GET - `/hackerz/question/:id/survey/cracking` - cracking - クラッキングページ
+## - GET - `/hackerz/question/collected/:collected_id/:sort_id/survey/cracking` - cracking - クラッキングページ
+## - POST - `/hackerz/question/collected/:collected_id/:sort_id/survey/cracking` - cracking - クラッキングページ (解答)
 
 ```
 第３問より

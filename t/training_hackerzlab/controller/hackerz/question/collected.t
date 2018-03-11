@@ -201,8 +201,6 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             $t->app->commands->run( 'generatemore', 'sqlitedb' );
         };
 
-
-
         # survey(30) -> 調査するページから解答を導き出してテキスト入力で解答
         subtest 'all q for pattern 30' => sub {
 
@@ -240,7 +238,7 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             # 問題画面からクラッキングページリンク取得
             $t->get_ok($q_link_url)->status_is(200);
             my $c_link
-                = "a[href=/hackerz/question/$question_id/survey/cracking]";
+                = "a[href=/hackerz/question/collected/$collected_id/$sort_id/survey/cracking]";
             $t->element_exists($c_link);
             my $c_link_url = $t->tx->res->dom->at($c_link)->attr('href');
 
@@ -250,6 +248,7 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             # クラッキングページ入力フォーム
 
             # 問題ページへもどるのリンク
+            $t->element_exists($q_link);
 
             # 問題画面から解答送信の値を作成
 
