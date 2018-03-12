@@ -4,6 +4,7 @@
       <p>ホワイトハカーというのを知ってるかい？...</p>
     </div>
   </div>
+  <!-- body msg -->
   <div class="container">
   % if ( my $msg = flash('msg') ) {
     <div class="alert alert-success"><b><%== $msg =%></b></div>

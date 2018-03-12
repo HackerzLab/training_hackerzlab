@@ -1,19 +1,19 @@
   <div class="container">
-    <form action="/hackerz/question/collected/<%= $collected->{id} %>/<%= $sort_id %>/survey<%= $survey->{page_url} %>" method="POST" class="form-horizontal well">
+    <form action="/hackerz/question/collected/<%= $collected->{id} %>/<%= $sort_id %>/survey<%= $survey->{page_url} %>" name="form_survey" method="POST" class="form-horizontal well">
       <fieldset>
         <legend><span class="glyphicon glyphicon-pencil"></span>&emsp;パスワードクラッキングせよ</legend>
 
         <p class="text-warning">
         % if ($survey_answer) {
-          % if ($survey_answer == 1) {
+          % if ($survey_answer eq 1) {
             <span>IDが入力されていません</span>
           % }
 
-          % if ($survey_answer == 2) {
+          % if ($survey_answer eq 2) {
             <span>パスワードが入力されていません</span>
           % }
 
-          % if ($survey_answer == 3) {
+          % if ($survey_answer eq 3) {
             <span>IDかパスワードが違います</span>
           % }
 

@@ -53,7 +53,8 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
     };
     subtest 'logic' => sub {
 
-        # form(10) -> 問題文に対して入力フォームにテキスト入力で解答
+       # form(10) ->
+       # 問題文に対して入力フォームにテキスト入力で解答
         subtest 'all q for pattern 10' => sub {
 
             # 初期値
@@ -127,7 +128,8 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             $t->app->commands->run( 'generatemore', 'sqlitedb' );
         };
 
-        # choice(20) -> 問題文に対して答えを4択から選択して解答
+        # choice(20) ->
+        # 問題文に対して答えを4択から選択して解答
         subtest 'all q for pattern 20' => sub {
 
             # 初期値
@@ -201,7 +203,8 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             $t->app->commands->run( 'generatemore', 'sqlitedb' );
         };
 
-        # survey(30) -> 調査するページから解答を導き出してテキスト入力で解答
+        # survey(30) ->
+        # 調査するページから解答を導き出して
         subtest 'all q for pattern 30' => sub {
 
             # 初期値
@@ -245,48 +248,76 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             # クラッキングページに解答入力
             $t->get_ok($c_link_url)->status_is(200);
 
-            # クラッキングページ入力フォーム
-
             # 問題ページへもどるのリンク
             $t->element_exists($q_link);
 
+            # クラッキングページ入力フォーム
+            my $s_cond = +{
+                question_id => $question_id,
+                deleted     => 0
+            };
+            my $s_row = $t->app->test_db->teng->single( 'survey', $s_cond );
+            my $s_action
+                = "/hackerz/question/collected/$collected_id/$sort_id/survey/cracking";
+            my $s_form
+                = "form[name=form_survey][method=POST][action=$s_action]";
+            $t->element_exists($s_form);
+            my $s_dom        = $t->tx->res->dom;
+            my $s_action_url = $s_dom->at($s_form)->attr('action');
+            my $s_val        = +{
+                secret_id       => $s_row->secret_id,
+                secret_password => $s_row->secret_password,
+            };
+            $s_dom = $test_util->input_val_in_dom( $s_dom, $s_form, $s_val );
+            my $s_params = $test_util->get_input_val( $s_dom, $s_form );
+            $t->post_ok( $s_action_url => form => $s_params )->status_is(200);
+            $t->content_like(qr{\Qやるじゃんクラック成功！！\E});
+
+            # 問題ページへもどるのリンク
+            $t->element_exists($q_link);
+            $q_link_url = $t->tx->res->dom->at($q_link)->attr('href');
+
+            # 問題画面
+            $t->get_ok($q_link_url)->status_is(200);
+
             # 問題画面から解答送信の値を作成
+            is( $user_answer, $s_row->secret_password, 'user_answer' );
+            my $name   = 'form_answer';
+            my $action = '/hackerz/answer';
+            my $form   = "form[name=$name][method=POST][action=$action]";
+            $t->element_exists($form);
+            my $dom        = $t->tx->res->dom;
+            my $action_url = $dom->at($form)->attr('action');
+            my $val        = +{ user_answer => $user_answer, };
+            $dom = $test_util->input_val_in_dom( $dom, $form, $val );
+            my $params = $test_util->get_input_val( $dom, $form );
 
-            # my $name   = 'form_answer';
-            # my $action = '/hackerz/answer';
-            # my $form   = "form[name=$name][method=POST][action=$action]";
-            # $t->element_exists($form);
-            # my $dom        = $t->tx->res->dom;
-            # my $action_url = $dom->at($form)->attr('action');
-            # my $val        = +{ user_answer => $user_answer, };
-            # $dom = $test_util->input_val_in_dom( $dom, $form, $val );
-            # my $params = $test_util->get_input_val( $dom, $form );
-            # # 解答を送信から解答結果画面
-            # $t->post_ok( $action_url => form => $params )->status_is(302);
-            # my $location_url = $t->tx->res->headers->location;
-            # $t->get_ok($location_url)->status_is(200);
-            # $t->content_like(qr{\Qおまえの解答だ！\E});
-            # $t->content_like(qr{\Q$user_answer\E});
+            # 解答を送信から解答結果画面
+            $t->post_ok( $action_url => form => $params )->status_is(302);
+            my $location_url = $t->tx->res->headers->location;
+            $t->get_ok($location_url)->status_is(200);
+            $t->content_like(qr{\Qおまえの解答だ！\E});
+            $t->content_like(qr{\Q$user_answer\E});
 
-            # # 解答結果画面から問題集リンク取得
-            # $t->element_exists($link);
-            # $link_url = $t->tx->res->dom->at($link)->attr('href');
+            # 解答結果画面から問題集リンク取得
+            $t->element_exists($link);
+            $link_url = $t->tx->res->dom->at($link)->attr('href');
 
-            # # 問題集画面から解答結果の表示の確認
-            # $t->get_ok($link_url)->status_is(200);
-            # $t->content_like(qr{\Q正解\E});
+            # 問題集画面から解答結果の表示の確認
+            $t->get_ok($link_url)->status_is(200);
+            $t->content_like(qr{\Q正解\E});
 
-            # # DB 確認
-            # my @rows = $t->app->test_db->teng->single( 'answer', +{} );
-            # is( scalar @rows, 1, 'count' );
-            # my $row = shift @rows;
-            # is( $row->question_id,  $question_id,  'question_id' );
-            # is( $row->collected_id, $collected_id, 'collected_id' );
-            # is( $row->user_id,      $user_id,      'user_id' );
-            # is( $row->user_answer,  $user_answer,  'user_answer' );
+            # DB 確認
+            my @answer_rows = $t->app->test_db->teng->single( 'answer', +{} );
+            is( scalar @answer_rows, 1, 'count' );
+            my $answer_row = shift @answer_rows;
+            is( $answer_row->question_id,  $question_id,  'question_id' );
+            is( $answer_row->collected_id, $collected_id, 'collected_id' );
+            is( $answer_row->user_id,      $user_id,      'user_id' );
+            is( $answer_row->user_answer,  $user_answer,  'user_answer' );
 
-            # $test_util->logout($t);
-            # $t->app->commands->run( 'generatemore', 'sqlitedb' );
+            $test_util->logout($t);
+            $t->app->commands->run( 'generatemore', 'sqlitedb' );
         };
     };
 };

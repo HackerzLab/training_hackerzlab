@@ -140,6 +140,9 @@ sub get_input_val {
     # input text 取得
     my $text_params = $self->_get_input_text_val( $dom, $form );
 
+    # input password 取得
+    my $password_params = $self->_get_input_password_val( $dom, $form );
+
     # input radio 取得
     my $radio_params = $self->_get_input_radio_val( $dom, $form );
 
@@ -148,9 +151,6 @@ sub get_input_val {
 
     # textarea 取得
     my $textarea_params = $self->_get_textarea_val( $dom, $form );
-
-    # input password 取得
-    my $password_params = $self->_get_input_password_val( $dom, $form );
 
     my $params = +{
         %{$text_params},     %{$radio_params}, %{$hidden_params},
@@ -169,6 +169,9 @@ sub input_val_in_dom {
     # input text
     $dom = $self->_text_val_in_dom( $dom, $form, $data );
 
+    # input password
+    $dom = $self->_password_val_in_dom( $dom, $form, $data );
+
     # input radio
     $dom = $self->_radio_val_in_dom( $dom, $form, $data );
 
@@ -186,6 +189,21 @@ sub _get_input_text_val {
 
     my $params = +{};
     for my $e ( $dom->find("$form input[type=text]")->each ) {
+        my $name = $e->attr('name');
+        next if !$name;
+        $params->{$name} = $e->val;
+    }
+    return $params;
+}
+
+# input password 入力フォームの値を取得
+sub _get_input_password_val {
+    my $self = shift;
+    my $dom  = shift;
+    my $form = shift;
+
+    my $params = +{};
+    for my $e ( $dom->find("$form input[type=password]")->each ) {
         my $name = $e->attr('name');
         next if !$name;
         $params->{$name} = $e->val;
@@ -241,21 +259,6 @@ sub _get_textarea_val {
     return $params;
 }
 
-# input password 入力フォームの値を取得
-sub _get_input_password_val {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
-
-    my $params = +{};
-    for my $e ( $dom->find("$form input[type=password]")->each ) {
-        my $name = $e->attr('name');
-        next if !$name;
-        $params->{$name} = $e->val;
-    }
-    return $params;
-}
-
 # input text の name を全て取得
 sub _get_input_text_names {
     my $self = shift;
@@ -264,6 +267,21 @@ sub _get_input_text_names {
 
     my $names;
     for my $e ( $dom->find("$form input[type=text]")->each ) {
+        my $name = $e->attr('name');
+        next if !$name;
+        push @{$names}, $name;
+    }
+    return $names;
+}
+
+# input password の name を全て取得
+sub _get_input_password_names {
+    my $self = shift;
+    my $dom  = shift;
+    my $form = shift;
+
+    my $names;
+    for my $e ( $dom->find("$form input[type=password]")->each ) {
         my $name = $e->attr('name');
         next if !$name;
         push @{$names}, $name;
@@ -315,6 +333,21 @@ sub _text_val_in_dom {
     my $data = shift;
 
     my $names = $self->_get_input_text_names( $dom, $form );
+    for my $name ( @{$names} ) {
+        my $val = $data->{$name};
+        $dom->at("$form input[name=$name]")->attr( +{ value => $val } );
+    }
+    return $dom;
+}
+
+# input password 値の埋め込み
+sub _password_val_in_dom {
+    my $self = shift;
+    my $dom  = shift;
+    my $form = shift;
+    my $data = shift;
+
+    my $names = $self->_get_input_password_names( $dom, $form );
     for my $name ( @{$names} ) {
         my $val = $data->{$name};
         $dom->at("$form input[name=$name]")->attr( +{ value => $val } );
