@@ -1,0 +1,4 @@
+            <input type="hidden" name="user_id" value="<%= $user->{id} %>">
+            <input type="hidden" name="question_id" value="<%= $question->{id} %>">
+            <input type="hidden" name="collected_id" value="<%= $collected->{id} %>">
+            <input type="hidden" name="sort_id" value="<%= $sort_id %>">

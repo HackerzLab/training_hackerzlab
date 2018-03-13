@@ -100,6 +100,21 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             $dom = $test_util->input_val_in_dom( $dom, $form, $val );
             my $params = $test_util->get_input_val( $dom, $form );
 
+            # バリデートを確認
+            my $e_params = +{
+                user_id      => $params->{user_id},
+                sort_id      => $params->{sort_id},
+                user_answer  => '',
+                question_id  => $params->{question_id},
+                collected_id => $params->{collected_id},
+            };
+            $t->post_ok( $action_url => form => $e_params )->status_is(200);
+            $t->content_like(
+                qr{\Q<b>解答が入力されていません</b>\E});
+
+            # 解答未入力画面から問題集リンク存在確認
+            $t->element_exists($link);
+
             # 解答を送信から解答結果画面
             $t->post_ok( $action_url => form => $params )->status_is(302);
             my $location_url = $t->tx->res->headers->location;

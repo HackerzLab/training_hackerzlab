@@ -43,9 +43,12 @@ sub store {
     my $self = shift;
 
     my $params          = $self->req->params->to_hash;
-    my $question_params = +{ question_id => $params->{question_id}, };
-    my $hackerz         = $self->model->hackerz;
-
+    my $question_params = +{
+        collected_id => $params->{collected_id},
+        sort_id      => $params->{sort_id},
+        user_id      => $params->{user_id},
+    };
+    my $hackerz           = $self->model->hackerz;
     my $answer            = $hackerz->answer->req_params($params);
     my $question          = $hackerz->question->req_params($question_params);
     my $to_template_think = $question->to_template_think;
