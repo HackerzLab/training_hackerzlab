@@ -334,6 +334,122 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             $test_util->logout($t);
             $t->app->commands->run( 'generatemore', 'sqlitedb' );
         };
+
+        # survey(31) ->
+        # 調査するページから解答を導き出して
+        subtest 'all q for pattern 31' => sub {
+
+            # 初期値
+            my $user_id      = 1;
+            my $collected_id = 1;
+            my $sort_id      = 5;
+            my $cond         = +{
+                collected_id => $collected_id,
+                sort_id      => $sort_id,
+                deleted      => 0
+            };
+            my $row
+                = $t->app->test_db->teng->single( 'collected_sort', $cond );
+            my $user_answer = $row->fetch_question->answer;
+            my $question_id = $row->fetch_question->id;
+            my $pattern     = $row->fetch_question->pattern;
+            is( $pattern, 31, 'pattern' );
+
+            $test_util->login( $t, $user_id );
+
+            # menu 画面から問題集リンク取得
+            my $link = "a[href=/hackerz/question/collected/$collected_id]";
+            $t->element_exists($link);
+            my $link_url = $t->tx->res->dom->at($link)->attr('href');
+
+            # 問題集画面から問題画面リンク取得
+            $t->get_ok($link_url)->status_is(200);
+            $t->content_unlike(qr{\Q正解\E});
+            my $q_link
+                = "a[href=/hackerz/question/collected/$collected_id/$sort_id/think]";
+            $t->element_exists($q_link);
+            my $q_link_url = $t->tx->res->dom->at($q_link)->attr('href');
+
+            # 問題画面からクラッキングページリンク取得
+            $t->get_ok($q_link_url)->status_is(200);
+            my $c_link
+                = "a[href=/hackerz/question/collected/$collected_id/$sort_id/survey/cracking_from_list]";
+            $t->element_exists($c_link);
+            my $c_link_url = $t->tx->res->dom->at($c_link)->attr('href');
+            # クラッキングページに解答入力
+            $t->get_ok($c_link_url)->status_is(200);
+
+            # 問題ページへもどるのリンク
+            $t->element_exists($q_link);
+
+            # クラッキングページ入力フォーム
+            my $s_cond = +{
+                question_id => $question_id,
+                deleted     => 0
+            };
+            my $s_row = $t->app->test_db->teng->single( 'survey', $s_cond );
+            my $s_action
+                = "/hackerz/question/collected/$collected_id/$sort_id/survey/cracking_from_list";
+            my $s_form
+                = "form[name=form_survey][method=POST][action=$s_action]";
+            $t->element_exists($s_form);
+            my $s_dom        = $t->tx->res->dom;
+            my $s_action_url = $s_dom->at($s_form)->attr('action');
+            my $s_val        = +{
+                secret_id       => $s_row->secret_id,
+                secret_password => $s_row->secret_password,
+            };
+            $s_dom = $test_util->input_val_in_dom( $s_dom, $s_form, $s_val );
+            my $s_params = $test_util->get_input_val( $s_dom, $s_form );
+            $t->post_ok( $s_action_url => form => $s_params )->status_is(200);
+            $t->content_like(qr{\Qやるじゃんクラック成功！！\E});
+
+            # 問題ページへもどるのリンク
+            $t->element_exists($q_link);
+            $q_link_url = $t->tx->res->dom->at($q_link)->attr('href');
+
+            # 問題画面
+            $t->get_ok($q_link_url)->status_is(200);
+
+            # 問題画面から解答送信の値を作成
+            is( $user_answer, $s_row->secret_password, 'user_answer' );
+            my $name   = 'form_answer';
+            my $action = '/hackerz/answer';
+            my $form   = "form[name=$name][method=POST][action=$action]";
+            $t->element_exists($form);
+            my $dom        = $t->tx->res->dom;
+            my $action_url = $dom->at($form)->attr('action');
+            my $val        = +{ user_answer => $user_answer, };
+            $dom = $test_util->input_val_in_dom( $dom, $form, $val );
+            my $params = $test_util->get_input_val( $dom, $form );
+
+            # 解答を送信から解答結果画面
+            $t->post_ok( $action_url => form => $params )->status_is(302);
+            my $location_url = $t->tx->res->headers->location;
+            $t->get_ok($location_url)->status_is(200);
+            $t->content_like(qr{\Qおまえの解答だ！\E});
+            $t->content_like(qr{\Q$user_answer\E});
+
+            # 解答結果画面から問題集リンク取得
+            $t->element_exists($link);
+            $link_url = $t->tx->res->dom->at($link)->attr('href');
+
+            # 問題集画面から解答結果の表示の確認
+            $t->get_ok($link_url)->status_is(200);
+            $t->content_like(qr{\Q正解\E});
+
+            # DB 確認
+            my @answer_rows = $t->app->test_db->teng->single( 'answer', +{} );
+            is( scalar @answer_rows, 1, 'count' );
+            my $answer_row = shift @answer_rows;
+            is( $answer_row->question_id,  $question_id,  'question_id' );
+            is( $answer_row->collected_id, $collected_id, 'collected_id' );
+            is( $answer_row->user_id,      $user_id,      'user_id' );
+            is( $answer_row->user_answer,  $user_answer,  'user_answer' );
+
+            $test_util->logout($t);
+            $t->app->commands->run( 'generatemore', 'sqlitedb' );
+        };
     };
 };
 
