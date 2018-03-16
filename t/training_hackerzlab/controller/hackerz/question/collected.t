@@ -355,32 +355,27 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             my $pattern     = $row->fetch_question->pattern;
             is( $pattern, 31, 'pattern' );
 
+            # 各画面のリンク
+            my $link_base = '/hackerz/question/collected';
+            my $link = +{
+                c     => "a[href=$link_base/$collected_id]",
+                q     => "a[href=$link_base/$collected_id/$sort_id/think]",
+                crack => "a[href=$link_base/$collected_id/$sort_id/survey/cracking_from_list]",
+            };
+
             $test_util->login( $t, $user_id );
 
-            # menu 画面から問題集リンク取得
-            my $link = "a[href=/hackerz/question/collected/$collected_id]";
-            $t->element_exists($link);
-            my $link_url = $t->tx->res->dom->at($link)->attr('href');
+            # menu > 問題集
+            $t->get_ok($t->tx->res->dom->at($link->{c})->attr('href'));
+            $t->status_is(200)->content_unlike(qr{\Q正解\E});
 
-            # 問題集画面から問題画面リンク取得
-            $t->get_ok($link_url)->status_is(200);
-            $t->content_unlike(qr{\Q正解\E});
-            my $q_link
-                = "a[href=/hackerz/question/collected/$collected_id/$sort_id/think]";
-            $t->element_exists($q_link);
-            my $q_link_url = $t->tx->res->dom->at($q_link)->attr('href');
+            # 問題集 > 問題
+            $t->get_ok($t->tx->res->dom->at($link->{q})->attr('href'));
+            $t->status_is(200);
 
-            # 問題画面からクラッキングページリンク取得
-            $t->get_ok($q_link_url)->status_is(200);
-            my $c_link
-                = "a[href=/hackerz/question/collected/$collected_id/$sort_id/survey/cracking_from_list]";
-            $t->element_exists($c_link);
-            my $c_link_url = $t->tx->res->dom->at($c_link)->attr('href');
-            # クラッキングページに解答入力
-            $t->get_ok($c_link_url)->status_is(200);
-
-            # 問題ページへもどるのリンク
-            $t->element_exists($q_link);
+            # 問題 > クラッキングページ、問題ページへもどるのリンク
+            $t->get_ok($t->tx->res->dom->at($link->{crack})->attr('href'));
+            $t->status_is(200)->element_exists($link->{q});
 
             # クラッキングページ入力フォーム
             my $s_cond = +{
@@ -401,42 +396,37 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             };
             $s_dom = $test_util->input_val_in_dom( $s_dom, $s_form, $s_val );
             my $s_params = $test_util->get_input_val( $s_dom, $s_form );
+
+            # クラッキングページ > 送信後
             $t->post_ok( $s_action_url => form => $s_params )->status_is(200);
             $t->content_like(qr{\Qやるじゃんクラック成功！！\E});
+            $t->element_exists($link->{q});
 
-            # 問題ページへもどるのリンク
-            $t->element_exists($q_link);
-            $q_link_url = $t->tx->res->dom->at($q_link)->attr('href');
-
-            # 問題画面
-            $t->get_ok($q_link_url)->status_is(200);
+            # 送信後 > 問題画面
+            $t->get_ok($t->tx->res->dom->at($link->{q})->attr('href'))->status_is(200);
 
             # 問題画面から解答送信の値を作成
             is( $user_answer, $s_row->secret_password, 'user_answer' );
             my $name   = 'form_answer';
             my $action = '/hackerz/answer';
             my $form   = "form[name=$name][method=POST][action=$action]";
-            $t->element_exists($form);
+
             my $dom        = $t->tx->res->dom;
             my $action_url = $dom->at($form)->attr('action');
             my $val        = +{ user_answer => $user_answer, };
-            $dom = $test_util->input_val_in_dom( $dom, $form, $val );
-            my $params = $test_util->get_input_val( $dom, $form );
 
-            # 解答を送信から解答結果画面
-            $t->post_ok( $action_url => form => $params )->status_is(302);
-            my $location_url = $t->tx->res->headers->location;
-            $t->get_ok($location_url)->status_is(200);
+            my $input_dom = $test_util->input_val_in_dom( $dom, $form, $val );
+            my $params = $test_util->get_input_val( $input_dom, $form );
+
+            # 解答送信 > 解答結果画面
+            $t->post_ok($action_url => form => $params)->status_is(302);
+            $t->get_ok($t->tx->res->headers->location)->status_is(200);
             $t->content_like(qr{\Qおまえの解答だ！\E});
             $t->content_like(qr{\Q$user_answer\E});
 
-            # 解答結果画面から問題集リンク取得
-            $t->element_exists($link);
-            $link_url = $t->tx->res->dom->at($link)->attr('href');
-
-            # 問題集画面から解答結果の表示の確認
-            $t->get_ok($link_url)->status_is(200);
-            $t->content_like(qr{\Q正解\E});
+            # 解答結果画面 > 問題集画面、解答結果の表示の確認
+            $t->get_ok($t->tx->res->dom->at($link->{c})->attr('href'));
+            $t->status_is(200)->content_like(qr{\Q正解\E});
 
             # DB 確認
             my @answer_rows = $t->app->test_db->teng->single( 'answer', +{} );
