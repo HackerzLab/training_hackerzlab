@@ -233,10 +233,18 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             };
             my $row
                 = $t->app->test_db->teng->single( 'collected_sort', $cond );
-            my $user_answer = $row->fetch_question->answer;
-            my $question_id = $row->fetch_question->id;
-            my $pattern     = $row->fetch_question->pattern;
-            is( $pattern, 30, 'pattern' );
+
+            my $db_params = +{
+                question_id  => $row->question_id,
+                collected_id => $row->collected_id,
+                user_id      => $user_id,
+                user_answer  => $row->fetch_question->answer,
+                sort_id      => $row->sort_id,
+                pattern      => $row->fetch_question->pattern,
+                s_action =>
+                    "/hackerz/question/collected/$collected_id/$sort_id/survey/cracking",
+            };
+            is( $db_params->{pattern}, 30, 'pattern' );
 
             # 各画面のリンク
             my $link_base = '/hackerz/question/collected';
@@ -245,16 +253,6 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
                 q => "a[href=$link_base/$collected_id/$sort_id/think]",
                 crack =>
                     "a[href=$link_base/$collected_id/$sort_id/survey/cracking]",
-            };
-
-            my $db_params = +{
-                question_id  => $question_id,
-                collected_id => $collected_id,
-                user_id      => $user_id,
-                user_answer  => $user_answer,
-                sort_id      => $sort_id,
-                s_action =>
-                    "/hackerz/question/collected/$collected_id/$sort_id/survey/cracking",
             };
 
             # ログイン後はアプリメニュー画面
@@ -301,20 +299,17 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             };
             my $row
                 = $t->app->test_db->teng->single( 'collected_sort', $cond );
-            my $user_answer = $row->fetch_question->answer;
-            my $question_id = $row->fetch_question->id;
-            my $pattern     = $row->fetch_question->pattern;
-            is( $pattern, 31, 'pattern' );
 
             my $db_params = +{
-                question_id  => $question_id,
-                collected_id => $collected_id,
+                question_id  => $row->question_id,
+                collected_id => $row->collected_id,
                 user_id      => $user_id,
-                user_answer  => $user_answer,
-                sort_id      => $sort_id,
-                s_action =>
-                    "/hackerz/question/collected/$collected_id/$sort_id/survey/cracking_from_list",
+                user_answer  => $row->fetch_question->answer,
+                sort_id      => $row->sort_id,
+                pattern      => $row->fetch_question->pattern,
+                s_action     => "/hackerz/question/collected/$collected_id/$sort_id/survey/cracking_from_list",
             };
+            is( $db_params->{pattern}, 31, 'pattern' );
 
             # 各画面のリンク
             my $link_base = '/hackerz/question/collected';
