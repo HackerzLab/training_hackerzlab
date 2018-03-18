@@ -1,7 +1,7 @@
   <div class="container">
     <div class="form-horizontal well">
       <fieldset>
-        <a href="/static/text/HLHQuiz2.txt" class="btn btn-primary btn-lg btn-block">データをダウンロード<br>(右クリックで保存)</a>
+        <a href="/static/text/HLHQuiz2.txt" download="HLHQuiz2.txt" class="btn btn-primary btn-lg btn-block">データをダウンロード<br>(右クリックで保存)</a>
       </fieldset>
     </div>
   </div>
