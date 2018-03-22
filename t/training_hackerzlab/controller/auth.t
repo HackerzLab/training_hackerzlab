@@ -2,10 +2,8 @@ use Mojo::Base -strict;
 use Test::More;
 use Test::Mojo;
 use Mojo::Util qw{dumper};
-use t::Util;
 
-my $test_util = t::Util->new();
-my $t         = $test_util->init;
+my $t = Test::Mojo->with_roles('+Basic')->new('TrainingHackerzlab')->init;
 
 sub _url_list {
     my $id = shift || '';
@@ -63,7 +61,7 @@ subtest 'get /auth/create create' => sub {
 
         subtest 'not show logget in' => sub {
             my $user_id = 1;
-            $test_util->login( $t, $user_id );
+            $t->login_ok($user_id);
             my $url = _url_list();
             $t->get_ok( $url->{create} )->status_is(302);
             my $location_url = $t->tx->res->headers->location;
@@ -73,7 +71,7 @@ subtest 'get /auth/create create' => sub {
             $t->get_ok($location_url)->status_is(200);
             $t->element_exists_not("a[href=/auth/create]");
             $t->element_exists_not("a[href=/auth]");
-            $test_util->logout($t);
+            $t->logout_ok();
         };
     };
     subtest 'fail' => sub {
@@ -135,7 +133,7 @@ subtest 'get /auth index' => sub {
 
         subtest 'not show logget in' => sub {
             my $user_id = 1;
-            $test_util->login( $t, $user_id );
+            $t->login_ok($user_id);
             my $url = _url_list();
             $t->get_ok( $url->{index} )->status_is(302);
             my $location_url = $t->tx->res->headers->location;
@@ -145,7 +143,7 @@ subtest 'get /auth index' => sub {
             $t->get_ok($location_url)->status_is(200);
             $t->element_exists_not("a[href=/auth/create]");
             $t->element_exists_not("a[href=/auth]");
-            $test_util->logout($t);
+            $t->logout_ok();
         };
     };
     subtest 'fail' => sub {
@@ -166,7 +164,7 @@ subtest 'post /auth/login login' => sub {
         # ログイン中はログイン実行できない
         subtest 'not login logget in' => sub {
             my $user_id = 1;
-            $test_util->login( $t, $user_id );
+            $t->login_ok($user_id);
 
             # 直接ログイン実行された場合
             my $user = $t->app->test_db->teng->single( 'user',
@@ -187,7 +185,7 @@ subtest 'post /auth/login login' => sub {
             $t->get_ok($location_url)->status_is(200);
             $t->element_exists_not("a[href=/auth/create]");
             $t->element_exists_not("a[href=/auth]");
-            $test_util->logout($t);
+            $t->logout_ok();
         };
     };
     subtest 'success' => sub {
@@ -214,7 +212,7 @@ subtest 'post /auth/login login' => sub {
             $dom->at('input[name=password]')->attr( +{ value => $password } );
 
             # input val 取得
-            my $params = $test_util->get_input_val( $dom, $form );
+            my $params = $t->get_input_val( $dom, $form );
 
             # ログイン実行
             $t->post_ok( $action_url => form => $params )->status_is(200);
@@ -255,7 +253,7 @@ subtest 'post /auth/login login' => sub {
             $dom->at('input[name=password]')->attr( +{ value => $password } );
 
             # input val 取得
-            my $params = $test_util->get_input_val( $dom, $form );
+            my $params = $t->get_input_val( $dom, $form );
 
             # ログイン実行
             $t->post_ok( $action_url => form => $params )->status_is(200);
@@ -273,7 +271,7 @@ subtest 'post /auth/login login' => sub {
             is( $session_id, undef, 'session_id' );
         };
         my $user_id = 1;
-        $test_util->login( $t, $user_id );
+        $t->login_ok($user_id);
 
         # セッション確認 (切断)
         $t->reset_session;
@@ -294,10 +292,10 @@ subtest 'post /auth/logout logout' => sub {
 
         # ログイン実行
         my $user_id = 1;
-        $test_util->login( $t, $user_id );
+        $t->login_ok($user_id);
 
         # ログアウト実行
-        $test_util->logout($t);
+        $t->logout_ok();
     };
 };
 
@@ -333,7 +331,7 @@ subtest 'post /auth/:id/remove remove' => sub {
         ok( $teng->single( 'user', $cond ) );
 
         # ログイン
-        $test_util->login( $t, $user_id );
+        $t->login_ok($user_id);
 
         # 削除実行 (メニュー画面から)
         my $dom        = $t->tx->res->dom;
@@ -350,10 +348,10 @@ subtest 'post /auth/:id/remove remove' => sub {
         is( $teng->single( 'user', $cond ), undef, 'db count' );
 
         # ログインができない
-        $test_util->not_login( $t, $user_id );
+        $t->not_login($user_id);
 
         # DB をリセット
-        $test_util->init;
+        $t->init;
     };
 };
 
@@ -386,7 +384,7 @@ subtest 'post /auth store' => sub {
             $dom->at('input[name=name]')->attr( +{ value => $name } );
 
             # input val 取得
-            my $params = $test_util->get_input_val( $dom, $form );
+            my $params = $t->get_input_val( $dom, $form );
 
             # ユーザー登録実行
             $t->post_ok( $action_url => form => $params )->status_is(200);
@@ -419,7 +417,7 @@ subtest 'post /auth store' => sub {
             $dom->at('input[name=name]')->attr( +{ value => $name } );
 
             # input val 取得
-            my $params = $test_util->get_input_val( $dom, $form );
+            my $params = $t->get_input_val( $dom, $form );
 
             # ユーザー登録実行
             $t->post_ok( $action_url => form => $params )->status_is(200);
@@ -452,7 +450,7 @@ subtest 'post /auth store' => sub {
             $dom->at('input[name=name]')->attr( +{ value => $name } );
 
             # input val 取得
-            my $params = $test_util->get_input_val( $dom, $form );
+            my $params = $t->get_input_val( $dom, $form );
 
             # ユーザー登録実行
             $t->post_ok( $action_url => form => $params )->status_is(200);
@@ -485,7 +483,7 @@ subtest 'post /auth store' => sub {
             $dom->at('input[name=name]')->attr( +{ value => $name } );
 
             # input val 取得
-            my $params = $test_util->get_input_val( $dom, $form );
+            my $params = $t->get_input_val( $dom, $form );
 
             # ユーザー登録実行
             $t->post_ok( $action_url => form => $params )->status_is(302);

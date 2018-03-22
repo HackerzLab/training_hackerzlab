@@ -2,10 +2,8 @@ use Mojo::Base -strict;
 use Test::More;
 use Test::Mojo;
 use Mojo::Util qw{dumper};
-use t::Util;
 
-my $test_util = t::Util->new();
-my $t         = $test_util->init;
+my $t = Test::Mojo->with_roles('+Basic')->new('TrainingHackerzlab')->init;
 
 subtest 'router' => sub {
     $t->ua->max_redirects(1);
@@ -20,14 +18,14 @@ subtest 'post /hackerz/hint/opened opened' => sub {
     # 各問題をとく画面を表示、ヒントと開封履歴の js 確認
     subtest 'template' => sub {
         my $user_id = 1;
-        $test_util->login( $t, $user_id );
+        $t->login_ok($user_id);
         my $collected_id = 1;
         my $sort_id = 1;
         my $url = "/hackerz/question/collected/$collected_id/$sort_id/think";
         $t->get_ok($url)->status_is(200);
         my $msg = q{$.post("/hackerz/hint/opened"};
         $t->content_like(qr{\Q$msg\E});
-        $test_util->logout($t);
+        $t->logout_ok();
     };
     subtest 'fail' => sub {
         ok(1);
@@ -40,7 +38,7 @@ subtest 'post /hackerz/hint/opened opened' => sub {
 
         # ヒントを開封を行う
         my $user_id = 1;
-        $test_util->login( $t, $user_id );
+        $t->login_ok($user_id);
         my $collected_id = 1;
         my $sort_id = 1;
 
@@ -100,7 +98,7 @@ subtest 'post /hackerz/hint/opened opened' => sub {
             $t->json_is('/status' => 500);
             $t->json_is('/hint_opened/id' => undef);
         };
-        $test_util->logout($t);
+        $t->logout_ok();
     };
     ok(1);
 };

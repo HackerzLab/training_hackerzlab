@@ -2,26 +2,24 @@ use Mojo::Base -strict;
 use Test::More;
 use Test::Mojo;
 use Mojo::Util qw{dumper};
-use t::Util;
 
-my $test_util = t::Util->new();
-my $t         = $test_util->init;
+my $t = Test::Mojo->with_roles('+Basic')->new('TrainingHackerzlab')->init;
 
 subtest 'router' => sub {
     my $user_id = 1;
-    $test_util->login( $t, $user_id );
+    $t->login_ok($user_id);
     my $id = 9999;
     $t->get_ok("/hackerz/answer/report")->status_is(200);
     $t->get_ok("/hackerz/answer/$id/result")->status_is(200);
     $t->post_ok("/hackerz/answer")->status_is(200);
-    $test_util->logout($t);
+    $t->logout_ok();
 };
 
 # 成績一覧画面
 subtest 'get /hackerz/answer/report report' => sub {
     subtest 'template' => sub {
         my $user_id = 1;
-        $test_util->login( $t, $user_id );
+        $t->login_ok($user_id);
         $t->get_ok("/hackerz/answer/report")->status_is(200);
 
         # 問題集のタイトル表示、クリックすると解答履歴
@@ -34,7 +32,7 @@ subtest 'get /hackerz/answer/report report' => sub {
             $t->element_exists($element);
             $t->text_is( $element, $title );
         }
-        $test_util->logout($t);
+        $t->logout_ok();
     };
     subtest 'fail' => sub {
         ok(1);
@@ -54,7 +52,7 @@ subtest 'get /hackerz/answer/:id/result result' => sub {
     };
     subtest 'success' => sub {
         my $user_id = 1;
-        $test_util->login( $t, $user_id );
+        $t->login_ok($user_id);
 
         # 問題の答え
         my $collected_id = 1;
@@ -86,10 +84,10 @@ subtest 'get /hackerz/answer/:id/result result' => sub {
         my $msg_hash = +{ user_answer => $user_answer, };
 
         # dom に 値を埋め込み
-        $dom = $test_util->input_val_in_dom( $dom, $form, $msg_hash );
+        $dom = $t->input_val_in_dom( $dom, $form, $msg_hash );
 
         # input val 取得
-        my $params = $test_util->get_input_val( $dom, $form );
+        my $params = $t->get_input_val( $dom, $form );
 
         # 解答を送信
         $t->post_ok( $action_url => form => $params )->status_is(302);
@@ -108,7 +106,7 @@ subtest 'get /hackerz/answer/:id/result result' => sub {
         is( $row->collected_id, $collected_id, 'collected_id' );
         is( $row->user_id,      $user_id,      'user_id' );
         is( $row->user_answer,  $user_answer,  'user_answer' );
-        $test_util->logout($t);
+        $t->logout_ok();
 
         # db 初期化
         $t->app->commands->run( 'generatemore', 'sqlitedb' );
@@ -122,7 +120,7 @@ subtest 'post /hackerz/answer store' => sub {
     };
     subtest 'logic' => sub {
         my $user_id = 1;
-        $test_util->login( $t, $user_id );
+        $t->login_ok($user_id);
 
         my $master     = $t->app->test_db->master;
         my $msg        = $master->answer->to_word('NOT_INPUT');
@@ -141,7 +139,7 @@ subtest 'post /hackerz/answer store' => sub {
 
         # 失敗時の画面
         $t->content_like(qr{\Q<b>$msg</b>\E});
-        $test_util->logout($t);
+        $t->logout_ok();
     };
 };
 

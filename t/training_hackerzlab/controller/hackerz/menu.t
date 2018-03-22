@@ -2,10 +2,8 @@ use Mojo::Base -strict;
 use Test::More;
 use Test::Mojo;
 use Mojo::Util qw{dumper};
-use t::Util;
 
-my $test_util = t::Util->new();
-my $t         = $test_util->init;
+my $t = Test::Mojo->with_roles('+Basic')->new('TrainingHackerzlab')->init;
 
 sub _url_list {
     my $id = shift || '';
@@ -31,7 +29,7 @@ subtest 'router' => sub {
 subtest 'get /hackerz/menu index' => sub {
     subtest 'template' => sub {
         my $user_id = 1;
-        $test_util->login( $t, $user_id );
+        $t->login_ok($user_id);
 
         my $url = _url_list($user_id);
         $t->get_ok( $url->{index} )->status_is(200);
@@ -62,7 +60,7 @@ subtest 'get /hackerz/menu index' => sub {
         $t->element_exists($form);
         $t->element_exists("$form button[type=submit]");
 
-        $test_util->logout($t);
+        $t->logout_ok();
     };
     subtest 'fail' => sub {
         my $master = $t->app->test_db->master;

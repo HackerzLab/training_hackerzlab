@@ -2,28 +2,26 @@ use Mojo::Base -strict;
 use Test::More;
 use Test::Mojo;
 use Mojo::Util qw{dumper};
-use t::Util;
 
-my $test_util = t::Util->new();
-my $t         = $test_util->init;
+my $t = Test::Mojo->with_roles('+Basic')->new('TrainingHackerzlab')->init;
 
 subtest 'router' => sub {
     my $user_id = 1;
-    $test_util->login( $t, $user_id );
+    $t->login_ok($user_id);
     my $id           = 9999;
     my $collected_id = 9999;
     my $sort_id      = 9999;
     $t->get_ok("/hackerz/question/collected/$id")->status_is(200);
     $t->get_ok("/hackerz/question/collected/$collected_id/$sort_id/think")
         ->status_is(200);
-    $test_util->logout($t);
+    $t->logout_ok();
 };
 
 # 各問題集をとく画面
 subtest 'get /hackerz/question/collected/:id show' => sub {
     subtest 'template' => sub {
         my $user_id = 1;
-        $test_util->login( $t, $user_id );
+        $t->login_ok($user_id);
         my $cond = +{ deleted => 0 };
         my @rows = $t->app->test_db->teng->search( 'collected', $cond );
         for my $row (@rows) {
@@ -38,7 +36,7 @@ subtest 'get /hackerz/question/collected/:id show' => sub {
             $t->content_like(qr{\Q$title\E});
             $t->content_like(qr{\Q$description\E});
         }
-        $test_util->logout($t);
+        $t->logout_ok();
     };
     subtest 'logic' => sub {
         ok(1);
@@ -73,7 +71,7 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             my $pattern     = $row->fetch_question->pattern;
             is( $pattern, 10, 'pattern' );
 
-            $test_util->login( $t, $user_id );
+            $t->login_ok($user_id);
 
             # menu 画面から問題集リンク取得
             my $link = "a[href=/hackerz/question/collected/$collected_id]";
@@ -97,8 +95,8 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             my $dom        = $t->tx->res->dom;
             my $action_url = $dom->at($form)->attr('action');
             my $val        = +{ user_answer => $user_answer, };
-            $dom = $test_util->input_val_in_dom( $dom, $form, $val );
-            my $params = $test_util->get_input_val( $dom, $form );
+            $dom = $t->input_val_in_dom( $dom, $form, $val );
+            my $params = $t->get_input_val( $dom, $form );
 
             # バリデートを確認
             my $e_params = +{
@@ -139,7 +137,7 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             is( $answer_row->user_id,      $user_id,      'user_id' );
             is( $answer_row->user_answer,  $user_answer,  'user_answer' );
 
-            $test_util->logout($t);
+            $t->logout_ok();
             $t->app->commands->run( 'generatemore', 'sqlitedb' );
         };
 
@@ -163,7 +161,7 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             my $pattern     = $row->fetch_question->pattern;
             is( $pattern, 20, 'pattern' );
 
-            $test_util->login( $t, $user_id );
+            $t->login_ok($user_id);
 
             # menu 画面から問題集リンク取得
             my $link = "a[href=/hackerz/question/collected/$collected_id]";
@@ -187,8 +185,8 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             my $dom        = $t->tx->res->dom;
             my $action_url = $dom->at($form)->attr('action');
             my $val        = +{ user_answer => $user_answer, };
-            $dom = $test_util->input_val_in_dom( $dom, $form, $val );
-            my $params = $test_util->get_input_val( $dom, $form );
+            $dom = $t->input_val_in_dom( $dom, $form, $val );
+            my $params = $t->get_input_val( $dom, $form );
 
             # 解答を送信から解答結果画面
             $t->post_ok( $action_url => form => $params )->status_is(302);
@@ -214,7 +212,7 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             is( $answer_row->user_id,      $user_id,      'user_id' );
             is( $answer_row->user_answer,  $user_answer,  'user_answer' );
 
-            $test_util->logout($t);
+            $t->logout_ok();
             $t->app->commands->run( 'generatemore', 'sqlitedb' );
         };
 
@@ -256,7 +254,7 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             };
 
             # ログイン後はアプリメニュー画面
-            $test_util->login( $t, $user_id );
+            $t->login_ok($user_id);
 
             # menu > 問題集 > 問題 > クラッキングページ
             _menu_for_collected( $t, $link );
@@ -264,14 +262,14 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             _question_for_crack( $t, $link );
 
             # クラッキングページから値を作成
-            my $crack_val = _crack_to_result( $t, $test_util, $db_params );
+            my $crack_val = _crack_to_result( $t, $db_params );
 
             # クラッキングページ > 送信後 > 問題画面
             _post_for_crack( $t, $crack_val, $link );
             _crack_for_question( $t, $link );
 
             # 問題画面から解答送信の値を作成
-            my $answer = _question_to_result( $t, $test_util, $db_params );
+            my $answer = _question_to_result( $t, $db_params );
 
             # 解答送信 > 解答結果 > 問題集
             _post_for_answer( $t, $answer, $db_params );
@@ -280,7 +278,7 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             # DB 確認
             _test_db( $t, $db_params );
 
-            $test_util->logout($t);
+            $t->logout_ok();
             $t->app->commands->run( 'generatemore', 'sqlitedb' );
         };
 
@@ -307,7 +305,8 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
                 user_answer  => $row->fetch_question->answer,
                 sort_id      => $row->sort_id,
                 pattern      => $row->fetch_question->pattern,
-                s_action     => "/hackerz/question/collected/$collected_id/$sort_id/survey/cracking_from_list",
+                s_action =>
+                    "/hackerz/question/collected/$collected_id/$sort_id/survey/cracking_from_list",
             };
             is( $db_params->{pattern}, 31, 'pattern' );
 
@@ -321,7 +320,7 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             };
 
             # ログイン後はアプリメニュー画面
-            $test_util->login( $t, $user_id );
+            $t->login_ok($user_id);
 
             # menu > 問題集 > 問題 > クラッキングページ
             _menu_for_collected( $t, $link );
@@ -329,14 +328,14 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             _question_for_crack( $t, $link );
 
             # クラッキングページから値を作成
-            my $crack_val = _crack_to_result( $t, $test_util, $db_params );
+            my $crack_val = _crack_to_result( $t, $db_params );
 
             # クラッキングページ > 送信後 > 問題画面
             _post_for_crack( $t, $crack_val, $link );
             _crack_for_question( $t, $link );
 
             # 問題画面から解答送信の値を作成
-            my $answer = _question_to_result( $t, $test_util, $db_params );
+            my $answer = _question_to_result( $t, $db_params );
 
             # 解答送信 > 解答結果 > 問題集
             _post_for_answer( $t, $answer, $db_params );
@@ -345,7 +344,7 @@ subtest 'get /:collected_id/:sort_id/think think' => sub {
             # DB 確認
             _test_db( $t, $db_params );
 
-            $test_util->logout($t);
+            $t->logout_ok();
             $t->app->commands->run( 'generatemore', 'sqlitedb' );
         };
     };
@@ -377,7 +376,7 @@ sub _question_for_crack {
 
 # クラッキングページから値を作成
 sub _crack_to_result {
-    my ( $t, $test_util, $params ) = @_;
+    my ( $t, $params ) = @_;
     my $cond = +{
         question_id => $params->{question_id},
         deleted     => 0
@@ -392,13 +391,13 @@ sub _crack_to_result {
         secret_id       => $row->secret_id,
         secret_password => $row->secret_password,
     };
-    my $input_dom = $test_util->input_val_in_dom( $dom, $form, $val );
+    my $input_dom = $t->input_val_in_dom( $dom, $form, $val );
 
     # クラッキングの答えは問題の答え
     is( $params->{user_answer}, $row->secret_password, 'user_answer' );
     return +{
         action_url => $action_url,
-        params     => $test_util->get_input_val( $input_dom, $form ),
+        params     => $t->get_input_val( $input_dom, $form ),
         row        => $row,
     };
 }
@@ -424,7 +423,7 @@ sub _crack_for_question {
 
 # 問題画面から解答送信の値を作成
 sub _question_to_result {
-    my ( $t, $test_util, $db_params ) = @_;
+    my ( $t, $db_params ) = @_;
     my $user_answer = $db_params->{user_answer};
     my $name        = 'form_answer';
     my $action      = '/hackerz/answer';
@@ -433,11 +432,11 @@ sub _question_to_result {
     my $dom        = $t->tx->res->dom;
     my $action_url = $dom->at($form)->attr('action');
     my $val        = +{ user_answer => $user_answer, };
-    my $input_dom  = $test_util->input_val_in_dom( $dom, $form, $val );
+    my $input_dom  = $t->input_val_in_dom( $dom, $form, $val );
 
     return +{
         action_url => $action_url,
-        params     => $test_util->get_input_val( $input_dom, $form ),
+        params     => $t->get_input_val( $input_dom, $form ),
     };
 }
 

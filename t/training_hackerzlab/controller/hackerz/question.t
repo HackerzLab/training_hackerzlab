@@ -2,10 +2,8 @@ use Mojo::Base -strict;
 use Test::More;
 use Test::Mojo;
 use Mojo::Util qw{dumper};
-use t::Util;
 
-my $test_util = t::Util->new();
-my $t         = $test_util->init;
+my $t = Test::Mojo->with_roles('+Basic')->new('TrainingHackerzlab')->init;
 
 sub _url_list {
     my $id = shift || '';
@@ -23,9 +21,9 @@ subtest 'router' => sub {
 
     # ログイン時
     my $user_id = 1;
-    $test_util->login( $t, $user_id );
+    $t->login_ok($user_id);
     $t->get_ok( $url->{think} )->status_is(200);
-    $test_util->logout($t);
+    $t->logout_ok();
 };
 
 # 各問題画面
