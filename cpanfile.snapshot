@@ -941,8 +941,8 @@ DISTRIBUTIONS
       perl 5.006
       strict 0
       warnings 0
-  Mojolicious-7.59
-    pathname: S/SR/SRI/Mojolicious-7.59.tar.gz
+  Mojolicious-7.71
+    pathname: S/SR/SRI/Mojolicious-7.71.tar.gz
     provides:
       Mojo undef
       Mojo::Asset undef
@@ -1011,7 +1011,7 @@ DISTRIBUTIONS
       Mojo::UserAgent::Transactor undef
       Mojo::Util undef
       Mojo::WebSocket undef
-      Mojolicious 7.59
+      Mojolicious 7.71
       Mojolicious::Command undef
       Mojolicious::Command::cgi undef
       Mojolicious::Command::cpanify undef
