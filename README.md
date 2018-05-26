@@ -20,7 +20,7 @@ training_hackerzlab - ハッカーズラボクイズシステム
 
 お手元の PC に任意のディレクトリを準備後、 github サイトよりリポジトリを取得
 
-<https://github.com/ykHakata/training_hackerzlab> - github
+<https://github.com/HackerzLab/training_hackerzlab> - github
 
 ```
 (例: ホームディレクト配下に github 用のディレクトリ作成)
@@ -28,7 +28,7 @@ $ mkdir ~/github
 
 # github ディレクトリ配下に departure リポジトリ展開
 $ cd ~/github
-$ git clone git@github.com:ykHakata/training_hackerzlab.git
+$ git clone git@github.com:HackerzLab/training_hackerzlab.git
 ```
 
 #### Perl install
