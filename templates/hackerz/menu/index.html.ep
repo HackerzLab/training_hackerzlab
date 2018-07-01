@@ -6,7 +6,7 @@
   <!-- ログイン後の画面選択 -->
   <div class="container">
     <h2 class="page-header">問題集 Collected</h2>
-    <p class="text-primary">今回の問題集は 2018-05-13 Vol.17 だ!!</p>
+    <p class="text-primary">今回の問題集は 2018-07-01 Vol.18 だ!!</p>
     <div class="row">
       % for my $collected (@{$collecteds}) {
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
