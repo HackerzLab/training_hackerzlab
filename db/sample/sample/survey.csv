@@ -1,5 +1,0 @@
-ID,問題ID,隠されているID,隠されているパスワード,調査用ページへのURL,調査用ページのタイトル,削除フラグ,登録日時,修正日時
-id,question_id,secret_id,secret_password,page_url,page_title,deleted,created_ts,modified_ts
-1,3,hacker,wATFyXV66LYHsCsoMDCeQLMfmGzU3A4C,/cracking,クラッキング用ページ,0,2017-12-27 12:24:12,2017-12-27 12:24:12
-2,5,Barton,qUrbkTQy,/cracking_from_list,クラッキング用ページ,0,2017-12-27 12:24:12,2017-12-27 12:24:12
-3,7,,,/exploits,改ざん用ページ,0,2017-12-27 12:24:12,2017-12-27 12:24:12
