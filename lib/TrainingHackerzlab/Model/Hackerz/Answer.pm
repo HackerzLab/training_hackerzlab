@@ -110,7 +110,28 @@ sub store {
         user_answer  => $self->req_params->{user_answer},
         deleted      => $master->deleted->constant('NOT_DELETED'),
     };
-    return $self->db->teng_fast_insert( 'answer', $params );
+    my $txn = $self->db->teng->txn_scope;
+    my $answer_id = $self->db->teng_fast_insert( 'answer', $params );
+
+    # エクサキッズ仕様は時間の記録も取得
+    my $exa_ids = $self->conf->{exa_ids};
+    my $is_exa  = 0;
+    for my $id ( @{$exa_ids} ) {
+        next if $self->req_params->{user_id} ne $id;
+        $is_exa = 1;
+    }
+
+    if ($is_exa) {
+        my $time_params = +{
+            answer_id     => $answer_id,
+            remaining_sec => $self->req_params->{remaining_sec},
+            deleted       => $master->deleted->constant('NOT_DELETED'),
+        };
+        my $answer_time_id
+            = $self->db->teng_fast_insert( 'answer_time', $time_params );
+    }
+    $txn->commit;
+    return $answer_id;
 }
 
 sub to_template_result {
@@ -142,7 +163,8 @@ sub to_template_result {
 
     my $collected = $answer_row->fetch_collected;
     $result->{collected} = $collected->get_columns;
-    $result->{collected_url} .= '/hackerz/question/collected/' . $collected->id;
+    $result->{collected_url}
+        .= '/hackerz/question/collected/' . $collected->id;
     return $result;
 }
 

@@ -154,8 +154,7 @@ sub to_template_think {
     $think->{hint_id}   = +{ map { $_->level => $_->id } @{$hint_rows} };
 
     # エクサ特別ID
-    my $exa_ids
-        = [ 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, ];
+    my $exa_ids = $self->conf->{exa_ids};
 
     # エクサキッズ拡張の確認
     $think->{is_exa} = 0;

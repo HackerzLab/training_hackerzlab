@@ -21,6 +21,8 @@
       var $progressBar = this.find('div.progress-bar');
       var $header = this.children('h4');
 
+      // 解答送信時に埋め込み
+      $('#exainput').val(timeLeft);
       if (timeLeft <= 0) {
         $header.empty().text('終了!!').addClass('text-danger');
         return;

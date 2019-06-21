@@ -2,3 +2,7 @@
             <input type="hidden" name="question_id" value="<%= $question->{id} %>">
             <input type="hidden" name="collected_id" value="<%= $collected->{id} %>">
             <input type="hidden" name="sort_id" value="<%= $sort_id %>">
+            <%# カウントを取得 %>
+            % if ($c->stash->{is_exa}) {
+            <input id="exainput" type="hidden" name="remaining_sec" value="">
+            % }
