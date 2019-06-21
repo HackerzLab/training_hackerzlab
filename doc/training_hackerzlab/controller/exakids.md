@@ -37,7 +37,7 @@ CREATE TABLE answer_time (                              -- 入力された時間
 );
 ```
 
-# - GET - `/exakids` - index - エントリー一覧画面
+# - GET - `/exakids` - index - エントリー画面
 
 ```
 アプリのトップ画面から遷移してくる
