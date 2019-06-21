@@ -146,6 +146,16 @@ $ git pull origin master
 $ carton exec -- hypnotoad script/training_hackerzlab
 ```
 
+本番環境ログインしアプリユーザーになった後に一気に実行するコマンド
+
+```
+(一気に再起動まで)
+$ cd ~/training_hackerzlab/ && git pull && carton exec -- hypnotoad script/training_hackerzlab
+
+(データー更新)
+$ cd ~/training_hackerzlab/ && carton exec -- script/training_hackerzlab generate sqlitedb --mode production
+```
+
 # DESCRIPTION
 
 # TODO
