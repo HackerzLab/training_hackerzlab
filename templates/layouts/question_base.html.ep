@@ -17,11 +17,47 @@
   </div>
   % }
 
+  <%# エクサキッズ拡張の判定 %>
+  % if ($c->stash->{is_exa}) {
+  <div class="container" id="">
+    <div class="jumbotron">
+      <h1>EXA KIDS 特別仕様</h1>
+      <ul>
+      <li>問題の難易度によって制限時間が異なります</li>
+      <li>一度問題スタートをおすとカウントダウンタイマーがスタートします</li>
+      <li>制限時間の残りが0秒になると獲得点数は0点になります</li>
+      <li>問題の正解数が同じ場合は制限時間の残り時間が多い方が勝ちになります</li>
+      </ul>
+    </div>
+  </div>
+  <%# エクサキッズ拡張、タイマー %>
+  <div class="container">
+    <div id="exatimer"></div>
+    <div style="padding-bottom:30px;">
+      <form id="exaform" class="form-inline">
+        <div class="form-group">
+          <label for="exaduration" class="control-label">制限時間!! [秒]</label>
+          <input id="exaduration" name="exaduration" type="text" value="<%= $c->stash->{count_sec} %>" class="form-control" readonly/>
+        </div>
+        <button id="exastart" type="submit" class="btn btn-primary" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">問題スタート!!</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="collapse" id="collapseExample">
   <!-- body content -->
   <%= content =%>
 
   <!-- 問題一覧へ -->
   <%= include('inc/question_index', format => 'html') =%>
+  </div>
+  % } else {
+  <!-- body content -->
+  <%= content =%>
+
+  <!-- 問題一覧へ -->
+  <%= include('inc/question_index', format => 'html') =%>
+  % }
 
   <!-- body footer bar -->
   <%= include('inc/body_footer_bar', format => 'html') =%>
@@ -31,6 +67,9 @@
 
   <!-- body hint js -->
   <%= include('inc/body_hint_js', format => 'html') =%>
+
+  <!-- countdown js -->
+  <%= include('inc/countdown_js', format => 'html') =%>
 </body>
 
 </html>

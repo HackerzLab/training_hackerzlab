@@ -100,6 +100,8 @@ sub to_template_think {
         hint_id         => undef,
         choice          => undef,
         survey          => undef,
+        count_sec       => 0,
+        is_exa          => 0,
     };
 
     my $cond = +{
@@ -150,6 +152,26 @@ sub to_template_think {
     my $hint_rows = $question_row->search_hint;
     $think->{hint_word} = +{ map { $_->level => $_->hint } @{$hint_rows} };
     $think->{hint_id}   = +{ map { $_->level => $_->id } @{$hint_rows} };
+
+    # エクサ特別ID
+    my $exa_ids
+        = [ 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, ];
+
+    # エクサキッズ拡張の確認
+    $think->{is_exa} = 0;
+    for my $id ( @{$exa_ids} ) {
+        next if $self->req_params->{user_id} ne $id;
+        $think->{is_exa} = 1;
+    }
+
+    # エクサキッズ拡張、タイマー機能(初期値)
+    $think->{count_sec} = 30;
+    if ( $question_row->level ) {
+
+        # 難易度によって時間の変更 30秒*難易度
+        my $count_sec = $question_row->level * 30;
+        $think->{count_sec} = $count_sec;
+    }
 
     # 問題文に対して入力フォームにテキスト入力で解答
     return $think if $self->is_question_form;
