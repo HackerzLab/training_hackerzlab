@@ -96,3 +96,12 @@ CREATE TABLE answer (                                   -- 入力された解答
     created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
     modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
 );
+DROP TABLE IF EXISTS answer_time;
+CREATE TABLE answer_time (                              -- 入力された時間
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID (例: 5)
+    answer_id       INTEGER,                            -- 入力された解答ID (例: 5)
+    elapsed_sec     INTEGER,                            -- 経過時間 (例: 600) 秒で入力
+    deleted         INTEGER,                            -- 削除フラグ (例: 0: 削除していない, 1: 削除済み)
+    created_ts      TEXT,                               -- 登録日時 (例: '2016-01-08 12:24:12')
+    modified_ts     TEXT                                -- 修正日時 (例: '2016-01-08 12:24:12')
+);
