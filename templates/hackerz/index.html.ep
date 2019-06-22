@@ -19,3 +19,11 @@
     </p>
     <a href="/auth" class="btn btn-default btn-lg btn-block">ログインする</a>
   </div>
+  <%# エクサキッズ仕様 %>
+  <div class="container">
+    <h2 class="page-header text-danger">EXAKIDS</h2>
+    <p class="well text-danger">
+      エクサキッズイベント用、早押しクイズ形式
+    </p>
+    <a href="/exakids" class="btn btn-danger btn-lg btn-block">EXAKIDS</a>
+  </div>

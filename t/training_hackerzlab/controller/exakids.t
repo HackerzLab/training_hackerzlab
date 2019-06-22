@@ -5,6 +5,22 @@ use Mojo::Util qw{dumper};
 
 my $t = Test::Mojo->with_roles('+Basic')->new('TrainingHackerzlab')->init;
 
+# - GET - `/exakids` - index - エントリー画面
+subtest 'GET - `/exakids` - index' => sub {
+
+    # ログインまえのトップ画面
+    $t->get_ok('/')->status_is(200);
+
+    # エントリーのリンク
+    my $link = "/exakids";
+
+    # 「登録してある全ての問題」を表示のリンク
+    my $e_link = "a[href=$link]";
+    $t->element_exists($e_link);
+
+    # exakids エントリー画面
+};
+
 # エクサidでログイン時の問題解答にはかかった時間が記録される
 subtest 'q exa id' => sub {
 
