@@ -104,6 +104,10 @@ sub startup {
     $collected->get( '/:collected_id/:sort_id/think', $collected_id )->to('Hackerz::Question::Collected#think');
     $collected->get( '/:collected_id/:sort_id/survey/:action', $collected_id )->to('Hackerz::Question::Survey#');
     $collected->post( '/:collected_id/:sort_id/survey/:action', $collected_id )->to('Hackerz::Question::Survey#');
+
+    # exa kids
+    my $exa = $r->under('/exakids');
+    $exa->get('')->to('Exakids#index');
 }
 
 1;

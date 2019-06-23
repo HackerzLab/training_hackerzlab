@@ -1,2 +1,48 @@
-% layout '';
-% title '';
+% layout 'base';
+% title 'HackerzLab.博多';
+  <div class="container" id="">
+    <div class="jumbotron">
+      <h2><span class="text-danger">EXA KIDS エントリー</span></h2>
+      <ul>
+        <li>お手元に配られたエントリーカードに書いてあるIDとパスワードを入力ください</li>
+        <li>名前は自分の好きな名前が入力できます</li>
+        <li>イベント終了後にクイズの解答結果などは全て消去されます</li>
+      </ul>
+    </div>
+  </div>
+  <div class="container">
+    <form name="form_entry" action="/exakids/entry" method="POST" class="form-horizontal well">
+      <fieldset>
+        <legend>エントリー</legend>
+        <div class="form-group has-feedback">
+          <label for="user_id" class="col-lg-2 control-label">ログインユーザーID</label>
+          <div class="col-lg-10">
+            <select class="form-control" name="user_id">
+            % for my $user (@{$c->stash->{exakids_users}}) {
+              <option value="<%= $user->{id} %>"><%= $user->{login_id} %></option>
+            % }
+            </select>
+          </div>
+        </div>
+        <div class="form-group has-feedback">
+          <label for="name" class="col-lg-2 control-label">名前</label>
+          <div class="col-lg-10">
+            <input type="name" class="form-control" id="name" placeholder="名前" name="name" value="">
+            <span class="glyphicon glyphicon-check form-control-feedback"></span>
+          </div>
+        </div>
+        <div class="form-group has-feedback">
+          <label for="password" class="col-lg-2 control-label">パスワード</label>
+          <div class="col-lg-10">
+            <input type="password" class="form-control" id="password" placeholder="パスワード" name="password" value="">
+            <span class="glyphicon glyphicon-check form-control-feedback"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-10 col-lg-offset-2">
+            <button type="submit" class="btn btn-primary" name="send" value="ボタン">エントリー</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>

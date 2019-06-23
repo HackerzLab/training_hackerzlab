@@ -9,8 +9,7 @@ training_hackerzlab/controller/exakids - TrainingHackerzlab エクサキッズ�
 - GET - `/exakids` - index - エントリー画面
 - GET - `/exakids/menu` - menu - メニュー
 - GET - `/exakids/ranking` - ranking - 解答者ランキング一覧
-- GET - `/exakids/:user_id/entry` - entry 解答者のエントリー画面
-- POST - `/exakids/:user_id/update` - update 解答者のエントリー実行
+- POST - `/exakids/entry` - entry 解答者のエントリー実行
 - POST - `/exakids/refresh` - refresh - 解答状況を初期状態にもどす
 
 # DESCRIPTION
@@ -27,8 +26,7 @@ exakids エントリーから遷移してきた問題には全てタイマー機
 
 ```
 アプリのトップ画面から遷移してくる
-解答者のエントリーボタン
-閲覧者のエントリーボタン
+解答者と閲覧者のエントリー入力フォーム
 リンク(トップ画面)
 ```
 
@@ -49,19 +47,12 @@ exakids エントリーから遷移してきた問題には全てタイマー機
 点数が同じ場合は時間が短い方が勝ち
 ```
 
-# - GET - `/exakids/:user_id/entry` - entry 解答者のエントリー画面
-
-```
-エントリーに必要なフォーム一式
-リンク(解答状況一覧画面)
-```
-
-# - POST - `/exakids/:user_id/update` - update 解答者のエントリー実行
+# - POST - `/exakids/entry` - entry 解答者のエントリー実行
 
 ```
 エントリー情報の更新実行
-実行 -> 失敗(実行せず解答状況一覧画面に戻る)
-実行 -> 成功(実行して解答状況一覧画面に遷移)
+実行 -> 失敗(実行せずエントリー画面に戻る)
+実行 -> 成功(実行してエントリー画面に遷移)
 ```
 
 # - POST - `/exakids/refresh` - refresh - 解答状況を初期状態にもどす

@@ -19,6 +19,17 @@ subtest 'GET - `/exakids` - index' => sub {
     $t->element_exists($e_link);
 
     # exakids エントリー画面
+    $t->get_ok($link)->status_is(200);
+
+    # エントリーへのフォーム確認
+    my $name   = 'form_entry';
+    my $action = "/exakids/entry";
+    my $form   = "form[name=$name][method=POST][action=$action]";
+    $t->element_exists($form);
+    $t->element_exists("$form select[name=user_id]");
+    $t->element_exists("$form input[name=name]");
+    $t->element_exists("$form input[name=password]");
+    $t->element_exists("$form button[type=submit]");
 };
 
 # エクサidでログイン時の問題解答にはかかった時間が記録される
