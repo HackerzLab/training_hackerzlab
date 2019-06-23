@@ -27,7 +27,7 @@
         <div class="form-group has-feedback">
           <label for="name" class="col-lg-2 control-label">名前</label>
           <div class="col-lg-10">
-            <input type="name" class="form-control" id="name" placeholder="名前" name="name" value="">
+            <input type="text" class="form-control" id="name" placeholder="名前" name="name" value="">
             <span class="glyphicon glyphicon-check form-control-feedback"></span>
           </div>
         </div>

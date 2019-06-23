@@ -32,6 +32,38 @@ subtest 'GET - `/exakids` - index' => sub {
     $t->element_exists("$form button[type=submit]");
 };
 
+# - POST - `/exakids/entry` - entry 解答者のエントリー実行
+subtest 'GET - `/exakids/entry` - entry' => sub {
+
+    my $exa_ids = $t->app->config->{exa_ids};
+    my $user_id = $exa_ids->[0];
+    my $user_row
+        = $t->app->test_db->teng->single( 'user', +{ id => $user_id } );
+
+    # exakids エントリー画面
+    $t->get_ok('/exakids')->status_is(200);
+    my $form = "form[name=form_entry][method=POST][action=/exakids/entry]";
+    my $dom  = $t->tx->res->dom;
+    my $action_url = $dom->at($form)->attr('action');
+
+    # 入力データーの元
+    my $entry_hash = +{
+        user_id  => $user_row->id,
+        password => $user_row->password,
+        name     => 'テストユーザー',
+    };
+
+    # dom に 値を埋め込み
+    $dom = $t->input_val_in_dom( $dom, $form, $entry_hash );
+
+    # input val 取得
+    my $params = $t->get_input_val( $dom, $form );
+
+    # エントリーを送信
+    $t->post_ok( $action_url => form => $params )->status_is(302);
+
+};
+
 # エクサidでログイン時の問題解答にはかかった時間が記録される
 subtest 'q exa id' => sub {
 

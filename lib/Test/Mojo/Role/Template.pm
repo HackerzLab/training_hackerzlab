@@ -5,77 +5,56 @@ use Mojo::Util qw{dumper};
 
 # input 入力フォームの値を取得
 sub get_input_val {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
+    my ( $self, $dom, $form ) = @_;
 
-    # input text 取得
-    my $text_params = $self->_get_input_text_val( $dom, $form );
-
-    # input password 取得
-    my $password_params = $self->_get_input_password_val( $dom, $form );
-
-    # input radio 取得
-    my $radio_params = $self->_get_input_radio_val( $dom, $form );
-
-    # input hidden 取得
-    my $hidden_params = $self->_get_input_hidden_val( $dom, $form );
-
-    # textarea 取得
-    my $textarea_params = $self->_get_textarea_val( $dom, $form );
+    # 取得 input, text, password, radio, checkbox, select, hidden, textarea
+    my $text     = $self->_get_val( $dom, $form, 'input[type=text]' );
+    my $password = $self->_get_val( $dom, $form, 'input[type=password]' );
+    my $radio    = $self->_get_val( $dom, $form, 'input[type=radio]' );
+    my $checkbox = $self->_get_val( $dom, $form, 'input[type=checkbox]' );
+    my $select   = $self->_get_val( $dom, $form, 'select' );
+    my $hidden   = $self->_get_val( $dom, $form, 'input[type=hidden]' );
+    my $textarea = $self->_get_val( $dom, $form, 'textarea' );
 
     my $params = +{
-        %{$text_params},     %{$radio_params}, %{$hidden_params},
-        %{$textarea_params}, %{$password_params},
+        %{$text},     %{$radio},    %{$hidden},
+        %{$textarea}, %{$password}, %{$select},
+        %{$checkbox},
     };
     return $params;
 }
 
 # dom に値を埋め込み
 sub input_val_in_dom {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
-    my $data = shift;
+    my ( $self, $dom, $form, $data ) = @_;
 
-    # input text
-    $dom = $self->_text_val_in_dom( $dom, $form, $data );
-
-    # input password
-    $dom = $self->_password_val_in_dom( $dom, $form, $data );
-
-    # input radio
-    $dom = $self->_radio_val_in_dom( $dom, $form, $data );
-
-    # textarea
-    $dom = $self->_textarea_val_in_dom( $dom, $form, $data );
-
+    # 埋込 input text, password, radio, checkbox, select, textarea
+    $dom = $self->_val_in_dom( $dom, $form, $data, 'input[type=text]' );
+    $dom = $self->_val_in_dom( $dom, $form, $data, 'input[type=password]' );
+    $dom = $self->_val_in_dom( $dom, $form, $data, 'input[type=radio]' );
+    $dom = $self->_val_in_dom( $dom, $form, $data, 'input[type=checkbox]' );
+    $dom = $self->_val_in_dom( $dom, $form, $data, 'select' );
+    $dom = $self->_val_in_dom( $dom, $form, $data, 'textarea' );
     return $dom;
 }
 
-# input text 入力フォームの値を取得
-sub _get_input_text_val {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
-
+# input 取得
+# my $params = $self->_get_val( $dom, $form, 'input[type=text]');
+sub _get_val {
+    my ( $self, $dom, $form, $type ) = @_;
     my $params = +{};
-    for my $e ( $dom->find("$form input[type=text]")->each ) {
-        my $name = $e->attr('name');
-        next if !$name;
-        $params->{$name} = $e->val;
-    }
-    return $params;
-}
 
-# input password 入力フォームの値を取得
-sub _get_input_password_val {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
+    # エレメントの構造がそれぞれ違う
+    return $self->_get_input_radio_val( $dom, $form, $type )
+        if $type eq 'input[type=radio]';
 
-    my $params = +{};
-    for my $e ( $dom->find("$form input[type=password]")->each ) {
+    return $self->_get_input_checkbox_val( $dom, $form, $type )
+        if $type eq 'input[type=checkbox]';
+
+    return $self->_get_input_select_val( $dom, $form, $type )
+        if $type eq 'select';
+
+    for my $e ( $dom->find("$form $type")->each ) {
         my $name = $e->attr('name');
         next if !$name;
         $params->{$name} = $e->val;
@@ -85,12 +64,10 @@ sub _get_input_password_val {
 
 # input radio 入力フォームの値を取得
 sub _get_input_radio_val {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
+    my ( $self, $dom, $form, $type ) = @_;
 
     my $params = +{};
-    for my $e ( $dom->find("$form input[type=radio]")->each ) {
+    for my $e ( $dom->find("$form $type")->each ) {
         my $name = $e->attr('name');
         next if !$name;
         my $tag = $e->to_string;
@@ -101,44 +78,83 @@ sub _get_input_radio_val {
     return $params;
 }
 
-# input hidden 入力フォームの値を取得
-sub _get_input_hidden_val {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
+# input checkbox 入力フォームの値を取得
+sub _get_input_checkbox_val {
+    my ( $self, $dom, $form, $type ) = @_;
 
     my $params = +{};
-    for my $e ( $dom->find("$form input[type=hidden]")->each ) {
+    for my $e ( $dom->find("$form $type")->each ) {
         my $name = $e->attr('name');
         next if !$name;
-        $params->{$name} = $e->val;
+        my $tag = $e->to_string;
+        if ( $tag =~ /checked/ ) {
+            push @{$params->{$name}}, $e->val;
+        }
+    }
+
+    # 配列が一つの場合はスカラーで返却(実際の挙動に合わせる)
+    for my $key (keys %{$params}) {
+        my $val = $params->{$key};
+        next if ref $val ne 'ARRAY';
+        next if scalar @{$val} ne 1;
+        $params->{$key} = shift @{$params->{$key}};
     }
     return $params;
 }
 
-# textarea 入力フォームの値を取得
-sub _get_textarea_val {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
+# input select 入力フォームの値を取得
+sub _get_input_select_val {
+    my ( $self, $dom, $form, $type ) = @_;
 
     my $params = +{};
-    for my $e ( $dom->find("$form textarea")->each ) {
+    for my $e ( $dom->find("$form $type")->each ) {
         my $name = $e->attr('name');
         next if !$name;
-        $params->{$name} = $e->val;
+        my $tag = $e->to_string;
+        if ( $tag =~ /selected/ ) {
+            $params->{$name} = $e->at('option[selected=selected]')->val;
+        }
     }
     return $params;
 }
 
-# input text の name を全て取得
-sub _get_input_text_names {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
+# input 値の埋め込み
+# $dom = $self->_val_in_dom( $dom, $form, $data, 'input[type=text]' );
+sub _val_in_dom {
+    my ( $self, $dom, $form, $data, $type ) = @_;
 
+    # name 情報取得
     my $names;
-    for my $e ( $dom->find("$form input[type=text]")->each ) {
+    for my $e ( $dom->find("$form $type")->each ) {
+        my $name = $e->attr('name');
+        next if !$name;
+        push @{$names}, $name;
+    }
+
+    # エレメントの構造がそれぞれ違う
+    return $self->_radio_val_in_dom( $dom, $form, $data, $type, $names )
+        if $type eq 'input[type=radio]';
+    return $self->_checkbox_val_in_dom( $dom, $form, $data, $type, $names )
+        if $type eq 'input[type=checkbox]';
+    return $self->_select_val_in_dom( $dom, $form, $data, $type, $names )
+        if $type eq 'select';
+    return $self->_textarea_val_in_dom( $dom, $form, $data, $type, $names )
+        if $type eq 'textarea';
+
+    # name ごとに値を埋め込み
+    for my $name ( @{$names} ) {
+        next if ref $data->{$name} eq 'ARRAY';
+        my $val = $data->{$name};
+        $dom->at("$form input[name=$name]")->attr( +{ value => $val } );
+    }
+    return $dom;
+}
+
+# name 情報取得
+sub _get_names {
+    my ( $self, $dom, $form, $type ) = @_;
+    my $names;
+    for my $e ( $dom->find("$form $type")->each ) {
         my $name = $e->attr('name');
         next if !$name;
         push @{$names}, $name;
@@ -146,95 +162,15 @@ sub _get_input_text_names {
     return $names;
 }
 
-# input password の name を全て取得
-sub _get_input_password_names {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
-
-    my $names;
-    for my $e ( $dom->find("$form input[type=password]")->each ) {
-        my $name = $e->attr('name');
-        next if !$name;
-        push @{$names}, $name;
-    }
-    return $names;
-}
-
-# input radio の name を全て取得
-sub _get_input_radio_names {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
-
-    my $names;
-    for my $e ( $dom->find("$form input[type=radio]")->each ) {
-        my $name = $e->attr('name');
-        next if !$name;
-        push @{$names}, $name;
-    }
+# input radio 値の埋め込み
+sub _radio_val_in_dom {
+    my ( $self, $dom, $form, $data, $type, $names ) = @_;
 
     # 重複している name を解消
     if ($names) {
         my $collection = Mojo::Collection->new( @{$names} );
         $names = $collection->uniq->to_array;
     }
-    return $names;
-}
-
-# textarea の name を全て取得
-sub _get_textarea_names {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
-
-    my $names;
-    for my $e ( $dom->find("$form textarea")->each ) {
-        my $name = $e->attr('name');
-        next if !$name;
-        push @{$names}, $name;
-    }
-    return $names;
-}
-
-# input text 値の埋め込み
-sub _text_val_in_dom {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
-    my $data = shift;
-
-    my $names = $self->_get_input_text_names( $dom, $form );
-    for my $name ( @{$names} ) {
-        my $val = $data->{$name};
-        $dom->at("$form input[name=$name]")->attr( +{ value => $val } );
-    }
-    return $dom;
-}
-
-# input password 値の埋め込み
-sub _password_val_in_dom {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
-    my $data = shift;
-
-    my $names = $self->_get_input_password_names( $dom, $form );
-    for my $name ( @{$names} ) {
-        my $val = $data->{$name};
-        $dom->at("$form input[name=$name]")->attr( +{ value => $val } );
-    }
-    return $dom;
-}
-
-# input radio 値の埋め込み
-sub _radio_val_in_dom {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
-    my $data = shift;
-
-    my $names = $self->_get_input_radio_names( $dom, $form );
 
     # checked をはずす
     for my $e ( $dom->find("$form input[type=radio][checked]")->each ) {
@@ -244,6 +180,7 @@ sub _radio_val_in_dom {
     }
 
     for my $name ( @{$names} ) {
+        next if ref $data->{$name} eq 'ARRAY';
         my $val = $data->{$name};
         $dom->at("$form input[name=$name][value=$val]")
             ->attr( 'checked' => undef );
@@ -251,15 +188,72 @@ sub _radio_val_in_dom {
     return $dom;
 }
 
+# input checkbox 値の埋め込み
+sub _checkbox_val_in_dom {
+    my ( $self, $dom, $form, $data, $type, $names ) = @_;
+
+    # 重複している name を解消
+    if ($names) {
+        my $collection = Mojo::Collection->new( @{$names} );
+        $names = $collection->uniq->to_array;
+    }
+
+    # checked をはずす
+    for my $e ( $dom->find("$form input[type=checkbox][checked]")->each ) {
+        my $name = $e->attr('name');
+        next if !$name;
+        delete $e->attr->{checked};
+    }
+
+    # checkbox は複数指定できる
+    for my $name ( @{$names} ) {
+        my @values;
+        if (ref $data->{$name} eq 'ARRAY') {
+            @values = @{$data->{$name}};
+            for my $val (@values) {
+                $dom->at("$form input[name=$name][value=$val]")
+                    ->attr( 'checked' => undef );
+            }
+        }
+        else {
+            my $val = $data->{$name};
+            $dom->at("$form input[name=$name][value=$val]")
+                ->attr( 'checked' => undef );
+        }
+    }
+    return $dom;
+}
+
+# input select 値の埋め込み
+sub _select_val_in_dom {
+    my ( $self, $dom, $form, $data, $type, $names ) = @_;
+
+    # selected をはずす
+    for my $e ( $dom->find("$form select")->each ) {
+        my $name = $e->attr('name');
+        next if !$name;
+
+        # select は入れ子になっている事に注意
+        for my $option_e ( $e->find('option')->each ) {
+            delete $option_e->attr->{selected};
+        }
+    }
+
+    for my $name ( @{$names} ) {
+        next if ref $data->{$name} eq 'ARRAY';
+        my $val = $data->{$name};
+        $dom->at("$form select[name=$name] option[value=$val]")
+            ->attr( +{ selected => "selected" } );
+    }
+    return $dom;
+}
+
 # textarea 値の埋め込み
 sub _textarea_val_in_dom {
-    my $self = shift;
-    my $dom  = shift;
-    my $form = shift;
-    my $data = shift;
+    my ( $self, $dom, $form, $data, $type, $names ) = @_;
 
-    my $names = $self->_get_textarea_names( $dom, $form );
     for my $name ( @{$names} ) {
+        next if ref $data->{$name} eq 'ARRAY';
         my $val = $data->{$name};
         $dom->at("$form textarea[name=$name]")->content($val);
     }
