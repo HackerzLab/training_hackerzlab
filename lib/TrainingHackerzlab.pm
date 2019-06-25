@@ -52,8 +52,9 @@ sub startup {
                 $c->redirect_to('/auth');
                 return;
             }
-            if ( $url =~ m{^/exakids/menu.*} ) {
-
+            if (   ( $url =~ m{^/exakids/.*} )
+                && ( $url !~ m{^/exakids/entry.*} ) )
+            {
                 # セッション情報からログイン者の情報を取得
                 my $params = +{ login_id => $c->session('user') };
                 my $model = $self->model->auth->req_params($params);
@@ -81,6 +82,7 @@ sub startup {
 
     # 認証関連
     my $id = [ id => qr/[0-9]+/ ];
+    my $user_id = [ user_id => qr/[0-9]+/ ];
     $r->get('/auth/create')->to('Auth#create');
     $r->get( '/auth/:id/edit', $id )->to('Auth#edit');
     $r->get( '/auth/:id',      $id )->to('Auth#show');
@@ -118,14 +120,19 @@ sub startup {
     my $collected_id = [ collected_id => qr/[0-9]+/, sort_id => qr/[0-9]+/ ];
     my $collected = $r->under('/hackerz/question/collected');
     $collected->get( '/:id', $id )->to('Hackerz::Question::Collected#show');
-    $collected->get( '/:collected_id/:sort_id/think', $collected_id )->to('Hackerz::Question::Collected#think');
-    $collected->get( '/:collected_id/:sort_id/survey/:action', $collected_id )->to('Hackerz::Question::Survey#');
-    $collected->post( '/:collected_id/:sort_id/survey/:action', $collected_id )->to('Hackerz::Question::Survey#');
+    $collected->get( '/:collected_id/:sort_id/think', $collected_id )
+        ->to('Hackerz::Question::Collected#think');
+    $collected->get( '/:collected_id/:sort_id/survey/:action', $collected_id )
+        ->to('Hackerz::Question::Survey#');
+    $collected->post( '/:collected_id/:sort_id/survey/:action',
+        $collected_id )->to('Hackerz::Question::Survey#');
 
     # exa kids
     my $exa = $r->under('/exakids');
     $exa->get('')->to('Exakids#index');
     $exa->get('/menu')->to('Exakids#menu');
+    $exa->get('/:user_id/edit')->to('Exakids#edit');
+    $exa->post('/:user_id/update')->to('Exakids#update');
     $exa->post('/entry')->to('Exakids#entry');
 }
 

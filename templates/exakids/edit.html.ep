@@ -1,0 +1,51 @@
+% layout 'base';
+% title 'HackerzLab.博多';
+  <div class="container" id="">
+    <div class="jumbotron">
+      <h2><span class="text-danger">EXA KIDS エントリー名更新</span></h2>
+      <ul>
+        <li>お手元に配られたエントリーカードに書いてあるIDとパスワードを入力ください</li>
+        <li>名前は自分の好きな名前が入力できます</li>
+        <li>イベント終了後にクイズの解答結果などは全て消去されます</li>
+      </ul>
+    </div>
+  </div>
+  <div class="container">
+    <form name="form_update" action="/exakids/<%= $c->stash->{login_user}->{id} %>/update" method="POST" class="form-horizontal well">
+      <fieldset>
+        <legend>エントリー名更新</legend>
+        <div class="form-group has-feedback">
+          <label for="login_id" class="col-lg-2 control-label">ログインID</label>
+          <div class="col-lg-10">
+            <input type="text" class="form-control" id="login_id" placeholder="ログインID" name="login_id" value="">
+          </div>
+        </div>
+        <div class="form-group has-feedback">
+          <label for="name" class="col-lg-2 control-label">名前</label>
+          <div class="col-lg-10">
+            <input type="text" class="form-control" id="name" placeholder="名前" name="name" value="">
+            <span class="glyphicon glyphicon-check form-control-feedback"></span>
+          </div>
+        </div>
+        <div class="form-group has-feedback">
+          <label for="password" class="col-lg-2 control-label">パスワード</label>
+          <div class="col-lg-10">
+            <input type="password" class="form-control" id="password" placeholder="パスワード" name="password" value="">
+            <span class="glyphicon glyphicon-check form-control-feedback"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-10 col-lg-offset-2">
+            <button type="submit" class="btn btn-primary" name="send" value="ボタン">更新</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+  <div class="container">
+    <h2 class="page-header text-danger">EXAKIDS メニュー</h2>
+    <p class="well text-danger">
+      エクサキッズイベント用、早押しクイズ形式
+    </p>
+    <a href="/exakids/menu" class="btn btn-danger btn-lg btn-block">EXAKIDS</a>
+  </div>

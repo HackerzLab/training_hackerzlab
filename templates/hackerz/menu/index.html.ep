@@ -51,6 +51,16 @@
     </div>
   </div>
 
+  % if ($c->stash->{is_exa}) {
+  <div class="container">
+    <h2 class="page-header text-danger">EXAKIDS メニュー</h2>
+    <p class="well text-danger">
+      エクサキッズイベント用、早押しクイズ形式
+    </p>
+    <a href="/exakids/menu" class="btn btn-danger btn-lg btn-block">EXAKIDS</a>
+  </div>
+  % }
+
   <div class="modal" id="removeModal">
     <div class="modal-dialog">
       <div class="modal-content">

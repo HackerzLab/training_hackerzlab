@@ -5,8 +5,15 @@ use Mojo::Base 'TrainingHackerzlab::Controller::Base';
 sub index {
     my $self              = shift;
     my $to_template_index = $self->model->hackerz->menu->to_template_index;
+    my $exa_ids           = $self->app->config->{exa_ids};
+    my $is_exa            = 0;
+    for my $id ( @{$exa_ids} ) {
+        next if $self->login_user->id ne $id;
+        $is_exa = 1;
+    }
     $self->render(
         %{$to_template_index},
+        is_exa   => $is_exa,
         user     => $self->login_user->get_columns,
         template => 'hackerz/menu/index',
         format   => 'html',

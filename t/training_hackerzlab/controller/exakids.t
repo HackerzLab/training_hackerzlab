@@ -32,6 +32,34 @@ subtest 'GET - `/exakids` - index' => sub {
     $t->element_exists("$form button[type=submit]");
 };
 
+# - GET - `/exakids/:user_id/edit` - edit - 解答者のエントリー情報更新画面
+subtest 'GET - `/exakids/:user_id/edit` - edit' => sub {
+
+    # exakids id でのログイン者のみ、みれる
+    my $exa_ids = $t->app->config->{exa_ids};
+    my $user_id = $exa_ids->[0];
+
+    # ログインしていないとみれない
+    $t->get_ok("/exakids/$user_id/edit")->status_is(302);
+
+    # exakids id でのログイン者のみ、みれる
+    $t->login_ok($user_id);
+    $t->get_ok("/exakids/$user_id/edit")->status_is(200);
+
+    # warn $t->tx->res->body;
+    # my $logout_form
+    #     = "form[name=form_logout][method=post][action=/auth/logout]";
+    # $t->element_exists("$logout_form button[type=submit]");
+    # my $refresh_form
+    #     = "form[name=form_refresh][method=post][action=/exakids/refresh]";
+    # $t->element_exists("$refresh_form button[type=submit]");
+    # $t->element_exists("a[href=/exakids/menu]");
+    # $t->element_exists("a[href=/hackerz/menu]");
+    # $t->element_exists("a[href=/exakids/ranking]");
+    # $t->element_exists("a[href=/exakids/$user_id/edit]");
+    $t->logout_ok();
+};
+
 # - POST - `/exakids/entry` - entry 解答者のエントリー実行
 subtest 'POST - `/exakids/entry` - entry' => sub {
 

@@ -21,4 +21,10 @@ sub to_template_menu {
     return $to_template;
 }
 
+sub to_template_edit {
+    my $self        = shift;
+    my $to_template = +{};
+    return $to_template;
+}
+
 1;
