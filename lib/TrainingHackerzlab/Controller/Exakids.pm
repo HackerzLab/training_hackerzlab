@@ -21,9 +21,10 @@ sub menu {
     my $to_template = $model->to_template_menu;
     $self->stash(
         %{$to_template},
-        template => 'exakids/menu',
-        format   => 'html',
-        handler  => 'ep',
+        login_user => $self->login_user->get_columns,
+        template   => 'exakids/menu',
+        format     => 'html',
+        handler    => 'ep',
     );
     $self->render();
     return;

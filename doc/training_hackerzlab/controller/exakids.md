@@ -9,6 +9,7 @@ training_hackerzlab/controller/exakids - TrainingHackerzlab エクサキッズ�
 - GET - `/exakids` - index - エントリー画面
 - GET - `/exakids/menu` - menu - メニュー
 - GET - `/exakids/ranking` - ranking - 解答者ランキング一覧
+- GET - `/exakids/:user_id/edit` - edit - 解答者のエントリー情報更新画面
 - POST - `/exakids/entry` - entry 解答者のエントリー実行
 - POST - `/exakids/refresh` - refresh - 解答状況を初期状態にもどす
 
@@ -46,6 +47,12 @@ exakids エントリーから遷移してきた問題には全てタイマー機
 ランキング画面
 得点の合計と解答入力までの時間の組み合わせで順位を決定
 点数が同じ場合は時間が短い方が勝ち
+```
+
+# - GET - `/exakids/:user_id/edit` - edit - 解答者のエントリー情報更新画面
+
+```
+エントリー者の情報更新の入力フォーム一式
 ```
 
 # - POST - `/exakids/entry` - entry 解答者のエントリー実行

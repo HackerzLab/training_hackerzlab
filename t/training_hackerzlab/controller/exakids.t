@@ -92,6 +92,16 @@ subtest 'GET - `/exakids/menu` - menu' => sub {
     my $user_id = $exa_ids->[0];
     $t->login_ok($user_id);
     $t->get_ok('/exakids/menu')->status_is(200);
+    my $logout_form
+        = "form[name=form_logout][method=post][action=/auth/logout]";
+    $t->element_exists("$logout_form button[type=submit]");
+    my $refresh_form
+        = "form[name=form_refresh][method=post][action=/exakids/refresh]";
+    $t->element_exists("$refresh_form button[type=submit]");
+    $t->element_exists("a[href=/exakids/menu]");
+    $t->element_exists("a[href=/hackerz/menu]");
+    $t->element_exists("a[href=/exakids/ranking]");
+    $t->element_exists("a[href=/exakids/$user_id/edit]");
     $t->logout_ok();
 };
 
