@@ -161,9 +161,10 @@ subtest 'GET - `/exakids/menu` - menu' => sub {
 # - POST - `/exakids/refresh` - refresh - 解答状況を初期状態にもどす
 subtest 'POST - `/exakids/refresh` - refresh' => sub {
 
+    # データベースのデータが違うのでデータの検証はなし
     # リフレッシュボタンがみれるのは閲覧者IDのみ
-    my $exa_ids = $t->app->config->{exa_ids_browse};
-    my $user_id = $exa_ids->[0];
+    my $exa_ids_browse = $t->app->config->{exa_ids_browse};
+    my $user_id        = $exa_ids_browse->[0];
     $t->login_ok($user_id);
     $t->get_ok('/exakids/menu')->status_is(200);
 
@@ -175,13 +176,15 @@ subtest 'POST - `/exakids/refresh` - refresh' => sub {
     my $action_url = $dom->at($refresh_form)->attr('action');
 
     # リフレッシュ実行
-    # $t->post_ok( $action_url )->status_is(302);
-    # my $location_url = $t->tx->res->headers->location;
+    $t->post_ok($action_url)->status_is(302);
+    my $location_url = $t->tx->res->headers->location;
 
     # データ初期化されて、ログアウト状態、トップ画面へ
-    # $t->get_ok($location_url)->status_is(200);
-    # $t->content_like(qr{\Q<b>$msg</b>\E});
-    $t->logout_ok();
+    $t->get_ok($location_url)->status_is(200);
+
+    # セッション確認
+    my $session_id = $t->app->build_controller( $t->tx )->session('user');
+    is( $session_id, undef, 'session_id' );
 };
 
 # エクサidでログイン時の問題解答にはかかった時間が記録される

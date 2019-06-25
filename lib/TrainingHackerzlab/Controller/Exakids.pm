@@ -16,9 +16,9 @@ sub index {
 }
 
 sub menu {
-    my $self        = shift;
-    my $model       = $self->model->exakids;
-    my $to_template = $model->to_template_menu;
+    my $self           = shift;
+    my $model          = $self->model->exakids;
+    my $to_template    = $model->to_template_menu;
     my $exa_ids_browse = $self->app->config->{exa_ids_browse};
     my $is_exa_browse  = 0;
     for my $id ( @{$exa_ids_browse} ) {
@@ -130,6 +130,14 @@ sub entry {
     $self->session( user => $check->{user}->login_id );
     $self->flash( msg => $check->{msg} );
     $self->redirect_to('/exakids/menu');
+    return;
+}
+
+sub refresh {
+    my $self = shift;
+    $self->app->commands->run( 'generate', 'sqlitedb' );
+    $self->session( expires => 1 );
+    $self->redirect_to('/');
     return;
 }
 
