@@ -108,6 +108,7 @@ sub startup {
     # exa kids
     my $exa = $r->under('/exakids');
     $exa->get('')->to('Exakids#index');
+    $exa->post('/entry')->to('Exakids#entry');
 }
 
 1;

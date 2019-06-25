@@ -14,7 +14,7 @@ training_hackerzlab/controller/auth - TrainingHackerzlab 認証
 - GET - `/auth/remove` - remove ユーザー削除画面
 - POST - `/auth/login` - login - ユーザーログイン実行
 - POST - `/auth/logout` - logout - ユーザーログアウト実行
-- POST - `/auth/:id/update` - update ユーザーパスワード変更実行 (未実装)
+- POST - `/auth/:id/update` - update ユーザーパスワード
 - POST - `/auth/:id/remove` - remove ユーザー削除実行
 - POST - `/auth` - store ユーザー新規登録実行
 
@@ -73,10 +73,10 @@ training_hackerzlab/controller/auth - TrainingHackerzlab 認証
 ログアウトボタン -> ログアウト実行 -> 失敗(例外処理)
 ```
 
-## - POST - `/auth/:id/update` - update ユーザーパスワード変更実行 (未実装)
+## - POST - `/auth/:id/update` - update ユーザーパスワード変更実行
 
 ```
-旧システムは未実装
+エクサキッズ拡張につき、ロジック部分のみ実装
 ```
 
 ## - POST - `/auth/:id/remove` - remove ユーザー削除実行 (未実装)

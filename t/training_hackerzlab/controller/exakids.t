@@ -35,6 +35,8 @@ subtest 'GET - `/exakids` - index' => sub {
 # - POST - `/exakids/entry` - entry 解答者のエントリー実行
 subtest 'GET - `/exakids/entry` - entry' => sub {
 
+    my $master  = $t->app->test_db->master;
+    my $msg     = $master->auth->to_word('DONE_ENTRY');
     my $exa_ids = $t->app->config->{exa_ids};
     my $user_id = $exa_ids->[0];
     my $user_row
@@ -61,7 +63,17 @@ subtest 'GET - `/exakids/entry` - entry' => sub {
 
     # エントリーを送信
     $t->post_ok( $action_url => form => $params )->status_is(302);
+    my $location_url = $t->tx->res->headers->location;
 
+    # エクサキッズ用のメニュー画面へ
+    # $t->get_ok($location_url)->status_is(200);
+    # $t->content_like(qr{\Q<b>$msg</b>\E});
+
+    # 名前も登録されている
+    my $row
+        = $t->app->test_db->teng->single( 'user', +{ id => $user_row->id } );
+    ok( $row, 'user row' );
+    is( $row->name, $entry_hash->{name}, 'name' );
 };
 
 # エクサidでログイン時の問題解答にはかかった時間が記録される

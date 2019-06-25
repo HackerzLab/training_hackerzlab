@@ -60,6 +60,24 @@ sub store {
     return $store;
 }
 
+# 更新(エクサキッズ拡張用)
+sub update {
+    my $self        = shift;
+    my $master      = $self->db->master;
+    my $user_params = +{
+        password => $self->req_params->{password} || '',
+        name     => $self->req_params->{name}     || '',
+    };
+    my $update_id
+        = $self->db->teng_update( 'user', $user_params,
+        +{ id => $self->req_params->{user_id} } );
+    my $update = +{
+        user_id => $update_id,
+        msg     => $master->auth->to_word('DONE_ENTRY'),
+    };
+    return $update;
+}
+
 # DB 認証
 sub check {
     my $self   = shift;
@@ -69,6 +87,13 @@ sub check {
         login_id => $params->{login_id},
         deleted  => $master->deleted->constant('NOT_DELETED'),
     };
+
+    # user_id の指定がされている場合はそちらで検索
+    if ( exists $params->{user_id} ) {
+        delete $cond->{login_id};
+        $cond->{id} = $params->{user_id};
+    }
+
     my $user = $self->db->teng->single( 'user', $cond );
     my $check = +{
         user     => $user,
