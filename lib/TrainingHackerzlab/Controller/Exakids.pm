@@ -19,23 +19,30 @@ sub menu {
     my $self        = shift;
     my $model       = $self->model->exakids;
     my $to_template = $model->to_template_menu;
+    my $exa_ids_browse = $self->app->config->{exa_ids_browse};
+    my $is_exa_browse  = 0;
+    for my $id ( @{$exa_ids_browse} ) {
+        next if $self->login_user->id ne $id;
+        $is_exa_browse = 1;
+    }
     $self->stash(
         %{$to_template},
-        login_user => $self->login_user->get_columns,
-        template   => 'exakids/menu',
-        format     => 'html',
-        handler    => 'ep',
+        is_exa_browse => $is_exa_browse,
+        login_user    => $self->login_user->get_columns,
+        template      => 'exakids/menu',
+        format        => 'html',
+        handler       => 'ep',
     );
     $self->render();
     return;
 }
 
 sub edit {
-    my $self        = shift;
-    my $params      = $self->req->params->to_hash;
-    my $model       = $self->model->exakids->req_params($params);
-    my $master      = $model->db->master;
-    my $template    = 'exakids/edit';
+    my $self     = shift;
+    my $params   = $self->req->params->to_hash;
+    my $model    = $self->model->exakids->req_params($params);
+    my $master   = $model->db->master;
+    my $template = 'exakids/edit';
 
     $self->stash(
         login_user => $self->login_user->get_columns,
