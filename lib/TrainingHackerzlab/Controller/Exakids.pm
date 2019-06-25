@@ -34,12 +34,10 @@ sub edit {
     my $self        = shift;
     my $params      = $self->req->params->to_hash;
     my $model       = $self->model->exakids->req_params($params);
-    my $to_template = $model->to_template_edit;
     my $master      = $model->db->master;
     my $template    = 'exakids/edit';
 
     $self->stash(
-        %{$to_template},
         login_user => $self->login_user->get_columns,
         template   => $template,
         format     => 'html',
@@ -59,8 +57,9 @@ sub update {
     my $template = 'exakids/edit';
 
     $self->stash(
-        format  => 'html',
-        handler => 'ep',
+        login_user => $self->login_user->get_columns,
+        format     => 'html',
+        handler    => 'ep',
     );
 
     # DB 存在確認

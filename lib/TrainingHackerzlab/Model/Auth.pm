@@ -68,9 +68,15 @@ sub update {
         password => $self->req_params->{password} || '',
         name     => $self->req_params->{name}     || '',
     };
+    my $update_cond = +{ id => $self->req_params->{user_id} };
+
+    # login_id 指定時
+    if ( exists $self->req_params->{login_id} ) {
+        delete $update_cond->{id};
+        $update_cond->{login_id} = $self->req_params->{login_id};
+    }
     my $update_id
-        = $self->db->teng_update( 'user', $user_params,
-        +{ id => $self->req_params->{user_id} } );
+        = $self->db->teng_update( 'user', $user_params, $update_cond );
     my $update = +{
         user_id => $update_id,
         msg     => $master->auth->to_word('DONE_ENTRY'),

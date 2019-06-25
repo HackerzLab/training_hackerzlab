@@ -34,6 +34,8 @@ subtest 'GET - `/exakids` - index' => sub {
 
 # - GET - `/exakids/:user_id/edit` - edit - 解答者のエントリー情報更新画面
 subtest 'GET - `/exakids/:user_id/edit` - edit' => sub {
+    my $master = $t->app->test_db->master;
+    my $msg    = $master->auth->to_word('DONE_ENTRY');
 
     # exakids id でのログイン者のみ、みれる
     my $exa_ids = $t->app->config->{exa_ids};
@@ -46,17 +48,43 @@ subtest 'GET - `/exakids/:user_id/edit` - edit' => sub {
     $t->login_ok($user_id);
     $t->get_ok("/exakids/$user_id/edit")->status_is(200);
 
-    # warn $t->tx->res->body;
-    # my $logout_form
-    #     = "form[name=form_logout][method=post][action=/auth/logout]";
-    # $t->element_exists("$logout_form button[type=submit]");
-    # my $refresh_form
-    #     = "form[name=form_refresh][method=post][action=/exakids/refresh]";
-    # $t->element_exists("$refresh_form button[type=submit]");
-    # $t->element_exists("a[href=/exakids/menu]");
-    # $t->element_exists("a[href=/hackerz/menu]");
-    # $t->element_exists("a[href=/exakids/ranking]");
-    # $t->element_exists("a[href=/exakids/$user_id/edit]");
+    # エントリーへのフォーム確認
+    my $name   = 'form_update';
+    my $action = "/exakids/$user_id/update";
+    my $form   = "form[name=$name][method=POST][action=$action]";
+    $t->element_exists($form);
+    $t->element_exists("$form input[name=login_id]");
+    $t->element_exists("$form input[name=name]");
+    $t->element_exists("$form input[name=password]");
+    $t->element_exists("$form button[type=submit]");
+
+    my $user_row
+        = $t->app->test_db->teng->single( 'user', +{ id => $user_id } );
+    my $dom        = $t->tx->res->dom;
+    my $action_url = $dom->at($form)->attr('action');
+
+    # 入力データーの元
+    my $update_hash = +{
+        login_id => $user_row->login_id,
+        password => $user_row->password,
+        name     => 'テスト変更ユーザー',
+    };
+
+    # dom に 値を埋め込み
+    $dom = $t->input_val_in_dom( $dom, $form, $update_hash );
+
+    # input val 取得
+    my $params = $t->get_input_val( $dom, $form );
+    $t->post_ok( $action_url => form => $params )->status_is(302);
+    my $location_url = $t->tx->res->headers->location;
+
+    # エクサキッズ用のメニュー画面へ
+    $t->get_ok($location_url)->status_is(200);
+    $t->content_like(qr{\Q<b>$msg</b>\E});
+    my $row
+        = $t->app->test_db->teng->single( 'user', +{ id => $user_row->id } );
+    ok( $row, 'user row' );
+    is( $row->name, $update_hash->{name}, 'name' );
     $t->logout_ok();
 };
 
