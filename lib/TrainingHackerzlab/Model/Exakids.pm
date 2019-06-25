@@ -15,4 +15,10 @@ sub to_template_index {
     return $to_template;
 }
 
+sub to_template_menu {
+    my $self        = shift;
+    my $to_template = +{};
+    return $to_template;
+}
+
 1;

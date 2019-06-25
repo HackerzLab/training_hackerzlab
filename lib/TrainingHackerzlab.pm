@@ -52,6 +52,23 @@ sub startup {
                 $c->redirect_to('/auth');
                 return;
             }
+            if ( $url =~ m{^/exakids/menu.*} ) {
+
+                # セッション情報からログイン者の情報を取得
+                my $params = +{ login_id => $c->session('user') };
+                my $model = $self->model->auth->req_params($params);
+                if ( my $login_user = $model->session_check ) {
+                    $self->helper( login_user => sub {$login_user} );
+                    return;
+                }
+
+                # セッション無き場合ログインページへ
+                my $master = $model->db->master;
+                my $msg    = $master->auth->to_word('NEED_LOGIN');
+                $c->flash( msg => $msg );
+                $c->redirect_to('/exakids');
+                return;
+            }
         }
     );
 
@@ -108,6 +125,7 @@ sub startup {
     # exa kids
     my $exa = $r->under('/exakids');
     $exa->get('')->to('Exakids#index');
+    $exa->get('/menu')->to('Exakids#menu');
     $exa->post('/entry')->to('Exakids#entry');
 }
 

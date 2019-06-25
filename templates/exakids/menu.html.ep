@@ -1,0 +1,15 @@
+% layout 'base';
+% title 'HackerzLab.博多';
+  <div class="container" id="">
+    <div class="jumbotron">
+      <h2><span class="text-danger">EXA KIDS メニュー</span></h2>
+      <ul>
+        <li>お手元に配られたエントリーカードに書いてあるIDとパスワードを入力ください</li>
+        <li>名前は自分の好きな名前が入力できます</li>
+        <li>イベント終了後にクイズの解答結果などは全て消去されます</li>
+      </ul>
+    </div>
+  </div>
+  <div class="container">
+
+  </div>

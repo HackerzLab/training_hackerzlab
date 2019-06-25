@@ -15,6 +15,20 @@ sub index {
     return;
 }
 
+sub menu {
+    my $self        = shift;
+    my $model       = $self->model->exakids;
+    my $to_template = $model->to_template_menu;
+    $self->stash(
+        %{$to_template},
+        template => 'exakids/menu',
+        format   => 'html',
+        handler  => 'ep',
+    );
+    $self->render();
+    return;
+}
+
 sub entry {
     my $self = shift;
     return if $self->transition_logged_in;
@@ -49,7 +63,7 @@ sub entry {
     my $update = $model->update;
 
     # 認証
-    $self->session( user => $params->{login_id} );
+    $self->session( user => $check->{user}->login_id );
     $self->flash( msg => $check->{msg} );
     $self->redirect_to('/exakids/menu');
     return;

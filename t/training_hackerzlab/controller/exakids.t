@@ -33,10 +33,10 @@ subtest 'GET - `/exakids` - index' => sub {
 };
 
 # - POST - `/exakids/entry` - entry 解答者のエントリー実行
-subtest 'GET - `/exakids/entry` - entry' => sub {
+subtest 'POST - `/exakids/entry` - entry' => sub {
 
     my $master  = $t->app->test_db->master;
-    my $msg     = $master->auth->to_word('DONE_ENTRY');
+    my $msg     = $master->auth->to_word('IS_LOGIN');
     my $exa_ids = $t->app->config->{exa_ids};
     my $user_id = $exa_ids->[0];
     my $user_row
@@ -66,14 +66,33 @@ subtest 'GET - `/exakids/entry` - entry' => sub {
     my $location_url = $t->tx->res->headers->location;
 
     # エクサキッズ用のメニュー画面へ
-    # $t->get_ok($location_url)->status_is(200);
-    # $t->content_like(qr{\Q<b>$msg</b>\E});
+    $t->get_ok($location_url)->status_is(200);
+    $t->content_like(qr{\Q<b>$msg</b>\E});
+
+    # ログイン状態を確認する
+    my $session_id = $t->app->build_controller( $t->tx )->session('user');
+    ok( $session_id, 'session_id' );
 
     # 名前も登録されている
     my $row
         = $t->app->test_db->teng->single( 'user', +{ id => $user_row->id } );
     ok( $row, 'user row' );
     is( $row->name, $entry_hash->{name}, 'name' );
+    $t->logout_ok();
+};
+
+# - GET - `/exakids/menu` - menu - メニュー
+subtest 'GET - `/exakids/menu` - menu' => sub {
+
+    # ログインしていないとみれない
+    $t->get_ok('/exakids/menu')->status_is(302);
+
+    # exakids id でのログイン者のみ、みれる
+    my $exa_ids = $t->app->config->{exa_ids};
+    my $user_id = $exa_ids->[0];
+    $t->login_ok($user_id);
+    $t->get_ok('/exakids/menu')->status_is(200);
+    $t->logout_ok();
 };
 
 # エクサidでログイン時の問題解答にはかかった時間が記録される
