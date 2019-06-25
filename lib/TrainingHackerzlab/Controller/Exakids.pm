@@ -96,12 +96,14 @@ sub update {
 sub entry {
     my $self = shift;
     return if $self->transition_logged_in;
-    my $params   = $self->req->params->to_hash;
-    my $model    = $self->model->auth->req_params($params);
-    my $master   = $model->db->master;
-    my $template = 'exakids/index';
-
+    my $params      = $self->req->params->to_hash;
+    my $model       = $self->model->auth->req_params($params);
+    my $exakids     = $self->model->exakids;
+    my $to_template = $exakids->to_template_index;
+    my $master      = $model->db->master;
+    my $template    = 'exakids/index';
     $self->stash(
+        %{$to_template},
         format  => 'html',
         handler => 'ep',
     );
