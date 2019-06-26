@@ -36,6 +36,13 @@ sub get_score_opened_hint {
     return $question_row->score - ( $count * 2 );
 }
 
+# 回答の残り時間
+sub fetch_answer_time {
+    my $self = shift;
+    my $cond = +{ answer_id => $self->id, deleted => 0, };
+    return $self->handle->single( 'answer_time', $cond );
+}
+
 1;
 
 __END__

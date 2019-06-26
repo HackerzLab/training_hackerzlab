@@ -31,12 +31,19 @@ sub answer_data_hash {
 
     my $answer   = $data_row->{answer_row}->get_columns;
     my $question = $data_row->{question_row}->get_columns;
+    my $answer_time_row = $data_row->{answer_row}->fetch_answer_time;
+    my $answer_time = +{};
+    if ($answer_time_row) {
+        $answer_time = $answer_time_row->get_columns;
+    }
 
     my $hash_row = +{
-        answer    => $answer,
-        how       => '不正解',
-        how_text  => 'danger',
-        get_score => 0,
+        answer      => $answer,
+        how         => '不正解',
+        how_text    => 'danger',
+        get_score   => 0,
+        is_answered => 1,
+        answer_time => $answer_time,
     };
     return $hash_row if $answer->{user_answer} ne $question->{answer};
 
@@ -61,18 +68,19 @@ sub question_data_hash_collected {
     my $data_hash = +{
         collected_sort => $collected_sort,
         question       => $question,
-        short_title => _short_cut($question->{title}),
+        short_title    => _short_cut( $question->{title} ),
         sort_id        => $collected_sort->{sort_id},
         collected_id   => $collected_sort->{collected_id},
         q_url          => $self->create_question_url(
             $collected_sort->{sort_id},
             $collected_sort->{collected_id},
         ),
-        short_question => substr( $question->{question}, 0, 20 ) . ' ...',
-        how            => '未',
-        how_text       => 'primary',
+        short_question    => substr( $question->{question}, 0, 20 ) . ' ...',
+        how               => '未',
+        how_text          => 'primary',
         hint_opened_level => [ map { $_->level } @{$hint_rows} ],
         get_score         => 0,
+        is_answered       => 0,
     };
     if ( $data_row->{answer_row} ) {
         my $answer_hash = $self->answer_data_hash($data_row);
@@ -103,12 +111,12 @@ sub question_data_hash_all {
     my $sort_id      = $question_row->id;
 
     my $data_hash = +{
-        sort_id     => $sort_id,
-        question    => $question_row->get_columns,
-        short_title => _short_cut($question_row->title),
-        q_url       => $self->create_question_url($sort_id),
-        how         => '未',
-        how_text    => 'primary',
+        sort_id           => $sort_id,
+        question          => $question_row->get_columns,
+        short_title       => _short_cut( $question_row->title ),
+        q_url             => $self->create_question_url($sort_id),
+        how               => '未',
+        how_text          => 'primary',
         hint_opened_level => [ map { $_->level } @{$hint_rows} ],
         get_score         => 0,
     };
