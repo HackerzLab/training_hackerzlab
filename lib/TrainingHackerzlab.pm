@@ -81,7 +81,7 @@ sub startup {
     $r->get('/hackerz')->to('Hackerz#index');
 
     # 認証関連
-    my $id = [ id => qr/[0-9]+/ ];
+    my $id      = [ id      => qr/[0-9]+/ ];
     my $user_id = [ user_id => qr/[0-9]+/ ];
     $r->get('/auth/create')->to('Auth#create');
     $r->get( '/auth/:id/edit', $id )->to('Auth#edit');
@@ -132,6 +132,7 @@ sub startup {
     $exa->get('')->to('Exakids#index');
     $exa->get('/menu')->to('Exakids#menu');
     $exa->get('/:user_id/edit')->to('Exakids#edit');
+    $exa->get('/ranking')->to('Exakids#ranking');
     $exa->post('/:user_id/update')->to('Exakids#update');
     $exa->post('/entry')->to('Exakids#entry');
     $exa->post('/refresh')->to('Exakids#refresh');

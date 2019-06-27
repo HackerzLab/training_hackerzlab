@@ -1,0 +1,27 @@
+% layout 'base';
+% title 'HackerzLab.博多';
+  <div class="container" id="">
+    <div class="jumbotron">
+      <h2><span class="text-danger">EXA KIDS メニュー</span></h2>
+      <ul>
+        <li>お手元に配られたエントリーカードに書いてあるIDとパスワードを入力ください</li>
+        <li>名前は自分の好きな名前が入力できます</li>
+        <li>イベント終了後にクイズの解答結果などは全て消去されます</li>
+      </ul>
+    </div>
+  </div>
+  <div class="container">
+    <div class="jumbotron">
+    <h2>[&nbsp;総合ランキング&nbsp;]</h2>
+    % for my $ranking (@{$rankings}) {
+    <h2>第&nbsp;<%= $ranking->{rank} %>&nbsp;位 <%= $ranking->{login_id} %> <small><%= $ranking->{name} %></small> <small class="text-danger">総合得点 [<%= $ranking->{overall_score} %>点]</small></h2>
+    % }
+    </div>
+  </div>
+  <div class="container">
+    <h2 class="page-header text-danger">EXAKIDS メニュー</h2>
+    <p class="well text-danger">
+      エクサキッズイベント用、早押しクイズ形式
+    </p>
+    <a href="/exakids/menu" class="btn btn-danger btn-lg btn-block">EXAKIDS</a>
+  </div>

@@ -30,6 +30,26 @@ sub get_score_opened_hint {
     return $score_all;
 }
 
+# 解答時の条件を考慮した点数
+sub get_overall_score {
+    my $self = shift;
+
+    # 解答結果を取得
+    my $answer_rows = $self->search_answer;
+    return 0 if !$answer_rows;
+
+    # ヒントの開封と残り時間を考慮した点数
+    my $score_all = 0;
+    for my $answer_row ( @{$answer_rows} ) {
+        next if !$answer_row->is_correct;
+        $score_all += $answer_row->get_score_opened_hint();
+        my $answer_time = $answer_row->fetch_answer_time();
+        next if !$answer_time;
+        $score_all += $answer_time->remaining_sec;
+    }
+    return $score_all;
+}
+
 # 関連情報全て削除
 sub soft_delete {
     my $self = shift;

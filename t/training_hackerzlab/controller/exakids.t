@@ -158,6 +158,20 @@ subtest 'GET - `/exakids/menu` - menu' => sub {
     $t->logout_ok();
 };
 
+# - GET - `/exakids/ranking` - ranking - 解答者ランキング一覧
+subtest 'GET - `/exakids/ranking` - ranking' => sub {
+
+    # ログインしていないとみれない
+    $t->get_ok('/exakids/ranking')->status_is(302);
+
+    # exakids id でのログイン者のみ、みれる
+    my $exa_ids = $t->app->config->{exa_ids};
+    my $user_id = $exa_ids->[0];
+    $t->login_ok($user_id);
+    $t->get_ok('/exakids/ranking')->status_is(200);
+    $t->logout_ok();
+};
+
 # - POST - `/exakids/refresh` - refresh - 解答状況を初期状態にもどす
 subtest 'POST - `/exakids/refresh` - refresh' => sub {
 

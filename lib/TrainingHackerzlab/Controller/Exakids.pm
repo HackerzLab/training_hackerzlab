@@ -37,6 +37,21 @@ sub menu {
     return;
 }
 
+sub ranking {
+    my $self        = shift;
+    my $model       = $self->model->exakids;
+    my $to_template = $model->to_template_ranking;
+    $self->stash(
+        %{$to_template},
+        login_user => $self->login_user->get_columns,
+        template   => 'exakids/ranking',
+        format     => 'html',
+        handler    => 'ep',
+    );
+    $self->render();
+    return;
+}
+
 sub edit {
     my $self     = shift;
     my $params   = $self->req->params->to_hash;
