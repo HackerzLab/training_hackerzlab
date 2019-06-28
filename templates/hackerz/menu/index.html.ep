@@ -6,7 +6,10 @@
   <!-- ログイン後の画面選択 -->
   <div class="container">
     <h2 class="page-header">問題集 Collected</h2>
+    % if ($c->stash->{is_exa}) {
+    % } else {
     <p class="text-primary">今回の問題集は 2019-05-05 Vol.21(子供向け)と(大人向け) だ!!</p>
+    % }
     <div class="row">
       % for my $collected (@{$collecteds}) {
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -18,6 +21,15 @@
     </div>
   </div>
 
+  % if ($c->stash->{is_exa}) {
+  <div class="container">
+    <h2 class="page-header text-danger">EXAKIDS メニュー</h2>
+    <p class="well text-danger">
+      エクサキッズイベント用、早押しクイズ形式
+    </p>
+    <a href="/exakids/menu" class="btn btn-danger btn-lg btn-block">EXAKIDS</a>
+  </div>
+  % } else {
   <div class="container">
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -51,16 +63,6 @@
     </div>
   </div>
 
-  % if ($c->stash->{is_exa}) {
-  <div class="container">
-    <h2 class="page-header text-danger">EXAKIDS メニュー</h2>
-    <p class="well text-danger">
-      エクサキッズイベント用、早押しクイズ形式
-    </p>
-    <a href="/exakids/menu" class="btn btn-danger btn-lg btn-block">EXAKIDS</a>
-  </div>
-  % }
-
   <div class="modal" id="removeModal">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -80,3 +82,5 @@
       </div>
     </div>
   </div>
+  % }
+

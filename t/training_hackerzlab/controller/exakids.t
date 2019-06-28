@@ -209,8 +209,11 @@ subtest 'q exa id' => sub {
     my $user_id = $exa_ids->[0];
     $t->login_ok($user_id);
 
+    # 指定の問題集が表示
+    my $exa_collected_ids = $t->app->config->{exa_collected_ids};
+
     # 問題の答え
-    my $collected_id = 1;
+    my $collected_id = shift @{$exa_collected_ids};
     my $sort_id      = 2;
     my $cond         = +{
         collected_id => $collected_id,
@@ -223,15 +226,11 @@ subtest 'q exa id' => sub {
 
     # 問題集のリンク
     my $c_link = "/hackerz/question/collected/$collected_id";
-
-    # 「登録してある全ての問題」を表示のリンク
     my $q_link = "a[href=$c_link]";
     $t->element_exists($q_link);
 
     # 問題集へ移動
     $t->get_ok($c_link)->status_is(200);
-
-    # 問題「社長は誰」のリンク
     my $think_link
         = "/hackerz/question/collected/$collected_id/$sort_id/think";
     my $q2_link = "a[href=$think_link]";

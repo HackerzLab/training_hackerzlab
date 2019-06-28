@@ -34,7 +34,17 @@ sub logout_ok {
     my $t = shift;
 
     # ログアウトボタンの存在する画面
-    $t->get_ok('/hackerz/menu')->status_is(200);
+    # exa id の場合はログアウトする画面が違う
+    my $logout_url = '/hackerz/menu';
+    my $is_exa     = 0;
+    for my $id ( @{ $t->app->config->{exa_ids} } ) {
+        next if $id ne $t->app->login_user->id;
+        $is_exa = 1;
+    }
+    if ($is_exa) {
+        $logout_url = '/exakids/menu';
+    }
+    $t->get_ok($logout_url)->status_is(200);
     my $dom        = $t->tx->res->dom;
     my $form       = 'form[name=form_logout]';
     my $action_url = $dom->at($form)->attr('action');

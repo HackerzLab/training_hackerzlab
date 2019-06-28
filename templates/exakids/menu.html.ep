@@ -17,7 +17,10 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-        <h2 class="page-header"><%= $users_data->[0]->{user}->{login_id} %> <small><%= $users_data->[0]->{user}->{name} %></small></h2>
+        <h2 class="page-header"><%= $users_data->[0]->[0]->{user}->{login_id} %> <small><%= $users_data->[0]->[0]->{user}->{name} %></small></h2>
+        % for my $q (@{$users_data->[0]})  {
+        % if ( !exists $q->{user}) {
+        <p class=""><%= $q->{collected}->{title} %></p>
         <table class="table table-striped table-hover ">
           <thead>
             <tr>
@@ -28,7 +31,7 @@
             </tr>
           </thead>
           <tbody>
-            % for my $list (@{$users_data->[0]->{question_list}}) {
+            % for my $list (@{$q->{question_list}}) {
             % if ($list->{is_answered}) {
             <tr class="text-<%= $list->{how_text} %>">
               <td class=""><%= $list->{how} %></td>
@@ -48,9 +51,14 @@
             % }
           </tbody>
         </table>
+        % }
+        % }
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-        <h2 class="page-header"><%= $users_data->[1]->{user}->{login_id} %> <small><%= $users_data->[1]->{user}->{name} %></small></h2>
+        <h2 class="page-header"><%= $users_data->[1]->[0]->{user}->{login_id} %> <small><%= $users_data->[1]->[0]->{user}->{name} %></small></h2>
+        % for my $q (@{$users_data->[1]})  {
+        % if ( !exists $q->{user}) {
+        <p class=""><%= $q->{collected}->{title} %></p>
         <table class="table table-striped table-hover ">
           <thead>
             <tr>
@@ -61,7 +69,7 @@
             </tr>
           </thead>
           <tbody>
-            % for my $list (@{$users_data->[1]->{question_list}}) {
+            % for my $list (@{$q->{question_list}}) {
             % if ($list->{is_answered}) {
             <tr class="text-<%= $list->{how_text} %>">
               <td class=""><%= $list->{how} %></td>
@@ -81,6 +89,8 @@
             % }
           </tbody>
         </table>
+        % }
+        % }
       </div>
     </div>
   </div>

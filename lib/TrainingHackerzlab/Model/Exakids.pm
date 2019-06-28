@@ -15,12 +15,50 @@ sub to_template_index {
     return $to_template;
 }
 
+# 解答結果を含む指定の問題集に関連する情報一式
+# +{  collected_row      => $collected_row,
+#     question_rows_list => [
+#         +{  collected_sort_row => $collected_sort_row,
+#             question_row       => $question_row,
+#             hint_opened_rows   => $hint_opened_row || [],
+#             answer_row         => $answer_row || undef,
+#         },
+#     ],
+# };
+# 横2列、縦行なりゆき
+# my $entry_users_data = [
+#     [   +{ user => $user_row->get_columns },
+#         +{  collected     => $collected_row->get_columns,
+#             total_score   => $total_score,
+#             question_list => [
+#                 +{  collected_id      => 14,
+#                     collected_sort    => $collected_sort_row->get_columns,
+#                     get_score         => 0,
+#                     hint_opened_level => [],
+#                     how               => "未",
+#                     how_text          => "primary",
+#                     is_answered       => 0,
+#                     q_url    => "/hackerz/question/collected/14/1/think",
+#                     question => $question_row->get_columns,
+#                     short_question => "クイズ...",
+#                     short_title    => "クイズタイトル",
+#                     sort_id        => 1,
+#                 },
+#                 +{},
+#             ],
+#         },
+#         +{},
+#     ],
+#     [],
+# ];
+
 sub to_template_menu {
     my $self        = shift;
     my $to_template = +{};
 
     # 表示したい問題集のナンバーをきめなくてはいけない
     my $show_collected_id = $self->conf->{exa_collected_id};
+    my $exa_collected_ids = $self->conf->{exa_collected_ids};
 
     # 解答者
     my $exa_ids_entry = $self->conf->{exa_ids_entry};
@@ -34,20 +72,26 @@ sub to_template_menu {
         if ( $count == 1 ) {
 
             # 解答状況の情報一式
-            my $collected_row_list
-                = $row->fetch_collected_row_list($show_collected_id);
-            my $collected_list
-                = $self->collected_data_hash($collected_row_list);
-            $collected_list->{user} = $row->get_columns;
+            my $collected_rows_list
+                = $row->fetch_collected_rows_list($exa_collected_ids);
+            my $collected_list;
+            push @{$collected_list}, +{ user => $row->get_columns };
+            for my $collected_data ( @{$collected_rows_list} ) {
+                push @{$collected_list},
+                    $self->collected_data_hash($collected_data);
+            }
             push @{$line}, $collected_list;
             next;
         }
         if ( $count == 2 ) {
-            my $collected_row_list
-                = $row->fetch_collected_row_list($show_collected_id);
-            my $collected_list
-                = $self->collected_data_hash($collected_row_list);
-            $collected_list->{user} = $row->get_columns;
+            my $collected_rows_list
+                = $row->fetch_collected_rows_list($exa_collected_ids);
+            my $collected_list;
+            push @{$collected_list}, +{ user => $row->get_columns };
+            for my $collected_data ( @{$collected_rows_list} ) {
+                push @{$collected_list},
+                    $self->collected_data_hash($collected_data);
+            }
             push @{$line},             $collected_list;
             push @{$entry_users_data}, $line;
             $line  = [];
