@@ -4,13 +4,15 @@
     <div class="jumbotron">
       <h2><span class="text-danger">EXA KIDS メニュー</span></h2>
       <ul>
-        <li>お手元に配られたエントリーカードに書いてあるIDとパスワードを入力ください</li>
-        <li>名前は自分の好きな名前が入力できます</li>
-        <li>イベント終了後にクイズの解答結果などは全て消去されます</li>
+        <li>解答者全員の問題解答状況が随時更新されます</li>
+        <li class=""><span class="badge">Reload</span> (リロード) 画面を最新状態に更新します</li>
+        <li class=""><span class="badge">Refresh</span> (リフレッシュ) 閲覧者権限のログインの場合は全てを初期化するリフレッシュ機能が使えます</li>
+        <li class=""><span class="badge">Logout</span> (ログアウト) ログインをやり直したい時はログアウトします</li>
+        <li class=""><span class="badge">Edit</span> (エントリー情報更新) 登録の名前を変更したい場合はエントリー情報更新のリンクから変更できます</li>
+        <li class=""><span class="badge">Collected</span> (問題集画面) 問題集画面のリンクから問題が始められます</li>
+        <li class=""><span class="badge">Ranking</span> (ランキング) 解答者の総合ランキング</li>
       </ul>
     </div>
-  </div>
-  <div class="container">
   </div>
 
   % for my $users_data (@{$c->stash->{entry_users_data}}) {
