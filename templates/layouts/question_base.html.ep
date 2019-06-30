@@ -50,6 +50,40 @@
   <!-- 問題一覧へ -->
   <%= include('inc/question_index', format => 'html') =%>
   </div>
+  % } elsif ($c->stash->{is_exa_browsesp}) {
+  <div class="container" id="">
+    <div class="jumbotron">
+      <h1>EXA KIDS 特別仕様</h1>
+      <ul>
+      <li>問題出題側の画面です</li>
+      <li>問題スタートをおすと問題が表示されます</li>
+      <li>一度問題を開くと出題時間が記録されます</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- body content -->
+  <%= content =%>
+
+  <!-- 問題一覧へ -->
+  <%= include('inc/question_index', format => 'html') =%>
+  % } elsif ($c->stash->{is_exa_entrysp}) {
+  <div class="container" id="">
+    <div class="jumbotron">
+      <h1>EXA KIDS 特別仕様</h1>
+      <ul>
+      <li>問題解答側の画面です</li>
+      <li>問題が開封されてから解答を入力してください</li>
+      <li>解答入力をすると解答時間が記録されます</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- body content -->
+  <%= content =%>
+
+  <!-- 問題一覧へ -->
+  <%= include('inc/question_index', format => 'html') =%>
   % } else {
   <!-- body content -->
   <%= content =%>
@@ -67,8 +101,10 @@
   <!-- body hint js -->
   <%= include('inc/body_hint_js', format => 'html') =%>
 
+  % if ($c->stash->{is_exa}) {
   <!-- countdown js -->
   <%= include('inc/countdown_js', format => 'html') =%>
+  % }
 </body>
 
 </html>

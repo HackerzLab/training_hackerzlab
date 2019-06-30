@@ -6,7 +6,7 @@
   <!-- ログイン後の画面選択 -->
   <div class="container">
     <h2 class="page-header">問題集 Collected</h2>
-    % if ($c->stash->{is_exa}) {
+    % if ($c->stash->{is_exa} || $c->stash->{is_exa_sp}) {
     % } else {
     <p class="text-primary">今回の問題集は 2019-05-05 Vol.21(子供向け)と(大人向け) だ!!</p>
     % }
@@ -21,7 +21,7 @@
     </div>
   </div>
 
-  % if ($c->stash->{is_exa}) {
+  % if ($c->stash->{is_exa} || $c->stash->{is_exa_sp}) {
   <div class="container">
     <h2 class="page-header text-danger">EXAKIDS メニュー</h2>
     <p class="well text-danger">

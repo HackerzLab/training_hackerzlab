@@ -102,6 +102,8 @@ sub to_template_think {
         survey          => undef,
         count_sec       => 0,
         is_exa          => 0,
+        is_exa_entrysp  => 0,
+        is_exa_browsesp => 0,
     };
 
     my $cond = +{
@@ -161,6 +163,22 @@ sub to_template_think {
     for my $id ( @{$exa_ids} ) {
         next if $self->req_params->{user_id} ne $id;
         $think->{is_exa} = 1;
+    }
+
+    # エクサキッズ拡張の確認(早押し総取り出題側)
+    my $exa_ids_browsesp = $self->conf->{exa_ids_browsesp};
+    $think->{is_exa_browsesp} = 0;
+    for my $id ( @{$exa_ids_browsesp} ) {
+        next if $self->req_params->{user_id} ne $id;
+        $think->{is_exa_browsesp} = 1;
+    }
+
+    # エクサキッズ拡張の確認(早押し総取り解答側)
+    my $exa_ids_entrysp = $self->conf->{exa_ids_entrysp};
+    $think->{is_exa_entrysp} = 0;
+    for my $id ( @{$exa_ids_entrysp} ) {
+        next if $self->req_params->{user_id} ne $id;
+        $think->{is_exa_entrysp} = 1;
     }
 
     # エクサキッズ拡張、タイマー機能(初期値)

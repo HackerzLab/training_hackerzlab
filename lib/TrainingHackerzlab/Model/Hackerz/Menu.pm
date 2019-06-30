@@ -5,6 +5,7 @@ use Mojo::Base 'TrainingHackerzlab::Model::Base';
 sub to_template_index {
     my $self          = shift;
     my $is_exa        = shift;
+    my $is_exa_sp     = shift;
     my $cond          = +{ deleted => 0, };
     my @question_rows = $self->db->teng->search( 'question', $cond );
     my $questions;
@@ -14,7 +15,7 @@ sub to_template_index {
 
     # exa id ログインの時は指定の問題集のみ
     my $exa_collected_ids = $self->conf->{exa_collected_ids};
-    if ($is_exa) {
+    if ( $is_exa || $is_exa_sp ) {
         $cond->{id} = $exa_collected_ids;
     }
     my @collected_rows = $self->db->teng->search( 'collected', $cond );

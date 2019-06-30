@@ -1,6 +1,21 @@
 % layout 'question_base';
 % title 'HackerzLab.博多';
+  % if ($c->stash->{is_exa_browsesp}) {
+  <!-- 問題 -->
+  <%= include('inc/question', format => 'html') =%>
+  % } elsif ($c->stash->{is_exa_entrysp}) {
+  <!-- 問題詳細 -->
+  <%= include('inc/explain/' . $question->{id} , format => 'html') =%>
 
+  <!-- 解答入力フォーム -->
+  <%= include('inc/question_form', format => 'html', inc_form => 'inc/input_form') =%>
+
+  <!-- 得点と難易度 -->
+  <%= include('inc/question_level', format => 'html') =%>
+
+  <!-- ヒント機能 -->
+  <%= include('inc/hint', format => 'html') =%>
+  % } else {
   <!-- 問題 -->
   <%= include('inc/question', format => 'html') =%>
 
@@ -15,3 +30,4 @@
 
   <!-- ヒント機能 -->
   <%= include('inc/hint', format => 'html') =%>
+  % }

@@ -298,4 +298,51 @@ subtest 'q exa id' => sub {
     $t->logout_ok();
 };
 
+# 問題解答、早押し正解者のみ得点クイズ形式
+subtest 'q exa id sp' => sub {
+    $t->app->commands->run( 'generate', 'sqlitedb' );
+
+    # exa id 早押しでログイン (閲覧者)
+    my $exa_ids_browsesp = $t->app->config->{exa_ids_browsesp};
+    my $user_id = $exa_ids_browsesp->[0];
+    $t->login_ok($user_id);
+
+    # 指定の問題集が表示
+    my $exa_collected_ids = $t->app->config->{exa_collected_ids};
+
+    # 問題の答え
+    my $collected_id = shift @{$exa_collected_ids};
+    my $sort_id      = 2;
+    my $cond         = +{
+        collected_id => $collected_id,
+        sort_id      => $sort_id,
+        deleted      => 0
+    };
+
+    # 今の画面
+    $t->element_exists( 'html head title', 'HackerzLab.博多' );
+
+    # 問題集のリンク
+    my $c_link = "/hackerz/question/collected/$collected_id";
+    my $q_link = "a[href=$c_link]";
+    $t->element_exists($q_link);
+
+    # 問題集へ移動
+    $t->get_ok($c_link)->status_is(200);
+    my $think_link
+        = "/hackerz/question/collected/$collected_id/$sort_id/think";
+    my $q2_link = "a[href=$think_link]";
+    $t->element_exists($q2_link);
+
+    # 問題を解く画面
+    $t->get_ok($think_link)->status_is(200);
+
+    # 問題をオープンするボタンが出現
+    # $t->element_exists("div[id=exatimer]");
+
+    # exa id 早押しでログイン (解答者)
+
+    # $t->logout_ok();
+};
+
 done_testing();
