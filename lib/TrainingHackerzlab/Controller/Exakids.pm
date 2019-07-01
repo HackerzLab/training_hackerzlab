@@ -18,20 +18,28 @@ sub index {
 sub menu {
     my $self           = shift;
     my $model          = $self->model->exakids;
-    my $to_template    = $model->to_template_menu;
     my $exa_ids_browse = $self->app->config->{exa_ids_browse};
     my $is_exa_browse  = 0;
     for my $id ( @{$exa_ids_browse} ) {
         next if $self->login_user->id ne $id;
         $is_exa_browse = 1;
     }
+    my $exa_ids_browsesp = $self->app->config->{exa_ids_browsesp};
+    my $is_exa_browsesp  = 0;
+    for my $id ( @{$exa_ids_browsesp} ) {
+        next if $self->login_user->id ne $id;
+        $is_exa_browsesp = 1;
+    }
+
+    my $to_template = $model->to_template_menu( $self->login_user->id );
     $self->stash(
         %{$to_template},
-        is_exa_browse => $is_exa_browse,
-        login_user    => $self->login_user->get_columns,
-        template      => 'exakids/menu',
-        format        => 'html',
-        handler       => 'ep',
+        is_exa_browse   => $is_exa_browse,
+        is_exa_browsesp => $is_exa_browsesp,
+        login_user      => $self->login_user->get_columns,
+        template        => 'exakids/menu',
+        format          => 'html',
+        handler         => 'ep',
     );
     $self->render();
     return;

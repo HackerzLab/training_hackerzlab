@@ -1,5 +1,6 @@
 package TrainingHackerzlab::Model::Hackerz::Answer;
 use Mojo::Base 'TrainingHackerzlab::Model::Base';
+use TrainingHackerzlab::Util qw{now_datetime};
 use Mojo::Util qw{dumper};
 has [qw{error_msg}] => undef;
 
@@ -121,12 +122,23 @@ sub store {
         $is_exa = 1;
     }
 
-    if ($is_exa) {
+    my $exa_ids_sp = $self->conf->{exa_ids_sp};
+    my $is_exa_sp  = 0;
+    for my $id ( @{$exa_ids_sp} ) {
+        next if $self->req_params->{user_id} ne $id;
+        $is_exa_sp = 1;
+    }
+    if ( $is_exa || $is_exa_sp ) {
         my $time_params = +{
             answer_id     => $answer_id,
-            remaining_sec => $self->req_params->{remaining_sec},
+            remaining_sec => $self->req_params->{remaining_sec} || 0,
+            entered_ts    => '',
             deleted       => $master->deleted->constant('NOT_DELETED'),
         };
+        if ($is_exa_sp) {
+            $time_params->{remaining_sec} = 0;
+            $time_params->{entered_ts}    = now_datetime();
+        }
         my $answer_time_id
             = $self->db->teng_fast_insert( 'answer_time', $time_params );
     }

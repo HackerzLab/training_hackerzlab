@@ -6,9 +6,17 @@ sub to_template_index {
     my $to_template = +{ exakids_users => [] };
 
     # エクサキッズ対象ユーザー
-    my $exa_ids = $self->conf->{exa_ids};
+    my $exa_ids    = $self->conf->{exa_ids};
+    my $exa_ids_sp = $self->conf->{exa_ids_sp};
+    my $cond_ids   = [];
+    for my $id ( @{$exa_ids} ) {
+        push @{$cond_ids}, $id;
+    }
+    for my $id ( @{$exa_ids_sp} ) {
+        push @{$cond_ids}, $id;
+    }
     my @exakids_users
-        = $self->db->teng->search( 'user', +{ id => $exa_ids } );
+        = $self->db->teng->search( 'user', +{ id => $cond_ids } );
     for my $user (@exakids_users) {
         push @{ $to_template->{exakids_users} }, $user->get_columns;
     }
@@ -53,8 +61,9 @@ sub to_template_index {
 # ];
 
 sub to_template_menu {
-    my $self        = shift;
-    my $to_template = +{};
+    my $self          = shift;
+    my $login_user_id = shift;
+    my $to_template   = +{};
 
     # 表示したい問題集のナンバーをきめなくてはいけない
     my $show_collected_id = $self->conf->{exa_collected_id};
@@ -62,6 +71,15 @@ sub to_template_menu {
 
     # 解答者
     my $exa_ids_entry = $self->conf->{exa_ids_entry};
+
+    # ログイン状況によって表示する user を変更する
+    my $exa_ids_sp = $self->conf->{exa_ids_sp};
+    for my $id ( @{$exa_ids_sp} ) {
+        if ( $login_user_id eq $id ) {
+            $exa_ids_entry = $self->conf->{exa_ids_entrysp};
+        }
+    }
+
     my @exakids_users
         = $self->db->teng->search( 'user', +{ id => $exa_ids_entry } );
     my $entry_users_data = [];

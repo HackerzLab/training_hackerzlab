@@ -213,7 +213,7 @@ subtest 'q exa id' => sub {
     my $exa_collected_ids = $t->app->config->{exa_collected_ids};
 
     # 問題の答え
-    my $collected_id = shift @{$exa_collected_ids};
+    my $collected_id = $exa_collected_ids->[0];
     my $sort_id      = 2;
     my $cond         = +{
         collected_id => $collected_id,
@@ -303,72 +303,151 @@ subtest 'q exa id sp' => sub {
     $t->app->commands->run( 'generate', 'sqlitedb' );
 
     # exa id 早押しでログイン (閲覧者)
-    my $exa_ids_browsesp = $t->app->config->{exa_ids_browsesp};
-    my $user_id = $exa_ids_browsesp->[0];
-    $t->login_ok($user_id);
+    subtest 'browse' => sub {
+        my $exa_ids_browsesp = $t->app->config->{exa_ids_browsesp};
+        my $user_id          = $exa_ids_browsesp->[0];
+        $t->login_ok($user_id);
 
-    # 指定の問題集が表示
-    my $exa_collected_ids = $t->app->config->{exa_collected_ids};
+        # 指定の問題集が表示
+        my $exa_collected_ids = $t->app->config->{exa_collected_ids};
 
-    # 問題の答え
-    my $collected_id = shift @{$exa_collected_ids};
-    my $sort_id      = 2;
-    my $cond         = +{
-        collected_id => $collected_id,
-        sort_id      => $sort_id,
-        deleted      => 0
+        # 問題の答え
+        my $collected_id = $exa_collected_ids->[0];
+        my $sort_id      = 2;
+        my $cond         = +{
+            collected_id => $collected_id,
+            sort_id      => $sort_id,
+            deleted      => 0
+        };
+
+        # 今の画面
+        $t->element_exists( 'html head title', 'HackerzLab.博多' );
+
+        # 問題集のリンク
+        my $c_link = "/hackerz/question/collected/$collected_id";
+        my $q_link = "a[href=$c_link]";
+        $t->element_exists($q_link);
+
+        # 問題集へ移動
+        $t->get_ok($c_link)->status_is(200);
+        my $think_link
+            = "/hackerz/question/collected/$collected_id/$sort_id/think";
+        my $q2_link = "a[href=$think_link]";
+        $t->element_exists($q2_link);
+
+        # 問題を解く画面
+        $t->get_ok($think_link)->status_is(200);
+
+        # 問題をオープンするボタンが出現
+        my $name   = 'form_opened';
+        my $action = "/hackerz/question/opened";
+        my $form   = "form[name=$name][method=POST][action=$action]";
+        $t->element_exists($form);
+        $t->element_exists("$form input[name=user_id]");
+        $t->element_exists("$form input[name=question_id]");
+        $t->element_exists("$form input[name=collected_id]");
+        $t->element_exists("$form input[name=opened]");
+        $t->element_exists("$form button[type=submit]");
+
+        # オープン実行後、問題と開封時間出現
+        my $dom        = $t->tx->res->dom;
+        my $action_url = $dom->at($form)->attr('action');
+
+        # input val 取得
+        my $params = $t->get_input_val( $dom, $form );
+        $t->post_ok( $action_url => form => $params )->status_is(302);
+        my $location_url = $t->tx->res->headers->location;
+        $t->get_ok($location_url)->status_is(200);
+
+        # もう一度オープンしてもオープンボタンはない
+        $t->element_exists_not($form);
+        $t->element_exists_not("$form input[name=user_id]");
+        $t->element_exists_not("$form input[name=question_id]");
+        $t->element_exists_not("$form input[name=collected_id]");
+        $t->element_exists_not("$form input[name=opened]");
+        $t->element_exists_not("$form button[type=submit]");
+        $t->logout_ok();
     };
 
-    # 今の画面
-    $t->element_exists( 'html head title', 'HackerzLab.博多' );
-
-    # 問題集のリンク
-    my $c_link = "/hackerz/question/collected/$collected_id";
-    my $q_link = "a[href=$c_link]";
-    $t->element_exists($q_link);
-
-    # 問題集へ移動
-    $t->get_ok($c_link)->status_is(200);
-    my $think_link
-        = "/hackerz/question/collected/$collected_id/$sort_id/think";
-    my $q2_link = "a[href=$think_link]";
-    $t->element_exists($q2_link);
-
-    # 問題を解く画面
-    $t->get_ok($think_link)->status_is(200);
-
-    # 問題をオープンするボタンが出現
-    my $name   = 'form_opened';
-    my $action = "/hackerz/question/opened";
-    my $form   = "form[name=$name][method=POST][action=$action]";
-    $t->element_exists($form);
-    $t->element_exists("$form input[name=user_id]");
-    $t->element_exists("$form input[name=question_id]");
-    $t->element_exists("$form input[name=collected_id]");
-    $t->element_exists("$form input[name=opened]");
-    $t->element_exists("$form button[type=submit]");
-
-    # オープン実行後、問題と開封時間出現
-    my $dom        = $t->tx->res->dom;
-    my $action_url = $dom->at($form)->attr('action');
-
-    # input val 取得
-    my $params = $t->get_input_val( $dom, $form );
-    $t->post_ok( $action_url => form => $params )->status_is(302);
-    my $location_url = $t->tx->res->headers->location;
-    $t->get_ok($location_url)->status_is(200);
-
-    # もう一度オープンしてもオープンボタンはあわれない
-    $t->element_exists_not($form);
-    $t->element_exists_not("$form input[name=user_id]");
-    $t->element_exists_not("$form input[name=question_id]");
-    $t->element_exists_not("$form input[name=collected_id]");
-    $t->element_exists_not("$form input[name=opened]");
-    $t->element_exists_not("$form button[type=submit]");
-
     # exa id 早押しでログイン (解答者)
+    subtest 'entry' => sub {
+        my $exa_ids_entrysp = $t->app->config->{exa_ids_entrysp};
+        my $user_id         = $exa_ids_entrysp->[0];
+        $t->login_ok($user_id);
 
-    # $t->logout_ok();
+        # 指定の問題集が表示
+        my $exa_collected_ids = $t->app->config->{exa_collected_ids};
+
+        # 問題の答え
+        my $collected_id = $exa_collected_ids->[0];
+        my $sort_id      = 2;
+        my $cond         = +{
+            collected_id => $collected_id,
+            sort_id      => $sort_id,
+            deleted      => 0
+        };
+
+        # 今の画面
+        $t->element_exists( 'html head title', 'HackerzLab.博多' );
+
+        # 問題集のリンク
+        my $c_link = "/hackerz/question/collected/$collected_id";
+        my $q_link = "a[href=$c_link]";
+        $t->element_exists($q_link);
+
+        # 問題集へ移動
+        $t->get_ok($c_link)->status_is(200);
+
+        my $think_link
+            = "/hackerz/question/collected/$collected_id/$sort_id/think";
+        my $q2_link = "a[href=$think_link]";
+        $t->element_exists($q2_link);
+
+        # 問題を解く画面
+        $t->get_ok($think_link)->status_is(200);
+
+        # 問題入力フォームが出現
+        my $name   = 'form_answer';
+        my $action = "/hackerz/answer";
+        my $form   = "form[name=$name][method=POST][action=$action]";
+        $t->element_exists($form);
+        $t->element_exists("$form input[name=user_id]");
+        $t->element_exists("$form input[name=question_id]");
+        $t->element_exists("$form input[name=collected_id]");
+        $t->element_exists("$form input[name=user_answer]");
+        $t->element_exists("$form button[type=submit]");
+
+        my $dom        = $t->tx->res->dom;
+        my $action_url = $dom->at($form)->attr('action');
+
+        my $collected_sort_row
+            = $t->app->test_db->teng->single( 'collected_sort', $cond );
+        my $user_answer = $collected_sort_row->fetch_question->answer;
+        my $question_id = $collected_sort_row->fetch_question->id;
+
+        # 入力データーの元
+        my $msg_hash = +{ user_answer => $user_answer, };
+
+        # dom に 値を埋め込み
+        $dom = $t->input_val_in_dom( $dom, $form, $msg_hash );
+
+        # input val 取得
+        my $params = $t->get_input_val( $dom, $form );
+        $t->post_ok( $action_url => form => $params )->status_is(302);
+        my $location_url = $t->tx->res->headers->location;
+        $t->get_ok($location_url)->status_is(200);
+
+        # 入力時間
+        my @answer_time_rows
+            = $t->app->test_db->teng->single( 'answer_time', +{} );
+        is( scalar @answer_time_rows, 1, 'count' );
+        my $time_row = shift @answer_time_rows;
+        ok( $time_row->entered_ts, 'entered_ts' );
+
+        $t->logout_ok();
+
+        # 閲覧権限、問題画面に解答状況が表示されている
+    };
 };
 
 done_testing();

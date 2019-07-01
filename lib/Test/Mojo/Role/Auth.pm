@@ -41,6 +41,10 @@ sub logout_ok {
         next if $id ne $t->app->login_user->id;
         $is_exa = 1;
     }
+    for my $id ( @{ $t->app->config->{exa_ids_sp} } ) {
+        next if $id ne $t->app->login_user->id;
+        $is_exa = 1;
+    }
     if ($is_exa) {
         $logout_url = '/exakids/menu';
     }
