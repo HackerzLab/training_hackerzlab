@@ -29,10 +29,10 @@ sub answer_data_hash {
     my $self     = shift;
     my $data_row = shift;
 
-    my $answer   = $data_row->{answer_row}->get_columns;
-    my $question = $data_row->{question_row}->get_columns;
+    my $answer          = $data_row->{answer_row}->get_columns;
+    my $question        = $data_row->{question_row}->get_columns;
     my $answer_time_row = $data_row->{answer_row}->fetch_answer_time;
-    my $answer_time = +{};
+    my $answer_time     = +{};
     if ($answer_time_row) {
         $answer_time = $answer_time_row->get_columns;
     }
@@ -82,6 +82,20 @@ sub question_data_hash_collected {
         get_score         => 0,
         is_answered       => 0,
     };
+
+    # 問題開封履歴
+    my $qo_params = +{
+        question_id  => $question->{id},
+        collected_id => $collected_sort->{collected_id},
+        opened       => 1,
+        deleted      => 0,
+    };
+    my $qo_row = $self->db->teng->single( 'question_opened', $qo_params );
+    if ($qo_row) {
+        $data_hash->{how}      = '開封済';
+        $data_hash->{how_text} = 'info';
+    }
+
     if ( $data_row->{answer_row} ) {
         my $answer_hash = $self->answer_data_hash($data_row);
         while ( my ( $key, $val ) = each %{$answer_hash} ) {

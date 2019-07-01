@@ -338,7 +338,33 @@ subtest 'q exa id sp' => sub {
     $t->get_ok($think_link)->status_is(200);
 
     # 問題をオープンするボタンが出現
-    # $t->element_exists("div[id=exatimer]");
+    my $name   = 'form_opened';
+    my $action = "/hackerz/question/opened";
+    my $form   = "form[name=$name][method=POST][action=$action]";
+    $t->element_exists($form);
+    $t->element_exists("$form input[name=user_id]");
+    $t->element_exists("$form input[name=question_id]");
+    $t->element_exists("$form input[name=collected_id]");
+    $t->element_exists("$form input[name=opened]");
+    $t->element_exists("$form button[type=submit]");
+
+    # オープン実行後、問題と開封時間出現
+    my $dom        = $t->tx->res->dom;
+    my $action_url = $dom->at($form)->attr('action');
+
+    # input val 取得
+    my $params = $t->get_input_val( $dom, $form );
+    $t->post_ok( $action_url => form => $params )->status_is(302);
+    my $location_url = $t->tx->res->headers->location;
+    $t->get_ok($location_url)->status_is(200);
+
+    # もう一度オープンしてもオープンボタンはあわれない
+    $t->element_exists_not($form);
+    $t->element_exists_not("$form input[name=user_id]");
+    $t->element_exists_not("$form input[name=question_id]");
+    $t->element_exists_not("$form input[name=collected_id]");
+    $t->element_exists_not("$form input[name=opened]");
+    $t->element_exists_not("$form button[type=submit]");
 
     # exa id 早押しでログイン (解答者)
 

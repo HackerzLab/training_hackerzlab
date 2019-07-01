@@ -38,4 +38,27 @@ sub index {
     return;
 }
 
+# 問題開封履歴
+sub opened {
+    my $self         = shift;
+    my $params       = $self->req->params->to_hash;
+    my $hackerz      = $self->model->hackerz;
+    my $question     = $hackerz->question->req_params($params);
+    my $collected_id = $params->{collected_id};
+    my $sort_id      = $params->{sort_id};
+    my $think_link
+        = "/hackerz/question/collected/$collected_id/$sort_id/think";
+
+    # 簡易的なバリデート
+    if ( $question->has_error_easy ) {
+        $self->redirect_to($think_link);
+        return;
+    }
+
+    # DB 登録実行
+    my $question_opened_id = $question->opened;
+    $self->redirect_to($think_link);
+    return;
+}
+
 1;

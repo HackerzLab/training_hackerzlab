@@ -2,6 +2,7 @@ package TrainingHackerzlab::Model::Hackerz::Question;
 use Mojo::Base 'TrainingHackerzlab::Model::Base';
 use TrainingHackerzlab::Model::Hackerz::Question::Collected;
 use TrainingHackerzlab::Model::Hackerz::Question::Survey;
+use TrainingHackerzlab::Util qw{now_datetime};
 use Mojo::Util qw{dumper};
 
 has collected => sub {
@@ -18,6 +19,46 @@ has [
     qw{is_question_choice is_question_form is_question_survey
         is_question_survey_and_file is_question_explain select_template}
 ] => undef;
+
+# 簡易的なバリデート
+sub has_error_easy {
+    my $self   = shift;
+    my $params = $self->req_params;
+    my $master = $self->db->master;
+    return 1 if !$params->{user_id};
+    return 1 if !$params->{question_id};
+    return 1 if !$params->{collected_id};
+    return 1 if !$params->{opened};
+
+    # 二重登録防止
+    my $cond = +{
+        question_id  => $params->{question_id},
+        collected_id => $params->{collected_id},
+        opened       => $params->{opened},
+        deleted      => $self->db->master->deleted->constant('NOT_DELETED'),
+    };
+    my $question_opened = $self->db->teng->single( 'question_opened', $cond );
+    return 1 if $question_opened;
+    return;
+}
+
+# 問題開封履歴
+sub opened {
+    my $self   = shift;
+    my $master = $self->db->master;
+
+    # 開封時刻を取得
+    my $opened_ts = now_datetime();
+    my $params    = +{
+        user_id      => $self->req_params->{user_id},
+        question_id  => $self->req_params->{question_id},
+        collected_id => $self->req_params->{collected_id},
+        opened       => $self->req_params->{opened},
+        opened_ts    => $opened_ts,
+        deleted      => $master->deleted->constant('NOT_DELETED'),
+    };
+    return $self->db->teng_fast_insert( 'question_opened', $params );
+}
 
 # 解答関連データ一式
 sub _answer_data_hash {
@@ -104,6 +145,8 @@ sub to_template_think {
         is_exa          => 0,
         is_exa_entrysp  => 0,
         is_exa_browsesp => 0,
+        is_opened       => 0,
+        question_opened => undef,
     };
 
     my $cond = +{
@@ -179,6 +222,20 @@ sub to_template_think {
     for my $id ( @{$exa_ids_entrysp} ) {
         next if $self->req_params->{user_id} ne $id;
         $think->{is_exa_entrysp} = 1;
+    }
+
+    # エクサキッズ拡張の確認(早押し総取り開封履歴)
+    $think->{is_opened} = 0;
+    my $qo_params = +{
+        question_id  => $think->{question}->{id},
+        collected_id => $self->req_params->{collected_id},
+        opened       => 1,
+        deleted      => 0,
+    };
+    my $qo_row = $self->db->teng->single( 'question_opened', $qo_params );
+    if ($qo_row) {
+        $think->{is_opened}       = 1;
+        $think->{question_opened} = $qo_row->get_columns;
     }
 
     # エクサキッズ拡張、タイマー機能(初期値)

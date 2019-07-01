@@ -62,11 +62,31 @@
     </div>
   </div>
 
+  <%# 問題の開封履歴で判定 %>
+    % if ($c->stash->{is_opened}) {
+  <div class="container">
+    <div class="alert alert-danger text-center">
+    <span class=""> この問題の開封時刻: <%= $c->stash->{question_opened}->{opened_ts} %></span>
+    </div>
+  </div>
   <!-- body content -->
   <%= content =%>
 
   <!-- 問題一覧へ -->
   <%= include('inc/question_index', format => 'html') =%>
+    % } else {
+  <%# エクサキッズ拡張、問題を開く %>
+  <div class="container">
+    <form action="/hackerz/question/opened" name="form_opened" method="POST" class="">
+      <input type="hidden" name="user_id" value="<%= $c->stash->{user}->{id} %>">
+      <input type="hidden" name="question_id" value="<%= $c->stash->{question}->{id} %>">
+      <input type="hidden" name="collected_id" value="<%= $c->stash->{collected}->{id} %>">
+      <input type="hidden" name="sort_id" value="<%= $c->stash->{sort_id} %>">
+      <input type="hidden" name="opened" value="1">
+      <button type="submit" class="btn btn-primary" name="send" value="ボタン">問題スタート!!</button>
+    </form>
+  </div>
+    % }
   % } elsif ($c->stash->{is_exa_entrysp}) {
   <div class="container" id="">
     <div class="jumbotron">
