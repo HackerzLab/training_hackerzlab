@@ -30,12 +30,25 @@ sub menu {
         next if $self->login_user->id ne $id;
         $is_exa_browsesp = 1;
     }
-
+    my $exa_ids = $self->app->config->{exa_ids};
+    my $is_exa  = 0;
+    for my $id ( @{$exa_ids} ) {
+        next if $self->login_user->id ne $id;
+        $is_exa = 1;
+    }
+    my $exa_ids_sp = $self->app->config->{exa_ids_sp};
+    my $is_exa_sp  = 0;
+    for my $id ( @{$exa_ids_sp} ) {
+        next if $self->login_user->id ne $id;
+        $is_exa_sp = 1;
+    }
     my $to_template = $model->to_template_menu( $self->login_user->id );
     $self->stash(
         %{$to_template},
         is_exa_browse   => $is_exa_browse,
         is_exa_browsesp => $is_exa_browsesp,
+        is_exa          => $is_exa,
+        is_exa_sp       => $is_exa_sp,
         login_user      => $self->login_user->get_columns,
         template        => 'exakids/menu',
         format          => 'html',
@@ -48,7 +61,7 @@ sub menu {
 sub ranking {
     my $self        = shift;
     my $model       = $self->model->exakids;
-    my $to_template = $model->to_template_ranking;
+    my $to_template = $model->to_template_ranking( $self->login_user->id );
     $self->stash(
         %{$to_template},
         login_user => $self->login_user->get_columns,

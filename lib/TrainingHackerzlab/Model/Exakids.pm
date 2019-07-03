@@ -149,11 +149,23 @@ sub _rank_sort {
 }
 
 sub to_template_ranking {
-    my $self        = shift;
-    my $to_template = +{};
+    my $self          = shift;
+    my $login_user_id = shift;
+    my $to_template   = +{};
 
     # エクサキッズ、解答者
     my $exa_ids_entry = $self->conf->{exa_ids_entry};
+
+    # ログイン状況によって表示する user を変更する
+    my $is_exa_sp  = 0;
+    my $exa_ids_sp = $self->conf->{exa_ids_sp};
+    for my $id ( @{$exa_ids_sp} ) {
+        if ( $login_user_id eq $id ) {
+            $exa_ids_entry = $self->conf->{exa_ids_entrysp};
+            $is_exa_sp     = 1;
+
+        }
+    }
     my @exakids_users
         = $self->db->teng->search( 'user', +{ id => $exa_ids_entry } );
 
@@ -165,7 +177,7 @@ sub to_template_ranking {
             login_id      => $user_row->login_id,
             name          => $user_row->name,
             score         => $user_row->get_score_opened_hint,
-            overall_score => $user_row->get_overall_score,
+            overall_score => $user_row->get_overall_score($is_exa_sp),
         };
         push @{$ranking_list}, $data;
     }

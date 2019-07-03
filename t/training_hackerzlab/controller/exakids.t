@@ -438,15 +438,20 @@ subtest 'q exa id sp' => sub {
         $t->get_ok($location_url)->status_is(200);
 
         # 入力時間
-        my @answer_time_rows
+        my $answer_time_row
             = $t->app->test_db->teng->single( 'answer_time', +{} );
-        is( scalar @answer_time_rows, 1, 'count' );
-        my $time_row = shift @answer_time_rows;
-        ok( $time_row->entered_ts, 'entered_ts' );
-
+        ok( $answer_time_row,             'count' );
+        ok( $answer_time_row->entered_ts, 'entered_ts' );
         $t->logout_ok();
 
         # 閲覧権限、問題画面に解答状況が表示されている
+        my $exa_ids_browsesp = $t->app->config->{exa_ids_browsesp};
+        $t->login_ok( $exa_ids_browsesp->[0] );
+
+        # 問題を解く画面
+        $t->get_ok($think_link)->status_is(200);
+        $t->content_like(qr{\Qentrysp1\E});
+        $t->logout_ok();
     };
 };
 

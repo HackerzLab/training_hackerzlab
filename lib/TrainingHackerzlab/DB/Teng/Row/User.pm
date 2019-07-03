@@ -32,14 +32,25 @@ sub get_score_opened_hint {
 
 # 解答時の条件を考慮した点数
 sub get_overall_score {
-    my $self = shift;
+    my $self      = shift;
+    my $is_exa_sp = shift;
 
     # 解答結果を取得
     my $answer_rows = $self->search_answer;
     return 0 if !$answer_rows;
 
-    # ヒントの開封と残り時間を考慮した点数
+    # 早押し総取りの場合
     my $score_all = 0;
+    if ($is_exa_sp) {
+        for my $answer_row ( @{$answer_rows} ) {
+            next if !$answer_row->is_correct;
+            next if !$answer_row->is_top_answer;
+            $score_all += $answer_row->get_score_opened_hint();
+        }
+        return $score_all;
+    }
+
+    # ヒントの開封と残り時間を考慮した点数
     for my $answer_row ( @{$answer_rows} ) {
         next if !$answer_row->is_correct;
         $score_all += $answer_row->get_score_opened_hint();

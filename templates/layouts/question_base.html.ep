@@ -72,6 +72,44 @@
   <!-- body content -->
   <%= content =%>
 
+  <%# 回答済みリスト表記 %>
+  <div class="container">
+    <table class="table table-striped table-hover ">
+      <thead>
+        <tr>
+          <th>早押し順位</th>
+          <th>How?</th>
+          <th>得点</th>
+          <th>解答者(login ID)</th>
+          <th>解答者(名前)</th>
+          <th>タイトル</th>
+          <th>解答入力時間</th>
+        </tr>
+      </thead>
+      <tbody>
+        % for my $list (@{$c->stash->{quick_answers}}) {
+        <tr class="text-<%= $list->{how_text} %>">
+          <td><%= $list->{rank} %></td>
+          <td><%= $list->{how} %></td>
+          <td><%= $list->{get_score} %></td>
+          <td><%= $list->{user}->{login_id} %></td>
+          <td><%= $list->{user}->{name} %></td>
+          <td><%= $list->{question}->{title} %></td>
+          <td><%= $list->{answer_time}->{entered_ts} %></td>
+        </tr>
+        % }
+      </tbody>
+    </table>
+  </div>
+
+<%# 自動更新 %>
+<script>
+setTimeout(function () {
+    location.reload();
+}, 2000);
+</script>
+
+
   <!-- 問題一覧へ -->
   <%= include('inc/question_index', format => 'html') =%>
     % } else {
