@@ -4,6 +4,15 @@
   <!-- 問題 -->
   <%= include('inc/question', format => 'html') =%>
   % } elsif ($c->stash->{is_exa_entrysp}) {
+
+  <%# 特別に画像表示 %>
+  % if ($c->stash->{question}->{id} eq 125) {
+  <div class="container"> <img src="/static/images/no3.jpg" width=100% > </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 126) {
+  <div class="container"> <img src="/static/images/no4.jpg" width=100% > </div>
+  % }
+
   <!-- 解答入力フォーム -->
   <%= include('inc/question_form', format => 'html', inc_form => 'inc/radio_form') =%>
 
