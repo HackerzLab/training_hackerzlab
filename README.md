@@ -288,6 +288,38 @@ webapiの提供の準備: [予定] 2h
 2017-01-22 Vol.8 [q36-45]	Hackerz Lab.博多 Vol.8にて公開した問題	hackerz9998
 ```
 
+__2019/07/05__
+
+> 開発サーバー(CentOS6 の sqlite3 のバージョンが古いせいか csv インポートが一部失敗)
+
+こちらの問題については sqlite3 の新しいバージョンをインストールすることで対応した
+
+下記手順参考
+
+sqlite3 公式ページからダウンロードして対応
+
+```
+(root になってから)
+(本来は tmp は一時的なディレクトリなので注意)
+# cd /tmp/
+# curl -OL https://www.sqlite.org/snapshot/sqlite-snapshot-201906171413.tar.gz
+# tar zxvf sqlite-snapshot-201906171413.tar.gz
+# cd sqlite-snapshot-201906171413
+# ./configure
+# make
+# make install
+# /tmp/sqlite-snapshot-201906171413/sqlite3 --version
+3.29.0 2019-06-17 14:13:30 a61db8ff6713d66778a0500ca4049229c081a3ae95991f05eba09729434444b3
+
+(実行のパスが以前のままなので、新しいものに向けておく)
+# which sqlite3
+/usr/local/bin/sqlite3
+
+(アプリユーザーに移動)
+$ echo 'export PATH="/tmp/sqlite-snapshot-201906171413:$PATH"' >> ~/.bash_profile
+$ exec $SHELL -l
+```
+
 ```sql
 -- 当初のスキーマー
 drop table if exists users;
