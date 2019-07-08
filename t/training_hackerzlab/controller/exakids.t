@@ -455,4 +455,16 @@ subtest 'q exa id sp' => sub {
     };
 };
 
+subtest 'GET - `/exakids/user` - user' => sub {
+
+    # exakids id でのログイン者のみ、みれる
+    my $exa_ids = $t->app->config->{exa_ids};
+    my $user_id = $exa_ids->[0];
+    $t->login_ok($user_id);
+
+    # $t->get_ok('/exakids/user')->status_is(200);
+
+    $t->logout_ok();
+};
+
 done_testing();

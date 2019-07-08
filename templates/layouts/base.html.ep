@@ -17,6 +17,11 @@
 
   <!-- body js -->
   <%= include('inc/body_js', format => 'html') =%>
+
+  % if ($c->stash->{is_exakids_menu}) {
+  <!-- exakids menu js -->
+  <%= include('inc/exakids_menu_js', format => 'html') =%>
+  % }
 </body>
 
 </html>

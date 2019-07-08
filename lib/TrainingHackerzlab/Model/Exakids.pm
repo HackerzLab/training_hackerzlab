@@ -82,42 +82,24 @@ sub to_template_menu {
 
     my @exakids_users
         = $self->db->teng->search( 'user', +{ id => $exa_ids_entry } );
-    my $entry_users_data = [];
-    my $count            = 0;
-    my $line             = [];
+    my $entry_users = [];
+    my $count       = 0;
+    my $user_line   = [];
     for my $row (@exakids_users) {
         $count = $count + 1;
         if ( $count == 1 ) {
-
-            # 解答状況の情報一式
-            my $collected_rows_list
-                = $row->fetch_collected_rows_list($exa_collected_ids);
-            my $collected_list;
-            push @{$collected_list}, +{ user => $row->get_columns };
-            for my $collected_data ( @{$collected_rows_list} ) {
-                push @{$collected_list},
-                    $self->collected_data_hash($collected_data);
-            }
-            push @{$line}, $collected_list;
+            push @{$user_line}, +{ user => $row->get_columns };
             next;
         }
         if ( $count == 2 ) {
-            my $collected_rows_list
-                = $row->fetch_collected_rows_list($exa_collected_ids);
-            my $collected_list;
-            push @{$collected_list}, +{ user => $row->get_columns };
-            for my $collected_data ( @{$collected_rows_list} ) {
-                push @{$collected_list},
-                    $self->collected_data_hash($collected_data);
-            }
-            push @{$line},             $collected_list;
-            push @{$entry_users_data}, $line;
-            $line  = [];
-            $count = 0;
+            push @{$user_line}, +{ user => $row->get_columns };
+            push @{$entry_users}, $user_line;
+            $user_line = [];
+            $count     = 0;
             next;
         }
     }
-    $to_template->{entry_users_data} = $entry_users_data;
+    $to_template->{entry_users} = $entry_users;
     return $to_template;
 }
 
@@ -187,6 +169,26 @@ sub to_template_ranking {
         @{$ranking_list};
     my $rank_list = $self->_rank_sort( \@sort_ranks );
     $to_template->{rankings} = $rank_list;
+    return $to_template;
+}
+
+sub to_template_user {
+    my $self = shift;
+    my $to_template = +{ status => 200, user => +{} };
+    my $user_row
+        = $self->db->teng->single( 'user',
+        +{ id => $self->req_params->{user_id} } );
+    $to_template->{user} = $user_row->get_columns;
+
+    # 解答状況の情報一式
+    my $exa_collected_ids = $self->conf->{exa_collected_ids};
+    my $collected_rows_list
+        = $user_row->fetch_collected_rows_list($exa_collected_ids);
+    my $collected_list;
+    for my $collected_data ( @{$collected_rows_list} ) {
+        push @{$collected_list}, $self->collected_data_hash($collected_data);
+    }
+    $to_template->{collected_list} = $collected_list;
     return $to_template;
 }
 

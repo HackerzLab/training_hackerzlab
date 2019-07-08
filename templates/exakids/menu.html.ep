@@ -15,88 +15,14 @@
     </div>
   </div>
 
-  % for my $users_data (@{$c->stash->{entry_users_data}}) {
+  % for my $users (@{$c->stash->{entry_users}}) {
   <div class="container">
     <div class="row">
-      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-        <h2 class="page-header"><%= $users_data->[0]->[0]->{user}->{login_id} %> <small><%= $users_data->[0]->[0]->{user}->{name} %></small></h2>
-        % for my $q (@{$users_data->[0]})  {
-        % if ( !exists $q->{user}) {
-        <p class=""><%= $q->{collected}->{title} %></p>
-        <table class="table table-striped table-hover ">
-          <thead>
-            <tr>
-              <th>How?</th>
-              <th>No</th>
-              <th>タイトル</th>
-              <th>獲得点 / 難易度 / ヒント開封履歴</th>
-            </tr>
-          </thead>
-          <tbody>
-            % for my $list (@{$q->{question_list}}) {
-            % if ($list->{is_answered}) {
-            <tr class="text-<%= $list->{how_text} %>">
-              <td class=""><%= $list->{how} %></td>
-              <td><a href="<%= $list->{q_url} %>" class="btn btn-primary btn-xs"><%= $list->{collected_sort}->{sort_id} %></a></td>
-              <td><%= $list->{short_title} %><br></td>
-              <td>
-              [ <%= $list->{get_score} %> ] [ <%= $list->{question}->{level} %> ]
-              % if ($c->stash->{is_exa}) {
-              <span class="badge">残り時間: <%= $list->{answer_time}->{remaining_sec} %>秒</span><br>
-              % } else {
-              <span class="badge">入力時間: <%= $list->{answer_time}->{entered_ts} %></span><br>
-              % }
-              % for my $level (@{$list->{hint_opened_level}}) {
-              <span class="badge"><%= $level %></span>
-              % }
-              </td>
-            </tr>
-            % }
-            % }
-          </tbody>
-        </table>
-        % }
-        % }
+      <div id="<%= $users->[0]->{user}->{login_id} %>" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <h2 class="page-header"></h2>
       </div>
-      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-        <h2 class="page-header"><%= $users_data->[1]->[0]->{user}->{login_id} %> <small><%= $users_data->[1]->[0]->{user}->{name} %></small></h2>
-        % for my $q (@{$users_data->[1]})  {
-        % if ( !exists $q->{user}) {
-        <p class=""><%= $q->{collected}->{title} %></p>
-        <table class="table table-striped table-hover ">
-          <thead>
-            <tr>
-              <th>How?</th>
-              <th>No</th>
-              <th>タイトル</th>
-              <th>獲得点 / 難易度 / ヒント開封履歴</th>
-            </tr>
-          </thead>
-          <tbody>
-            % for my $list (@{$q->{question_list}}) {
-            % if ($list->{is_answered}) {
-            <tr class="text-<%= $list->{how_text} %>">
-              <td class=""><%= $list->{how} %></td>
-              <td><a href="<%= $list->{q_url} %>" class="btn btn-primary btn-xs"><%= $list->{collected_sort}->{sort_id} %></a></td>
-              <td><%= $list->{short_title} %></td>
-              <td>
-              [ <%= $list->{get_score} %> ] [ <%= $list->{question}->{level} %> ]
-              % if ($c->stash->{is_exa}) {
-              <span class="badge">残り時間: <%= $list->{answer_time}->{remaining_sec} %>秒</span><br>
-              % } else {
-              <span class="badge">入力時間: <%= $list->{answer_time}->{entered_ts} %></span><br>
-              % }
-              % for my $level (@{$list->{hint_opened_level}}) {
-              <span class="badge"><%= $level %></span>
-              % }
-              </td>
-            </tr>
-            % }
-            % }
-          </tbody>
-        </table>
-        % }
-        % }
+      <div id="<%= $users->[1]->{user}->{login_id} %>" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <h2 class="page-header"> <small></small></h2>
       </div>
     </div>
   </div>
@@ -167,8 +93,9 @@
   </div>
   % }
 <%# 自動更新 %>
-<script>
-setTimeout(function () {
-    location.reload();
-}, 2000);
-</script>
+<%# <script> %>
+<%# setTimeout(function () { %>
+    <%# location.reload(); %>
+<%# }, 2000); %>
+<%# </script> %>
+<%# ajax %>

@@ -1,0 +1,59 @@
+<script>
+$.get( "/exakids/user", { user_id: 27 }, function(data) {
+    changeTable (data);
+}, "json" );
+
+$.get( "/exakids/user", { user_id: 28 }, function(data) {
+    changeTable (data);
+}, "json" );
+
+function changeTable (data) {
+    var element = 'div#' + data.user.login_id;
+    $(element + " h2").append(data.user.login_id + "<small>" + data.user.name + "</small>");
+    var collected_list = data.collected_list;
+    $.each(collected_list, function(index, value){
+        $(element).append("<p>" + value.collected.title + "</p>");
+        var text =
+        "        <table>" +
+        "          <thead>" +
+        "            <tr>" +
+        "              <th>How?</th>" +
+        "              <th>No</th>" +
+        "              <th>タイトル</th>" +
+        "              <th>獲得点 / 難易度 / ヒント開封履歴</th>" +
+        "            </tr>" +
+        "          </thead>" +
+        "          <tbody>" +
+        "          </tbody>" +
+        "        </table>";
+        $(element).append(text);
+        $(element + ' table').addClass("table table-striped table-hover");
+        $.each(value.question_list, function(index, list){
+            if (list.is_answered) {
+                var tableText =
+                '            <tr class="text-' + list.how_text +'">' +
+                '              <td class="">' + list.how + '</td>' +
+                '              <td><a href="' + list.q_url + '" class="btn btn-primary btn-xs">' + list.collected_sort.sort_id + '</a></td>' +
+                '              <td>' + list.short_title + '</td>' +
+                '              <td>' +
+                '              [ ' + list.get_score +' ] [ ' + list.question.level + ' ]';
+                if (list.answer_time.entered_ts) {
+                    tableText = tableText +
+                    '              <span class="badge">入力時間: ' + list.answer_time.entered_ts + '</span><br>';
+                } else {
+                    tableText = tableText +
+                    '              <span class="badge">残り時間: ' + list.answer_time.remaining_sec + '秒</span><br>';
+                }
+                $.each(list.hint_opened_level, function(index, level){
+                    tableText = tableText +
+                    '              <span class="badge">' + level + '</span>';
+                });
+                tableText = tableText +
+                '              </td>' +
+                '            </tr>';
+                $(element + " table tbody").append(tableText);
+            }
+        });
+    });
+}
+</script>

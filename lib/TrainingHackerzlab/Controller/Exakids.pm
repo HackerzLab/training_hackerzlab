@@ -49,6 +49,7 @@ sub menu {
         is_exa_browsesp => $is_exa_browsesp,
         is_exa          => $is_exa,
         is_exa_sp       => $is_exa_sp,
+        is_exakids_menu => 1,
         login_user      => $self->login_user->get_columns,
         template        => 'exakids/menu',
         format          => 'html',
@@ -176,6 +177,21 @@ sub refresh {
     $self->app->commands->run( 'generate', 'sqlitedb' );
     $self->session( expires => 1 );
     $self->redirect_to('/');
+    return;
+}
+
+sub user {
+    my $self        = shift;
+    my $res         = +{ status => 500, };
+    my $params      = $self->req->params->to_hash;
+    my $exakids     = $self->model->exakids->req_params($params);
+    my $to_template = $exakids->to_template_user;
+    if ( !$to_template ) {
+        $self->render( json => $res );
+        return;
+    }
+    $res = +{ %{$res}, %{$to_template}, };
+    $self->render( json => $res );
     return;
 }
 

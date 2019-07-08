@@ -134,6 +134,7 @@ sub startup {
     $exa->get('/menu')->to('Exakids#menu');
     $exa->get('/:user_id/edit')->to('Exakids#edit');
     $exa->get('/ranking')->to('Exakids#ranking');
+    $exa->get('/user')->to('Exakids#user');
     $exa->post('/:user_id/update')->to('Exakids#update');
     $exa->post('/entry')->to('Exakids#entry');
     $exa->post('/refresh')->to('Exakids#refresh');
