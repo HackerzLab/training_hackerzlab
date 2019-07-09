@@ -1,15 +1,19 @@
 <script>
-$.get( "/exakids/user", { user_id: 27 }, function(data) {
-    changeTable (data);
-}, "json" );
-
-$.get( "/exakids/user", { user_id: 28 }, function(data) {
-    changeTable (data);
-}, "json" );
+setInterval(function(){
+    $.get( "/exakids/user", { user_id: 27 }, function(data) {
+        changeTable (data);
+    }, "json" );
+    $.get( "/exakids/user", { user_id: 28 }, function(data) {
+        changeTable (data);
+    }, "json" );
+},5000);
 
 function changeTable (data) {
     var element = 'div#' + data.user.login_id;
-    $(element + " h2").append(data.user.login_id + "<small>" + data.user.name + "</small>");
+    $(element).html('');
+    var titleText =
+    '        <h2 class="page-header">'+ data.user.login_id +'<small>'+ data.user.name + '</small></h2>';
+    $(element).append(titleText);
     var collected_list = data.collected_list;
     $.each(collected_list, function(index, value){
         $(element).append("<p>" + value.collected.title + "</p>");
