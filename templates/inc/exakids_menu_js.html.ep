@@ -1,12 +1,24 @@
 <script>
-setInterval(function(){
-    $.get( "/exakids/user", { user_id: 27 }, function(data) {
-        changeTable (data);
+// 表示該当の user.id を全て取得する
+$.get( "/exakids/user", { mode: 'exasp' }, function(data) {
+  var user_ids = data.user_ids;
+
+  // 初回時の画面
+  $.each(user_ids, function(index, value){
+    $.get( "/exakids/user", { user_id: value }, function(data) {
+      changeTable (data);
     }, "json" );
-    $.get( "/exakids/user", { user_id: 28 }, function(data) {
+  });
+
+  // 定期的に下記更新描画
+  setInterval(function(){
+    $.each(user_ids, function(index, value){
+      $.get( "/exakids/user", { user_id: value }, function(data) {
         changeTable (data);
-    }, "json" );
-},5000);
+      }, "json" );
+    });
+  },10000);
+}, "json" );
 
 function changeTable (data) {
     var element = 'div#' + data.user.login_id;

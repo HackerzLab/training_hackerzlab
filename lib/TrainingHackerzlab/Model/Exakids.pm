@@ -2,7 +2,7 @@ package TrainingHackerzlab::Model::Exakids;
 use Mojo::Base 'TrainingHackerzlab::Model::Base';
 
 sub to_template_index {
-    my $self = shift;
+    my $self        = shift;
     my $to_template = +{ exakids_users => [] };
 
     # エクサキッズ対象ユーザー
@@ -173,8 +173,22 @@ sub to_template_ranking {
 }
 
 sub to_template_user {
-    my $self = shift;
+    my $self        = shift;
     my $to_template = +{ status => 200, user => +{} };
+
+    # 表示該当の user.id を全て取得する
+    if ( exists $self->req_params->{mode}
+        && $self->req_params->{mode} eq 'exasp' )
+    {
+        my $exa_ids_sp = $self->conf->{exa_ids_entrysp};
+        my $cond_ids   = [];
+        for my $id ( @{$exa_ids_sp} ) {
+            push @{$cond_ids}, $id;
+        }
+        $to_template->{user_ids} = $cond_ids;
+        return $to_template;
+    }
+
     my $user_row
         = $self->db->teng->single( 'user',
         +{ id => $self->req_params->{user_id} } );

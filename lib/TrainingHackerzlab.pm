@@ -39,7 +39,7 @@ sub startup {
 
                 # セッション情報からログイン者の情報を取得
                 my $params = +{ login_id => $c->session('user') };
-                my $model = $self->model->auth->req_params($params);
+                my $model  = $self->model->auth->req_params($params);
                 if ( my $login_user = $model->session_check ) {
                     $self->helper( login_user => sub {$login_user} );
                     return;
@@ -57,7 +57,7 @@ sub startup {
             {
                 # セッション情報からログイン者の情報を取得
                 my $params = +{ login_id => $c->session('user') };
-                my $model = $self->model->auth->req_params($params);
+                my $model  = $self->model->auth->req_params($params);
                 if ( my $login_user = $model->session_check ) {
                     $self->helper( login_user => sub {$login_user} );
                     return;
@@ -119,7 +119,7 @@ sub startup {
 
     # 問題集
     my $collected_id = [ collected_id => qr/[0-9]+/, sort_id => qr/[0-9]+/ ];
-    my $collected = $r->under('/hackerz/question/collected');
+    my $collected    = $r->under('/hackerz/question/collected');
     $collected->get( '/:id', $id )->to('Hackerz::Question::Collected#show');
     $collected->get( '/:collected_id/:sort_id/think', $collected_id )
         ->to('Hackerz::Question::Collected#think');
@@ -132,10 +132,10 @@ sub startup {
     my $exa = $r->under('/exakids');
     $exa->get('')->to('Exakids#index');
     $exa->get('/menu')->to('Exakids#menu');
-    $exa->get('/:user_id/edit')->to('Exakids#edit');
+    $exa->get( '/:user_id/edit', $user_id )->to('Exakids#edit');
     $exa->get('/ranking')->to('Exakids#ranking');
     $exa->get('/user')->to('Exakids#user');
-    $exa->post('/:user_id/update')->to('Exakids#update');
+    $exa->post( '/:user_id/update', $user_id )->to('Exakids#update');
     $exa->post('/entry')->to('Exakids#entry');
     $exa->post('/refresh')->to('Exakids#refresh');
 }
