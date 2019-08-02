@@ -195,4 +195,19 @@ sub user {
     return;
 }
 
+sub quick_answer {
+    my $self        = shift;
+    my $res         = +{ status => 500, };
+    my $params      = $self->req->params->to_hash;
+    my $exakids     = $self->model->exakids->req_params($params);
+    my $to_template = $exakids->to_template_quick_answer;
+    if ( !$to_template ) {
+        $self->render( json => $res );
+        return;
+    }
+    $res = +{ %{$res}, %{$to_template}, };
+    $self->render( json => $res );
+    return;
+}
+
 1;

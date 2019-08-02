@@ -2,7 +2,7 @@ package TrainingHackerzlab::Model::Exakids;
 use Mojo::Base 'TrainingHackerzlab::Model::Base';
 
 sub to_template_index {
-    my $self        = shift;
+    my $self = shift;
     my $to_template = +{ exakids_users => [] };
 
     # エクサキッズ対象ユーザー
@@ -173,7 +173,7 @@ sub to_template_ranking {
 }
 
 sub to_template_user {
-    my $self        = shift;
+    my $self = shift;
     my $to_template = +{ status => 200, user => +{} };
 
     # 表示該当の user.id を全て取得する
@@ -203,6 +203,66 @@ sub to_template_user {
         push @{$collected_list}, $self->collected_data_hash($collected_data);
     }
     $to_template->{collected_list} = $collected_list;
+    return $to_template;
+}
+
+sub to_template_quick_answer {
+    my $self = shift;
+    my $to_template = +{ status => 200, quick_answers => +{} };
+
+    # エクサキッズ拡張の確認(早押し総取り解答状況)
+    # answer_time を entered_ts の順番に全部取得
+    my $at_params = +{ deleted  => 0, };
+    my $at_attr   = +{ order_by => 'entered_ts ASC' };
+    my @at_rows
+        = $self->db->teng->search( 'answer_time', $at_params, $at_attr );
+
+    my $quick_answers = [];
+    for my $at_row (@at_rows) {
+
+        # 解答を取得
+        my $answer_row = $at_row->fetch_answer;
+
+        # 今見ている問題の該当情報だけを取得
+        if (( $answer_row->question_id eq $self->req_params->{question_id} )
+            && ( $answer_row->collected_id eq
+                $self->req_params->{collected_id} )
+            )
+        {
+            my $quick_answer = +{
+                answer      => $answer_row->get_columns,
+                answer_time => $at_row->get_columns,
+                user        => $answer_row->fetch_user->get_columns,
+                question    => $answer_row->fetch_question->get_columns,
+                how         => '不正解',
+                how_text    => 'danger',
+                get_score   => 0,
+            };
+
+            # 正解状況
+            if ( $answer_row->is_correct ) {
+                $quick_answer->{how}      = '正解';
+                $quick_answer->{how_text} = 'success';
+            }
+            $quick_answer->{get_score} = $answer_row->get_score_opened_hint();
+            push @{$quick_answers}, $quick_answer;
+        }
+    }
+
+    # 早押しの得点条件を加える
+    my $rank = 1;
+    for my $quick_answer ( @{$quick_answers} ) {
+        $quick_answer->{rank} = $rank;
+
+        # 2番目以降の正解者は 0 点
+        if ( ( $rank >= 2 ) && ( $quick_answer->{how} eq '正解' ) ) {
+            $quick_answer->{how}       = '正解(得点なし)';
+            $quick_answer->{how_text}  = 'info';
+            $quick_answer->{get_score} = 0;
+        }
+        $rank = $rank + 1;
+    }
+    $to_template->{quick_answers} = $quick_answers;
     return $to_template;
 }
 

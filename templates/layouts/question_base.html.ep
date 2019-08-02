@@ -86,29 +86,10 @@
           <th>解答入力時間</th>
         </tr>
       </thead>
-      <tbody>
-        % for my $list (@{$c->stash->{quick_answers}}) {
-        <tr class="text-<%= $list->{how_text} %>">
-          <td><%= $list->{rank} %></td>
-          <td><%= $list->{how} %></td>
-          <td><%= $list->{get_score} %></td>
-          <td><%= $list->{user}->{login_id} %></td>
-          <td><%= $list->{user}->{name} %></td>
-          <td><%= $list->{question}->{title} %></td>
-          <td><%= $list->{answer_time}->{entered_ts} %></td>
-        </tr>
-        % }
+      <tbody id="quick_answer_tbody" >
       </tbody>
     </table>
   </div>
-
-<%# 自動更新 %>
-<script>
-setTimeout(function () {
-    location.reload();
-}, 2000);
-</script>
-
 
   <!-- 問題一覧へ -->
   <%= include('inc/question_index', format => 'html') =%>
@@ -162,6 +143,11 @@ setTimeout(function () {
   % if ($c->stash->{is_exa}) {
   <!-- countdown js -->
   <%= include('inc/countdown_js', format => 'html') =%>
+  % }
+
+  % if ($c->stash->{is_exa_browsesp}) {
+  <!-- exakids menu js -->
+  <%= include('inc/exakids_q_js', format => 'html') =%>
   % }
 </body>
 

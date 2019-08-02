@@ -450,7 +450,16 @@ subtest 'q exa id sp' => sub {
 
         # 問題を解く画面
         $t->get_ok($think_link)->status_is(200);
-        $t->content_like(qr{\Qentrysp1\E});
+
+        # 解答状況は ajax で取得する
+        my $url_quick_answer        = '/exakids/quick_answer';
+        my $url_quick_answer_params = +{
+            question_id  => $question_id,
+            collected_id => $collected_id,
+        };
+        $t->get_ok( $url_quick_answer => form => $url_quick_answer_params )
+            ->status_is(200);
+        $t->json_is( '/status' => 200 );
         $t->logout_ok();
     };
 };

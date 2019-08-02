@@ -1,0 +1,37 @@
+<script>
+
+var questionId = <%= $c->stash->{question}->{id} %>;
+var collectedId = <%= $c->stash->{collected}->{id} %>;
+
+// 初回時の画面
+$.get("/exakids/quick_answer", { question_id: questionId, collected_id: collectedId }, function(data) {
+  var quick_answers = data.quick_answers;
+  changeTableQuickAnswer(quick_answers);
+}, "json");
+
+// 定期的に下記更新描画
+setInterval(function() {
+  $.get("/exakids/quick_answer", { question_id: questionId, collected_id: collectedId }, function(data) {
+    var quick_answers = data.quick_answers;
+    changeTableQuickAnswer(quick_answers);
+  }, "json");
+}, 5000);
+
+function changeTableQuickAnswer(quick_answers) {
+  var element = 'tbody#quick_answer_tbody';
+  $(element).html('');
+  $.each(quick_answers, function(index, list) {
+    var text =
+      '        <tr class="text-' + list.how_text + '">' +
+      '          <td>' + list.rank + '</td>' +
+      '          <td>' + list.how + '</td>' +
+      '          <td>' + list.get_score + '</td>' +
+      '          <td>' + list.user.login_id + '</td>' +
+      '          <td>' + list.user.name + '</td>' +
+      '          <td>' + list.question.title + '</td>' +
+      '          <td>' + list.answer_time.entered_ts + '</td>' +
+      '        </tr>';
+    $(element).append(text);
+  });
+}
+</script>
