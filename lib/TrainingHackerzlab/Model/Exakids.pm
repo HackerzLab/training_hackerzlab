@@ -173,8 +173,9 @@ sub to_template_ranking {
 }
 
 sub to_template_user {
-    my $self = shift;
+    my $self        = shift;
     my $to_template = +{ status => 200, user => +{} };
+    my $teng        = $self->db->teng;
 
     # 表示該当の user.id を全て取得する
     if ( exists $self->req_params->{mode}
@@ -190,8 +191,7 @@ sub to_template_user {
     }
 
     my $user_row
-        = $self->db->teng->single( 'user',
-        +{ id => $self->req_params->{user_id} } );
+        = $teng->single( 'user', +{ id => $self->req_params->{user_id} } );
     $to_template->{user} = $user_row->get_columns;
 
     # 解答状況の情報一式
@@ -201,6 +201,27 @@ sub to_template_user {
     my $collected_list;
     for my $collected_data ( @{$collected_rows_list} ) {
         push @{$collected_list}, $self->collected_data_hash($collected_data);
+    }
+
+    # 早押し総取りの条件反映
+    for my $data ( @{$collected_list} ) {
+        my $subtract = 0;
+        for my $q_list ( @{ $data->{question_list} } ) {
+
+            # 回答済みの者に対して条件を加える
+            next if !$q_list->{is_answered};
+            my $answer_row = $teng->single( 'answer',
+                +{ id => $q_list->{answer}->{id} } );
+            next if !$answer_row->is_correct;
+            next if $answer_row->is_top_answer;
+            $subtract            = $subtract + $q_list->{get_score};
+            $q_list->{how}       = '正解(得点なし)';
+            $q_list->{how_text}  = 'info';
+            $q_list->{get_score} = 0;
+        }
+        if ( $data->{total_score} ) {
+            $data->{total_score} = $data->{total_score} - $subtract;
+        }
     }
     $to_template->{collected_list} = $collected_list;
     return $to_template;
@@ -250,20 +271,41 @@ sub to_template_quick_answer {
     }
 
     # 早押しの得点条件を加える
-    my $rank = 1;
+    $to_template->{quick_answers} = $self->_quick_cond($quick_answers);
+    return $to_template;
+}
+
+# 早押しの得点条件を加える
+sub _quick_cond {
+    my $self          = shift;
+    my $quick_answers = shift;
+
+    my $rank  = 1;
+    my $quick = 0;
     for my $quick_answer ( @{$quick_answers} ) {
         $quick_answer->{rank} = $rank;
+        $rank = $rank + 1;
 
-        # 2番目以降の正解者は 0 点
-        if ( ( $rank >= 2 ) && ( $quick_answer->{how} eq '正解' ) ) {
+        # 不正解は 0 点
+        if ( $quick_answer->{how} eq '不正解' ) {
+            $quick_answer->{get_score} = 0;
+            next;
+        }
+
+        if ( $quick_answer->{how} eq '正解' ) {
+            $quick = $quick + 1;
+
+            # 初めての正解者
+            next if $quick eq 1;
+
+            # 2回目以降は正解でも 0 点
             $quick_answer->{how}       = '正解(得点なし)';
             $quick_answer->{how_text}  = 'info';
             $quick_answer->{get_score} = 0;
+            next;
         }
-        $rank = $rank + 1;
     }
-    $to_template->{quick_answers} = $quick_answers;
-    return $to_template;
+    return $quick_answers;
 }
 
 1;

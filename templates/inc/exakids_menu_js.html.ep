@@ -1,20 +1,20 @@
 <script>
 // 表示該当の user.id を全て取得する
-$.get( "/exakids/user", { mode: 'exasp' }, function(data) {
-  var user_ids = data.user_ids;
+$.get( "/exakids/user", { mode: 'exasp' }, function(exaspData) {
+  var user_ids = exaspData.user_ids;
 
   // 初回時の画面
   $.each(user_ids, function(index, value){
-    $.get( "/exakids/user", { user_id: value }, function(data) {
-      changeTable (data);
+    $.get( "/exakids/user", { user_id: value }, function(fastData) {
+      changeTable (fastData);
     }, "json" );
   });
 
   // 定期的に下記更新描画
   setInterval(function(){
     $.each(user_ids, function(index, value){
-      $.get( "/exakids/user", { user_id: value }, function(data) {
-        changeTable (data);
+      $.get( "/exakids/user", { user_id: value }, function(updateData) {
+        changeTable (updateData);
       }, "json" );
     });
   },10000);
@@ -28,7 +28,7 @@ function changeTable (data) {
     $(element).append(titleText);
     var collected_list = data.collected_list;
     $.each(collected_list, function(index, value){
-        $(element).append("<p>" + value.collected.title + "</p>");
+        $(element).append("<p>" + value.collected.title + " -> 合計: " + value.total_score + " 点</p>");
         var text =
         "        <table>" +
         "          <thead>" +
