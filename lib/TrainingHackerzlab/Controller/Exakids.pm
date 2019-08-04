@@ -15,6 +15,25 @@ sub index {
     return;
 }
 
+sub logout {
+    my $self = shift;
+
+    # ユーザーログアウト実行
+    if ( $self->req->method eq 'POST' ) {
+        $self->session( expires => 1 );
+        $self->redirect_to('/exakids/logout');
+        return;
+    }
+    my $master = $self->model->auth->db->master;
+    $self->render(
+        msg      => $master->auth->to_word('IS_LOGOUT'),
+        template => 'exakids/logout',
+        format   => 'html',
+        handler  => 'ep',
+    );
+    return;
+}
+
 sub menu {
     my $self           = shift;
     my $model          = $self->model->exakids;

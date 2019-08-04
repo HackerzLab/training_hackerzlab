@@ -1,0 +1,6 @@
+% layout 'base';
+% title 'HackerzLab.博多';
+  <div class="container">
+    <h2 class="page-header">ログアウト</h2>
+    <a href="/" class="btn btn-default btn-lg btn-block">トップページ</a>
+  </div>

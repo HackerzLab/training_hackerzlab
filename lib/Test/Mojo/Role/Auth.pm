@@ -65,7 +65,9 @@ sub logout_ok {
 
     # 他 button, link
     $t->element_exists("a[href=/]");
-    $t->element_exists("a[href=/auth]");
+    if ( !$is_exa ) {
+        $t->element_exists("a[href=/auth]");
+    }
 
     # セッション確認
     my $session_id = $t->app->build_controller( $t->tx )->session('user');

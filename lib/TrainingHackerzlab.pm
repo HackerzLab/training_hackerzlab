@@ -39,7 +39,7 @@ sub startup {
 
                 # セッション情報からログイン者の情報を取得
                 my $params = +{ login_id => $c->session('user') };
-                my $model  = $self->model->auth->req_params($params);
+                my $model = $self->model->auth->req_params($params);
                 if ( my $login_user = $model->session_check ) {
                     $self->helper( login_user => sub {$login_user} );
                     return;
@@ -53,11 +53,12 @@ sub startup {
                 return;
             }
             if (   ( $url =~ m{^/exakids/.*} )
-                && ( $url !~ m{^/exakids/entry.*} ) )
+                && ( $url !~ m{^/exakids/entry.*} )
+                && ( $url !~ m{^/exakids/logout.*} ) )
             {
                 # セッション情報からログイン者の情報を取得
                 my $params = +{ login_id => $c->session('user') };
-                my $model  = $self->model->auth->req_params($params);
+                my $model = $self->model->auth->req_params($params);
                 if ( my $login_user = $model->session_check ) {
                     $self->helper( login_user => sub {$login_user} );
                     return;
@@ -119,7 +120,7 @@ sub startup {
 
     # 問題集
     my $collected_id = [ collected_id => qr/[0-9]+/, sort_id => qr/[0-9]+/ ];
-    my $collected    = $r->under('/hackerz/question/collected');
+    my $collected = $r->under('/hackerz/question/collected');
     $collected->get( '/:id', $id )->to('Hackerz::Question::Collected#show');
     $collected->get( '/:collected_id/:sort_id/think', $collected_id )
         ->to('Hackerz::Question::Collected#think');
@@ -136,6 +137,8 @@ sub startup {
     $exa->get('/ranking')->to('Exakids#ranking');
     $exa->get('/user')->to('Exakids#user');
     $exa->get('/quick_answer')->to('Exakids#quick_answer');
+    $exa->get('/logout')->to('Exakids#logout');
+    $exa->post('/logout')->to('Exakids#logout');
     $exa->post( '/:user_id/update', $user_id )->to('Exakids#update');
     $exa->post('/entry')->to('Exakids#entry');
     $exa->post('/refresh')->to('Exakids#refresh');

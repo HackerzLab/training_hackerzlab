@@ -149,7 +149,7 @@ subtest 'GET - `/exakids/menu` - menu' => sub {
     $t->login_ok($user_id);
     $t->get_ok('/exakids/menu')->status_is(200);
     my $logout_form
-        = "form[name=form_logout][method=post][action=/auth/logout]";
+        = "form[name=form_logout][method=post][action=/exakids/logout]";
     $t->element_exists("$logout_form button[type=submit]");
     $t->element_exists("a[href=/exakids/menu]");
     $t->element_exists("a[href=/hackerz/menu]");
