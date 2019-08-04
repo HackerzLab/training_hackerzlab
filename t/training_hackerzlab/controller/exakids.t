@@ -93,7 +93,8 @@ subtest 'POST - `/exakids/entry` - entry' => sub {
 
     my $master  = $t->app->test_db->master;
     my $msg     = $master->auth->to_word('IS_LOGIN');
-    my $exa_ids = $t->app->config->{exa_ids};
+    # my $exa_ids = $t->app->config->{exa_ids};
+    my $exa_ids = $t->app->config->{exa_ids_sp};
     my $user_id = $exa_ids->[0];
     my $user_row
         = $t->app->test_db->teng->single( 'user', +{ id => $user_id } );

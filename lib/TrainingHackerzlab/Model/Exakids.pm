@@ -6,12 +6,12 @@ sub to_template_index {
     my $to_template = +{ exakids_users => [] };
 
     # エクサキッズ対象ユーザー
-    my $exa_ids    = $self->conf->{exa_ids};
+    # my $exa_ids    = $self->conf->{exa_ids};
     my $exa_ids_sp = $self->conf->{exa_ids_sp};
     my $cond_ids   = [];
-    for my $id ( @{$exa_ids} ) {
-        push @{$cond_ids}, $id;
-    }
+    # for my $id ( @{$exa_ids} ) {
+    #     push @{$cond_ids}, $id;
+    # }
     for my $id ( @{$exa_ids_sp} ) {
         push @{$cond_ids}, $id;
     }
