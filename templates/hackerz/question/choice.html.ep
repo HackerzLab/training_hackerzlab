@@ -12,6 +12,12 @@
   % if ($c->stash->{question}->{id} eq 126) {
   <div class="container"> <img src="/static/images/no4.jpg" width=100% > </div>
   % }
+  % if ($c->stash->{question}->{id} eq 145) {
+  <div class="container"> <img src="/static/images/20190804no03.jpg" width=100% > </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 146) {
+  <div class="container"> <img src="/static/images/20190804no04.jpg" width=100% > </div>
+  % }
 
   <!-- 解答入力フォーム -->
   <%= include('inc/question_form', format => 'html', inc_form => 'inc/radio_form') =%>
