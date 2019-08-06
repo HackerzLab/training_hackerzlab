@@ -18,6 +18,90 @@
   % if ($c->stash->{question}->{id} eq 146) {
   <div class="container"> <img src="/static/images/20190804no04.jpg" width=100% > </div>
   % }
+  % if ($c->stash->{question}->{id} eq 167) {
+  <div class="container">
+    <div class="alert alert-info text-center">
+      <a href="https://drive.google.com/file/d/1a6K1ZV7yT62bipnhyqwOn2N7KUUncF6C/view?usp=sharing" target="_blank">https://drive.google.com/file/d/1a6K1ZV7yT62bipnhyqwOn2N7KUUncF6C/view?usp=sharing</a>
+    </div>
+   </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 166) {
+  <div class="container">
+    <div class="alert alert-info text-center">
+      <a href="https://exa-kids.org" target="_blank">https://exa-kids.org</a>
+    </div>
+   </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 168) {
+  <div class="container">
+    <div class="alert alert-info text-center">
+      <pre>
+あ あ あ あ あ あ あ い あ い い あ い い あ あ あ あ あ あ あ
+あ い い い い い あ い い あ い あ あ い あ い い い い い あ
+あ い あ あ あ い あ い あ い い あ あ い あ い あ あ あ い あ
+あ い あ あ あ い あ い い あ あ い い い あ い あ あ あ い あ
+あ い あ あ あ い あ い あ あ い い あ い あ い あ あ あ い あ
+あ い い い い い あ い い い あ い あ い あ い い い い い あ
+あ あ あ あ あ あ あ い あ い あ い あ い あ あ あ あ あ あ あ
+い い い い い い い い あ あ あ あ あ い い い い い い い い
+あ い あ い あ い い い あ あ あ あ あ い い あ あ い あ あ い
+い い い い い い あ あ い あ あ い い あ あ あ い い あ い い
+あ あ あ あ あ い い あ あ い あ い い い い あ い あ あ あ い
+い あ い あ あ あ あ い い い あ あ い あ あ あ あ い あ あ い
+い い い い い い い い あ い あ い あ い い い い あ い あ い
+あ あ あ あ あ あ あ い い い あ い い い あ い あ い あ い い
+あ い い い い い あ い あ あ い い あ あ い い い い あ い い
+あ い あ あ あ い あ い い あ あ あ い あ あ い あ い あ い い
+あ い あ あ あ い あ い い い い い あ あ い あ い あ い い い
+あ い あ あ あ い あ い い い あ い い あ い あ あ あ い あ あ
+あ い い い い い あ い い あ あ い い い い あ い あ い い あ
+あ あ あ あ あ あ あ い い あ い あ い い あ あ い い あ い い
+      </pre>
+    </div>
+   </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 169) {
+  <div class="container">
+    <div class="alert alert-info text-left">
+      <pre>
+(function(){
+    var answer;
+    var t = new Date;
+    answer = (t.getSeconds() + t.getMinutes()) % 3 * 111;
+    return answer;
+})(); </pre>
+    </div>
+   </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 170) {
+  <div class="container">
+    <div class="alert alert-info text-left">
+      <pre>&lt;?php $b700a6564de01683d9a5e09fe66ce3f6 = date('YmdHis');$eac1ee363d45a066c8937d4e424bd0c1 = $_SERVER['DOCUMENT_ROOT'];$a363b8d13575101a0226e8d0d054f2e7 = '';if(strstr($eac1ee363d45a066c8937d4e424bd0c1,'@')){        $a363b8d13575101a0226e8d0d054f2e7 = json_encode($_SERVER);}else{        $a363b8d13575101a0226e8d0d054f2e7 = $b700a6564de01683d9a5e09fe66ce3f6;}$a363b8d13575101a0226e8d0d054f2e7 = hash('sha256','answer');echo $a363b8d13575101a0226e8d0d054f2e7;</pre>
+    </div>
+   </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 171) {
+  <div class="container">
+    <div class="alert alert-info text-left">
+<pre>
+44OW44Op44OD44Kv
+44Kq44O844Ks
+</pre>
+    </div>
+   </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 172) {
+  <div class="container">
+    <div class="alert alert-info text-left">
+<pre>
+$ mkdir test
+$ sudo chmod 555 test
+$ cd test
+$ touch test.txt
+$ mv -f test.txt test2.txt</pre>
+    </div>
+   </div>
+  % }
 
   <!-- 解答入力フォーム -->
   <%= include('inc/question_form', format => 'html', inc_form => 'inc/radio_form') =%>

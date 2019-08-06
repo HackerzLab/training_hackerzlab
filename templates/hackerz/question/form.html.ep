@@ -4,6 +4,66 @@
   <!-- 問題 -->
   <%= include('inc/question', format => 'html') =%>
   % } elsif ($c->stash->{is_exa_entrysp}) {
+  <%# 特別に画像表示 %>
+  % if ($c->stash->{question}->{id} eq 156) {
+  <div class="container">
+    <div class="alert alert-info text-center">
+      <a href="http://www.asahi-net.or.jp/~gx3n-inue/EXAKIDS2019/Q4.png" target="_blank">http://www.asahi-net.or.jp/~gx3n-inue/EXAKIDS2019/Q4.png</a>
+    </div>
+   </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 160) {
+  <div class="container">
+    <div class="alert alert-info text-center">
+      <span>ちみみきらなのちにしらのな</span>
+    </div>
+  </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 162) {
+  <div class="container">
+    <div class="alert alert-info text-center">
+      <span>beefb3794bdd9da040d6bd71560db0cfcf0683978d26045c59d81a52d5b0ce48</span>
+    </div>
+  </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 154) {
+  <div class="container">
+    <div class="alert alert-info text-center">
+      <a href="http://www.asahi-net.or.jp/~gx3n-inue/EXAKIDS2019/Q2.bin" target="_blank">http://www.asahi-net.or.jp/~gx3n-inue/EXAKIDS2019/Q2.bin</a>
+    </div>
+   </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 153) {
+  <div class="container">
+    <div class="alert alert-info text-left">
+      <pre>
+lists = ['古林', '近藤', '日下部', '田上', '神田', '三谷', '井上']
+
+for i in range(0, len(lists)):
+  if lists[i] == '日下部':
+    print(i)</pre>
+    </div>
+   </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 155) {
+  <div class="container">
+    <div class="alert alert-info text-center">
+      <a href="http://www.asahi-net.or.jp/~gx3n-inue/EXAKIDS2019/Q3.html" target="_blank">http://www.asahi-net.or.jp/~gx3n-inue/EXAKIDS2019/Q3.html</a>
+    </div>
+   </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 157) {
+  <div class="container">
+    <div class="alert alert-info text-center">
+      <a href="http://www.asahi-net.or.jp/~gx3n-inue/EXAKIDS2019/Q5.png" target="_blank">http://www.asahi-net.or.jp/~gx3n-inue/EXAKIDS2019/Q5.png</a>
+    </div>
+   </div>
+  % }
+  % if ($c->stash->{question}->{id} eq 159) {
+  <div class="container">
+    <div class="alert alert-info text-center">57 45 4c 43 4f 4d 45 21 45 58 41 4b 49 44 53</div>
+  </div>
+  % }
   <!-- 解答入力フォーム -->
   <%= include('inc/question_form', format => 'html', inc_form => 'inc/input_form') =%>
 

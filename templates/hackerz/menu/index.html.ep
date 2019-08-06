@@ -8,7 +8,7 @@
     <h2 class="page-header">問題集 Collected</h2>
     % if ($c->stash->{is_exa} || $c->stash->{is_exa_sp}) {
     % } else {
-    <p class="text-primary">今回の問題集は 2019-05-05 Vol.21(子供向け)と(大人向け) だ!!</p>
+    <p class="text-primary"></p>
     % }
     <div class="row">
       % for my $collected (@{$collecteds}) {
